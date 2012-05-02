@@ -1,0 +1,132 @@
+# List of the standard launch parameters for an LTI launch
+LAUNCH_DATA_PARAMETERS = [
+        'context_id',
+        'context_label',
+        'context_title',
+        'context_type',
+        'launch_presentation_css_url',
+        'launch_presentation_document_target',
+        'launch_presentation_height',
+        'launch_presentation_locale',
+        'launch_presentation_return_url',
+        'launch_presentation_width',
+        'lis_course_offering_sourcedid',
+        'lis_course_section_sourcedid',
+        'lis_outcome_service_url',
+        'lis_person_contact_email_primary',
+        'lis_person_name_family',
+        'lis_person_name_full',
+        'lis_person_name_given',
+        'lis_person_sourcedid',
+        'lis_result_sourcedid',
+        'lti_message_type',
+        'lti_version',
+        'oauth_callback',
+        'oauth_consumer_key',
+        'oauth_nonce',
+        'oauth_signature',
+        'oauth_signature_method',
+        'oauth_timestamp',
+        'oauth_version',
+        'resource_link_description',
+        'resource_link_id',
+        'resource_link_title',
+        'roles',
+        'tool_consumer_info_product_family_code',
+        'tool_consumer_info_version',
+        'tool_consumer_instance_contact_email',
+        'tool_consumer_instance_description',
+        'tool_consumer_instance_guid',
+        'tool_consumer_instance_name',
+        'tool_consumer_instance_url',
+        'user_id',
+        'user_image'
+]
+
+class LaunchParamsMixin():
+    def __init__(self):
+        self.launch_params = {}
+        self.custom_params = {}
+        self.ext_params = {}
+
+    def roles(self, roles_list):
+        '''
+        Set the roles for the current launch.
+
+        Full list of roles can be found here:
+        http://www.imsglobal.org/LTI/v1p1pd/ltiIMGv1p1pd.html#_Toc309649700
+
+        LIS roles include:
+        * Student
+        * Faculty
+        * Member
+        * Learner
+        * Instructor
+        * Mentor
+        * Staff
+        * Alumni
+        * ProspectiveStudent
+        * Guest
+        * Other
+        * Administrator
+        * Observer
+        * None
+        '''
+        if roles_list and isinstance(roles_list, list):
+            self.roles = [].extend(roles_list)
+        elif roles_list and isinstance(roles_list, str):
+            self.roles = [role.lower() for role in roles_list.split(',')]
+
+    def process_params(self, params):
+        '''
+        Populates the launch data from a dictionary. Only cares about keys in
+        the LAUNCH_DATA_PARAMETERS list, or that start with 'custom_' or
+        'ext_'.
+        '''
+        for key in params.iterkeys():
+            if key in LAUNCH_DATA_PARAMETERS:
+                if key == 'roles':
+                    # Roles are a list of ',' delimited strings
+                    self.roles = [role.lower() for role in
+                            params[key].split(',')]
+                else:
+                    self.launch_params[key] = params[key]
+            elif 'custom_' in key:
+                self.custom_params[key] = params[key]
+            elif 'ext_' in key:
+                self.ext_params[key] = params[key]
+
+    def set_custom_param(self, key, val):
+      self.custom_params[key] = val
+
+    def get_custom_param(self, key):
+      self.custom_params[key]
+
+    def set_non_spec_param(self, key, val):
+      self.non_spec_params[key] = val
+
+    def get_non_spec_param(self, key):
+      self.non_spec_params[key]
+
+    def set_ext_param(self, key, val):
+      self.ext_params[key] = val
+
+    def get_ext_param(self, key):
+      self.ext_params[key]
+    
+    def to_params(self):
+        '''
+        Createa a new dictionary with all launch data. Custom / Extension keys
+        will be included. Roles are set as a ',' separated string.
+        '''
+        params = {}
+        custom_params = {}
+        for key in self.custom_params:
+            custom_params['custom_' + key] = self.custom_params[key]
+        ext_params = {}
+        for key in self.ext_params:
+            ext_params['ext_' + key] = self.ext_params[key]
+        params.extend(self.launch_params)
+        params.extend(custom_params)
+        params.extend(ext_params)
+        return params
