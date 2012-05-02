@@ -76,7 +76,7 @@ class ToolProvider(LaunchParams):
         '''
         POSTs a delete request to the Tool Consumer.
         '''
-        return self.new_request.post_delet_result()
+        return self.new_request.post_delete_result()
 
     def post_read_result(self):
         '''
