@@ -1,4 +1,11 @@
-ims-lti-py
-==========
+#ims-lti-py
 
-Python port of the useful ims-lti Ruby library. Makes integrating with LTI pretty easy.
+Python port of the useful [ims-lti](https://github.com/instructure/ims-lti) Ruby library. Makes integrating with LTI pretty easy.
+
+##Installation
+
+TODD
+
+## Usage
+
+TODO
