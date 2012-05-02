@@ -1,3 +1,4 @@
+from collections import defaultdict
 from launch_params import LaunchParams
 
 class ToolProvider(LaunchParams):
@@ -11,7 +12,7 @@ class ToolProvider(LaunchParams):
         '''
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.non_spec_params = {}
+        self.non_spec_params = defaultdict(lambda: None)
         self.outcome_requests = []
         self.process_params(params)
 
@@ -40,24 +41,26 @@ class ToolProvider(LaunchParams):
         '''
         Check if the request was an LTI Launch Request.
         '''
-        return self.lti_message_type == 'basic-lti-launch-request'
+        return self.launch_params['lti_message_type'] ==\
+                'basic-lti-launch-request'
 
     def outcome_service(self):
         '''
         Check if the Tool Launch expects an Outcome Result.
         '''
-        return (self.lis_outcome_service_url and self.lis_result_sourcedid)
+        return (self.launch_params['lis_outcome_service_url']and
+                self.launch_params['lis_result_sourcedid'])
 
     def username(self, default = None):
         '''
         Return the full, given, or family name if set.
         '''
-        if self.lis_person_name_given:
-            return self.lis_person_name_given
-        elif self.lis_person_name_family:
-            return self.lis_person_name_family
-        elif self.lis_person_name_full:
-            return self.lis_person_name_full
+        if self.launch_params['lis_person_name_given']:
+            return self.launch_params['lis_person_name_given']
+        elif self.launch_params['lis_person_name_family']:
+            return self.launch_params['lis_person_name_family']
+        elif self.launch_params['lis_person_name_full']:
+            return self.launch_params['lis_person_name_full']
         else:
             return default
 
