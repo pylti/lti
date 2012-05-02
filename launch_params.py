@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 # List of the standard launch parameters for an LTI launch
 LAUNCH_DATA_PARAMETERS = [
         'context_id',
@@ -45,9 +47,11 @@ LAUNCH_DATA_PARAMETERS = [
 
 class LaunchParamsMixin():
     def __init__(self):
-        self.launch_params = {}
-        self.custom_params = {}
-        self.ext_params = {}
+        # These dictionaries return a 'None' object when accessing a key that
+        # is not in the dictionary.
+        self.launch_params = defaultdict(lambda: None)
+        self.custom_params = defaultdict(lambda: None)
+        self.ext_params = defaultdict(lambda: None)
 
     def roles(self, roles_list):
         '''
