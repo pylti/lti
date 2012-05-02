@@ -11,8 +11,6 @@ class ToolProvider(LaunchParams):
         '''
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.custom_params = {}
-        self.ext_params = {}
         self.non_spec_params = {}
         self.outcome_requests = []
         self.process_params(params)
