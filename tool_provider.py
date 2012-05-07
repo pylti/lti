@@ -22,7 +22,7 @@ class ToolProvider(LaunchParamsMixin, object):
         '''
         Check whether the Launch Paramters set the role.
         '''
-        return self.roles and role in self.roles
+        return self.roles and role.lower() in self.roles
 
     def is_student(self):
         '''
