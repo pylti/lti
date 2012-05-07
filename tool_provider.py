@@ -1,7 +1,7 @@
 from collections import defaultdict
-from launch_params import LaunchParams
+from launch_params import LaunchParamsMixin
 
-class ToolProvider(LaunchParams):
+class ToolProvider(LaunchParamsMixin, object):
     '''
     Implements the LTI Tool Provider.
     '''
@@ -10,6 +10,7 @@ class ToolProvider(LaunchParams):
         '''
         Create new ToolProvider.
         '''
+        super(ToolProvider, self).__init__()
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.non_spec_params = defaultdict(lambda: None)
@@ -37,14 +38,14 @@ class ToolProvider(LaunchParams):
         return self.has_role('instructor') or self.has_role('faculty') or\
                 self.has_role('staff')
 
-    def launch_request(self):
+    def is_launch_request(self):
         '''
         Check if the request was an LTI Launch Request.
         '''
         return self.launch_params['lti_message_type'] ==\
                 'basic-lti-launch-request'
 
-    def outcome_service(self):
+    def is_outcome_service(self):
         '''
         Check if the Tool Launch expects an Outcome Result.
         '''
