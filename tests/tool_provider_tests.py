@@ -30,9 +30,9 @@ class TestToolProvider(unittest.TestCase):
 
     def test_username(self):
         self.assertEqual(self.tp.username('guy'), 'guy')
-        self.tp.lis_person_name_full = 'full'
+        self.tp.launch_params['lis_person_name_full'] = 'full'
         self.assertEqual(self.tp.username('guy'), 'full')
-        self.tp.lis_person_name_family = 'family'
+        self.tp.launch_params['lis_person_name_family'] = 'family'
         self.assertEqual(self.tp.username('guy'), 'family')
-        self.tp.lis_person_name_given = 'given'
+        self.tp.launch_params['lis_person_name_given'] = 'given'
         self.assertEqual(self.tp.username('guy'), 'given')
