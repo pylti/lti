@@ -1,6 +1,7 @@
 from launch_params import LaunchParamsMixin
+from request_validator import RequestValidatorMixin
 
-class ToolConsumer(LaunchParamsMixin):
+class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin):
     def __init__(self, consumer_key, consumer_secret, params = {}):
         '''
         Create new ToolConsumer.
