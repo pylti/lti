@@ -10,7 +10,7 @@ def create_params():
             "lti_version": "LTI-1p0",
             "resource_link_id": "c28ddcf1b2b13c52757aed1fe9b2eb0a4e2710a3",
             "lis_result_sourcedid": "261-154-728-17-784",
-            "lis_outcome_service_url":"http://localhost/lis_grade_passback",
+            "lis_outcome_service_url": "http://localhost/lis_grade_passback",
             "launch_presentation_return_url": "http://example.com/lti_return",
             "custom_param1": "custom1",
             "custom_param2": "custom2",

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from launch_params import LaunchParamsMixin
+from urllib import quote
 
 class ToolProvider(LaunchParamsMixin, object):
     '''
@@ -94,15 +95,18 @@ class ToolProvider(LaunchParamsMixin, object):
         If the Tool Consumer sent a return URL, add any set messages to the
         URL.
         '''
-        if not self.launch_presentation_return_url:
+        if not self.launch_params['launch_presentation_return_url']:
             return None
 
         messages = []
         for message in ['lti_errormsg', 'lti_errorlog', 'lti_msg', 'lti_log']:
-            # TODO: Implement
-            #if message == self.
-            pass
-        
+            if self.launch_params[message]:
+                messages.append('%s=%s' %(message,
+                    quote(self.launch_params[message])))
+
+        q_string = '?' + '&'.join(messages) if messages else ''
+        return self.launch_params['launch_presentation_return_url'] + q_string
+
     def new_request(self):
         # TODO: Implement OutcomeRequest 
         pass

@@ -8,21 +8,21 @@ class TestToolProvider(unittest.TestCase):
 
     def test_outcome_service(self):
         self.assertTrue(self.tp.is_outcome_service())
-        self.tp.lis_result_sourcedid = None
+        self.tp.launch_params['lis_result_sourcedid'] = None
         self.assertFalse(self.tp.is_outcome_service())
 
     def test_return_url_with_messages(self):
         self.assertEqual(self.tp.build_return_url(),
                 self.params['launch_presentation_return_url'])
-        self.tp.lti_errormsg = 'user error message'
-        self.tp.lti_errorlog = 'lms error log'
-        self.lti_msg = 'user message'
-        self.ti_log = 'lms message'
+        self.tp.launch_params['lti_errormsg'] = 'user error message'
+        self.tp.launch_params['lti_errorlog'] = 'lms error log'
+        self.tp.launch_params['lti_msg'] = 'user message'
+        self.tp.launch_params['lti_log'] = 'lms message'
         self.assertEqual(self.tp.build_return_url(),
-                self.params['launch_presenation_return_url'] +
+                self.params['launch_presentation_return_url'] +
                 '?lti_errormsg=user%20error%20message&lti_errorlog=lms%20error%20log&lti_msg=user%20message&lti_log=lms%20message')
 
-    def test_rules(self):
+    def test_roles(self):
         self.assertTrue(self.tp.is_student())
         self.assertTrue(self.tp.is_instructor())
         self.assertTrue(self.tp.has_role('Observer'))
