@@ -2,7 +2,7 @@ from launch_params import LaunchParamsMixin
 from urllib import quote
 from collections import defaultdict
 
-class ToolProvider(LaunchParamsMixin, object):
+class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
     '''
     Implements the LTI Tool Provider.
     '''
@@ -12,6 +12,7 @@ class ToolProvider(LaunchParamsMixin, object):
         Create new ToolProvider.
         '''
         super(ToolProvider, self).__init__()
+
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.non_spec_params = defaultdict(lambda: None)
