@@ -1,5 +1,5 @@
-import unittest
 from test_helper import create_test_tp, create_params
+import unittest
 
 class TestToolProvider(unittest.TestCase):
     def setUp(self):
