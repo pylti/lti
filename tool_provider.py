@@ -1,4 +1,5 @@
 from launch_params import LaunchParamsMixin
+from request_validator import RequestValidatorMixin
 from urllib import quote
 from collections import defaultdict
 
