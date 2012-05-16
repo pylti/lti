@@ -1,8 +1,10 @@
 from launch_params import LaunchParamsMixin
 from request_validator import RequestValidatorMixin
+from collections import defaultdict
 
 class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin):
-    def __init__(self, consumer_key, consumer_secret, params = {}):
+    def __init__(self, consumer_key, consumer_secret, params =
+            defaultdict(lambda: None)):
         '''
         Create new ToolConsumer.
         '''
