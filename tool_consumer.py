@@ -16,6 +16,7 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
 
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
+        self.non_spec_params = defaultdict(lambda: None)
 
         self.launch_url = params_dict['launch_url']
         self.process_params(params_dict)
