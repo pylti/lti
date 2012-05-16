@@ -44,3 +44,30 @@ class TestToolConsumer(unittest.TestCase):
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php', '4L1f5SctEX0num3GPElvMKq2w+s=')
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php?oi=hoyt', 'dvvQchwqhDH1nFGzWbgVxmcUysc=')
 
+    def testURIQueryParameters(self):
+        '''
+        Should include URI query parameters.
+        '''
+        tc = ToolConsumer('12345', 'secret', {
+            'resource_link_id': 1,
+            'user_id': 2
+            })
+        tc.launch_url = 'http://www.yahoo.com?a=1&b=2'
+        result = tc.generate_launch_data()
+        self.assertEqual(result['a'], '1')
+        self.assertEqual(result['b'], '2')
+
+    def testOveriteURIQueryParamters(self):
+        '''
+        Should not allow overwriting other parameters from the URI query
+        string.
+        '''
+        tc = ToolConsumer('12345', 'secret', {
+            'resource_link_id': 1,
+            'user_id': 2
+            })
+        tc.launch_url = 'http://www.yahoo.com?user_id=123&lti_message_type=1234'
+        result = tc.generate_launch_data()
+        self.assertEqual(result['user_id'], '2')
+        self.assertEqual(result['lti_message_type'],
+                'basic-lti-launch-request')
