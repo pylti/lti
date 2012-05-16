@@ -51,7 +51,7 @@ def create_test_tc():
     '''
     Returns a new ToolConsumer.
     '''
-    tc = ToolConsumer.new('12345', 'secret', create_params_tc())
+    tc = ToolConsumer('12345', 'secret', create_params_tc())
     tc.launch_url = 'http://dr-chuck.com/ims/php-simple/tool.php'
     tc.timestamp = '1251600739'
     tc.nonce = 'c8350c0e47782d16d2fa48b2090c1d8f'
