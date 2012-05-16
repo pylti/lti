@@ -2,16 +2,23 @@ from launch_params import LaunchParamsMixin
 from request_validator import RequestValidatorMixin
 from collections import defaultdict
 
-class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin):
+class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
     def __init__(self, consumer_key, consumer_secret, params =
             defaultdict(lambda: None)):
         '''
         Create new ToolConsumer.
         '''
+        super(ToolConsumer, self).__init__()
+
+        # Prevent key errors
+        params_dict = defaultdict(lambda: None)
+        params_dict.update(params)
+
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.launch_url = params['launch_url']
-        self.process_params(params)
+
+        self.launch_url = params_dict['launch_url']
+        self.process_params(params_dict)
 
     def set_config(self, config):
         '''
