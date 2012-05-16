@@ -1,9 +1,9 @@
-from test_helper import create_test_tp, create_params
+from test_helper import create_test_tp, create_params_tp
 import unittest
 
 class TestToolProvider(unittest.TestCase):
     def setUp(self):
-        self.params = create_params()
+        self.params = create_params_tp()
         self.tp = create_test_tp()
 
     def test_outcome_service(self):
