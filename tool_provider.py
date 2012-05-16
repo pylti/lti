@@ -1,6 +1,6 @@
-from collections import defaultdict
 from launch_params import LaunchParamsMixin
 from urllib import quote
+from collections import defaultdict
 
 class ToolProvider(LaunchParamsMixin, object):
     '''
