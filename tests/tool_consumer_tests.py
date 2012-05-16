@@ -19,7 +19,7 @@ class TestToolConsumer(unittest.TestCase):
         tc = create_test_tc()
         tc.launch_url = 'http://dr-chuck.com/ims/php-simple/tool.php?a=1&b=2&c=3%20%26a'
         result = tc.generate_launch_data()
-        self.assetEquals(result['oauth_signature'], 
+        self.assertEquals(result['oauth_signature'], 
                 'uF7LooyefQN5aocx7UlYQ4tQM5k=')
         self.assertEquals(result['c'], '3 &a')
 
@@ -33,7 +33,7 @@ class TestToolConsumer(unittest.TestCase):
 
         def test_url(url, sig):
             tc.launch_url = url
-            self.assertEquals(tc.generate_launch_data['oauth_signature'], sig)
+            self.assertEquals(tc.generate_launch_data()['oauth_signature'], sig)
 
         test_url('http://dr-chuck.com:123/ims/php-simple/tool.php', 'HdHJri8Z7OhnMhxX27hSPB5W+SI=')
         test_url('http://dr-chuck.com/ims/php-simple/tool.php', 'bTcODyqQSdogpn1mJAugGB2c2F4=')
