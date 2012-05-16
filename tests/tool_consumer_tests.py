@@ -3,7 +3,7 @@ from test_helper import create_test_tc
 import unittest
 
 class TestToolConsumer(unittest.TestCase):
-    def testSignature(self):
+    def test_signature(self):
         '''
         Should generate correct oauth signature.
         '''
@@ -12,7 +12,7 @@ class TestToolConsumer(unittest.TestCase):
         self.assertEqual(result['oauth_signature'],
                 'TPFPK4u3NwmtLt0nDMP1G1zG30U=')
 
-    def testURLQueryParameters(self):
+    def test_url_query_parameters(self):
         '''
         Should generate a correct signature with URL query parameters.
         '''
@@ -23,7 +23,7 @@ class TestToolConsumer(unittest.TestCase):
                 'uF7LooyefQN5aocx7UlYQ4tQM5k=')
         self.assertEquals(result['c'], '3 &a')
 
-    def testSignaturePort(self):
+    def test_signature_port(self):
         '''
         Should generate a correct signature with a non-standard port.
         '''
@@ -44,7 +44,7 @@ class TestToolConsumer(unittest.TestCase):
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php', '4L1f5SctEX0num3GPElvMKq2w+s=')
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php?oi=hoyt', 'dvvQchwqhDH1nFGzWbgVxmcUysc=')
 
-    def testURIQueryParameters(self):
+    def test_uri_query_parameters(self):
         '''
         Should include URI query parameters.
         '''
@@ -57,7 +57,7 @@ class TestToolConsumer(unittest.TestCase):
         self.assertEqual(result['a'], '1')
         self.assertEqual(result['b'], '2')
 
-    def testOveriteURIQueryParamters(self):
+    def test_overite_uri_query_parameters(self):
         '''
         Should not allow overwriting other parameters from the URI query
         string.
