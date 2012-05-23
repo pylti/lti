@@ -9,6 +9,7 @@ class TestToolConsumer(unittest.TestCase):
         '''
         tc = create_test_tc()
         result = tc.generate_launch_data()
+        self.assertNotEqual(result, None)
         self.assertEqual(result['oauth_signature'],
                 'TPFPK4u3NwmtLt0nDMP1G1zG30U=')
 
@@ -19,6 +20,7 @@ class TestToolConsumer(unittest.TestCase):
         tc = create_test_tc()
         tc.launch_url = 'http://dr-chuck.com/ims/php-simple/tool.php?a=1&b=2&c=3%20%26a'
         result = tc.generate_launch_data()
+        self.assertNotEqual(result, None)
         self.assertEquals(result['oauth_signature'], 
                 'uF7LooyefQN5aocx7UlYQ4tQM5k=')
         self.assertEquals(result['c'], '3 &a')
@@ -33,7 +35,9 @@ class TestToolConsumer(unittest.TestCase):
 
         def test_url(url, sig):
             tc.launch_url = url
-            self.assertEquals(tc.generate_launch_data()['oauth_signature'], sig)
+            ld = tc.generate_launch_data()
+            self.assertNotEqual(ld, None)
+            self.assertEquals(ld['oauth_signature'], sig)
 
         test_url('http://dr-chuck.com:123/ims/php-simple/tool.php', 'HdHJri8Z7OhnMhxX27hSPB5W+SI=')
         test_url('http://dr-chuck.com/ims/php-simple/tool.php', 'bTcODyqQSdogpn1mJAugGB2c2F4=')
@@ -54,6 +58,7 @@ class TestToolConsumer(unittest.TestCase):
             })
         tc.launch_url = 'http://www.yahoo.com?a=1&b=2'
         result = tc.generate_launch_data()
+        self.assertNotEqual(result, None)
         self.assertEqual(result['a'], '1')
         self.assertEqual(result['b'], '2')
 
@@ -68,6 +73,7 @@ class TestToolConsumer(unittest.TestCase):
             })
         tc.launch_url = 'http://www.yahoo.com?user_id=123&lti_message_type=1234'
         result = tc.generate_launch_data()
+        self.assertNotEqual(result, None)
         self.assertEqual(result['user_id'], '2')
         self.assertEqual(result['lti_message_type'],
                 'basic-lti-launch-request')
