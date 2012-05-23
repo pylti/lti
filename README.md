@@ -4,7 +4,7 @@ Python port of the useful [ims-lti](https://github.com/instructure/ims-lti) Ruby
 
 ##Installation
 
-TODD
+TODO
 
 ## Usage
 
