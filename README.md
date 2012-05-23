@@ -9,3 +9,8 @@ TODO
 ## Usage
 
 TODO
+
+## Testing
+ims-lti-py unit tests can be run with the [nose](http://readthedocs.org/docs/nose/en/latest/) Python library. Once installed, just run
+
+    nosetests tests/
