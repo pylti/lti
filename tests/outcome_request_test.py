@@ -1,4 +1,5 @@
 from test_helper import create_test_tp
+from outcome_request import OutcomeRequest
 
 import unittest
 
@@ -14,7 +15,56 @@ class TestOutcomeRequest(unittest.TestCase):
         pass
 
     def test_post_replace_result(self):
+        '''
+        Should post replaceResult rquest.
+        '''
         self.mock_request(self.replace_result_xml)
         self.tp.post_replace_result(5)
+        self.assetFalse(self.tp.last_outcome_success)
 
-    # TODO
+    def test_post_read_result(self):
+        '''
+        Should post readResult request.
+        '''
+        self.mock_request(self.read_result_xml)
+        self.post_read_result()
+
+    def  test_post_delete_result(self):
+        '''
+        Should post deleteResult request.
+        '''
+        self.mock_request(self.delete_result_xml)
+        self.tp.post_delete_result()
+
+    def test_parse_replace_result_xml(self):
+        '''
+        Should parse replaceResult XML.
+        '''
+        request = OutcomeRequest()
+        request.process_xml(self.replace_result_xml)
+        self.assertEqual(request.operation, 'replaceResult')
+        self.assertEqual(request.options['lis_result_sourceid'], '261-154-728-17-784')
+        self.assertEqual(request.options['message_identifier'], '123456789')
+        self.assertEqual(request.should, '5')
+
+    def test_parse_read_result_xml(self):
+        '''
+        Should parse readResult XML.
+        '''
+        request = OutcomeRequest()
+        request.process_xml(self.read_result_xml)
+        self.assertEqual(request.operation, 'readResult')
+        self.assertEqual(request.options['lis_result_sourceid'], '261-154-728-17-784')
+        self.assertEqual(request.options['message_identifier'], '123456789')
+        self.assertEqual(request.should, None)
+
+    def test_parse_delete_result_xml(self):
+        '''
+        Should parse deleteRequest XML.
+        '''
+        request = OutcomeRequest()
+        request.process_xml(self.delete_result_xml)
+        self.assertEqual(request.operation, 'deleteResult')
+        self.assertEqual(request.options['lis_result_sourceid'], '261-154-728-17-784')
+        self.assertEqual(request.options['message_identifier'], '123456789')
+        self.assertEqual(request.should, None)
