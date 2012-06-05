@@ -90,7 +90,18 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         return self.new_request.post_read_result()
 
     def last_outcome_request(self):
+        '''
+        Returns the most recent OutcomeRequest.
+        '''
         return self.outcome_requests.last
+
+    def last_outcome_success(self):
+        '''
+        Convenience method for determining the success of the last
+        OutcomeRequest.
+        '''
+        return self.last_outcome_request and\
+                self.last_outcome_request.is_outcome_post_successful()
 
     def build_return_url(self):
         '''
