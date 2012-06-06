@@ -15,68 +15,67 @@ class OutcomeRequest():
     request to the TC. A TC will use it to parse such a request from a TP.
     '''
     def __init__(self, opts = defaultdict(lambda: None)):
+        # Store specified options in our options member
         self.options = defaultdict(lambda: None)
         for (key, val) in opts.iteritems():
             self.options[key] = val
 
+    @staticmethod
     def from_post_request(post_request):
         '''
         Convenience method for creating a new OutcomeRequest from a request
         object.
+
+        post_request is assumed to be a Django HttpRequest object
         '''
         request = OutcomeRequest()
-        request.post_request = post_request
-        if post_request.body.read:
-            xml = post_request.body.read
-            post_request.body.rewind
-        else:
-            xml = post_request.body
-
-        request.process_xml(xml)
+        request.options['post_request'] = post_request
+        request.process_xml(post_request.POST)
         return request
 
     def post_replace_result(self, score):
         '''
         POSTs the given score to the Tool Consumer with a replaceResult.
         '''
-        self.operation = REPLACE_REQUEST
-        self.score = score
+        self.options['operation'] = REPLACE_REQUEST
+        self.options['score'] = score
         self.post_outcome_request()
 
     def post_delete_result(self):
         '''
         POSTs a deleteRequest to the Tool Consumer.
         '''
-        self.operation = DELETE_REQUEST
+        self.options['operation'] = DELETE_REQUEST
         self.post_outcome_request()
 
     def post_read_result(self):
         '''
         POSTS a readResult to the Tool Consumer.
         '''
-        self.operation = READ_REQUEST
+        self.options['operation'] = READ_REQUEST
         self.post_outcome_request()
 
     def is_replace_request(self):
         '''
         Check whether this request is a replaceResult request.
         '''
-        return self.operation == REPLACE_REQUEST
+        return self.options['operation'] == REPLACE_REQUEST
 
     def is_delete_request(self):
         '''
         Check whether this request is a deleteResult request.
         '''
-        return self.operation == DELETE_REQUEST
+        return self.options['operation'] == DELETE_REQUEST
 
     def is_read_request(self):
         '''
         Check whether this request is a readResult request.
         '''
-        return self.operation == READ_REQUEST
+        return self.options['operation'] == READ_REQUEST
 
     def was_outcome_post_successful(self):
-        return self.outcome_response and self.outcome_response.success()
+        return self.options['outcome_response'] and\
+                self.options['outcome_response'].is_success()
 
     def post_outcome_request(self):
         '''
