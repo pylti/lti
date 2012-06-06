@@ -1,4 +1,5 @@
 from collections import defaultdict
+from lxml import etree
 
 REPLACE_REQUEST = 'replaceResult'
 DELETE_REQUEST = 'deleteResult'
@@ -84,12 +85,33 @@ class OutcomeRequest():
         # TODO
         pass
 
-    def process_xml(self):
+    def process_xml(self, xml):
         '''
         Parse Outcome Request data from XML.
         '''
-        # TODO
-        pass
+        # TODO: This is horribly ugly
+        root = etree.fromstring(xml)
+        try:
+            self.options['message_identifier'] = root.iter('imsx_messageIdentifier').next();
+        except:
+            self.options['message_identifier'] = None
+        try:
+            self.options['lis_result_sourcedid'] = root.iter('imsx_sourcedId').next()
+        except:
+            self.options['lis_result_sourcedid'] = None
+        try:
+            root.iter('deleteResultRequest').first()
+            self.options['operation'] = DELETE_REQUEST
+        except:
+            try:
+                root.iter('readResultRequest').first()
+                self.options['operation'] = READ_REQUEST 
+            except:
+                self.options['operation'] = REPLACE_REQUEST 
+                try:
+                    self.options['score'] = root.iter('textString')
+                except:
+                    self.options['score'] = 0.0
 
     def has_required_attributes(self):
       self.consumer_key\
@@ -99,5 +121,28 @@ class OutcomeRequest():
               and self.operation
 
     def generate_request_xml(self):
-        # TODO
-        pass
+        root = etree.Element('imsx_POXEnvelopeResponse', xmlns =
+                'http://www.imsglobal.org/lis/oms1p0/pox',
+                xml_declaration = True, encoding = 'utf-8')
+
+        header = etree.SubElement(root, 'imsx_POXHeader')
+        header_info = etree.SubElement(header, 'imsx_POXResponseHeaderInfo')
+        version = etree.SubElement(header_info, 'imsx_version')
+        version.text = 'V1.0'
+        message_identifier = etree.SubElement(header_info,
+                'imsx_messageIdentifier')
+        message_identifier.text = self.options['message_identifier']
+        body = etree.SubElement(root, 'imsx_POXBody')
+        request = etree.SubElement(body, '%s%s' %(self.options['operation'],
+            'Request'))
+        record = etree.SubElement(request, 'resultRecord')
+        guid = etree.SubElement(record, 'sourceGUID')
+        guid.text = self.options['lis_result_sourcedid']
+        
+        if self.options['score']:
+            result = etree.SubElement(record, 'result')
+            result_score = etree.SubElement(result, 'resultScore')
+            language = etree.SubElement(result_score, 'language')
+            language.text = 'en'
+            text_string = etree.SubElement(result_score, 'textString')
+            text_string.text = self.options['score']
