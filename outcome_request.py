@@ -1,6 +1,14 @@
 from collections import defaultdict
 from lxml import etree
 
+from utils import InvalidLTIConfigError
+
+    class InvalidLTIConfigError(Exception):
+        def __init__(self, value):
+            self.value = value
+        def __str__(self):
+            return repr(self.value)
+
 REPLACE_REQUEST = 'replaceResult'
 DELETE_REQUEST = 'deleteResult'
 READ_REQUEST = 'readResult'
@@ -82,8 +90,8 @@ class OutcomeRequest():
         '''
         POST an OAuth signed request to the Tool Consumer.
         '''
-        # TODO
-        pass
+        if not self.has_required_attributes():
+            raise InvalidLTIConfigError()
 
     def process_xml(self, xml):
         '''
@@ -146,3 +154,4 @@ class OutcomeRequest():
             language.text = 'en'
             text_string = etree.SubElement(result_score, 'textString')
             text_string.text = self.options['score']
+

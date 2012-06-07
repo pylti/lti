@@ -26,6 +26,7 @@ class OutcomeResponse():
     to send back to a TP.
     ''' 
     def __init__(self, opts = defaultdict(lambda: None)):
+        # Store specified options in our options member
         for (key, val) in opts.iteritems():
             self.options[key] = val
 
