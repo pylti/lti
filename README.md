@@ -9,6 +9,7 @@ TODO
 ## Dependencies
 
  * [lxml](https://github.com/lxml/lxml)
+ * [python-oath2](https://github.com/simplegeo/python-oauth2)
 
 ## Usage
 

@@ -1,13 +1,11 @@
 from collections import defaultdict
 from lxml import etree
 
-from utils import InvalidLTIConfigError
+import oauth2
+import textwrap
 
-    class InvalidLTIConfigError(Exception):
-        def __init__(self, value):
-            self.value = value
-        def __str__(self):
-            return repr(self.value)
+from outcome_response import OutcomeResponse
+from utils import InvalidLTIConfigError
 
 REPLACE_REQUEST = 'replaceResult'
 DELETE_REQUEST = 'deleteResult'
@@ -91,7 +89,21 @@ class OutcomeRequest():
         POST an OAuth signed request to the Tool Consumer.
         '''
         if not self.has_required_attributes():
-            raise InvalidLTIConfigError()
+            raise InvalidLTIConfigError(textwrap.dedent('OutcomeRequest does not have all required attributes'))
+
+        consumer = oauth2.Consumer(key = self.options['consumer_key'],
+                secret =  self.options['consumer_secret'])
+
+        client = oauth2.Client(consumer)
+
+        response, content = client.request(
+                self.options['lis_outcome_service_url'],
+                'POST',
+                body = self.generate_request_xml(),
+                headers = { 'Content-Type': 'application/xml' })
+
+        self.options['outcome_response'] =\
+                OutcomeResponse.from_post_response(response)
 
     def process_xml(self, xml):
         '''
@@ -122,16 +134,15 @@ class OutcomeRequest():
                     self.options['score'] = 0.0
 
     def has_required_attributes(self):
-      self.consumer_key\
-              and self.consumer_secret\
-              and self.lis_outcome_service_url\
-              and self.lis_result_sourcedid\
-              and self.operation
+        return self.options['consumer_key'] != None\
+                and self.options['consumer_secret'] != None\
+                and self.options['lis_outcome_service_url'] != None\
+                and self.options['lis_result_sourcedid'] != None\
+                and self.options['operation'] != None
 
     def generate_request_xml(self):
         root = etree.Element('imsx_POXEnvelopeResponse', xmlns =
-                'http://www.imsglobal.org/lis/oms1p0/pox',
-                xml_declaration = True, encoding = 'utf-8')
+                'http://www.imsglobal.org/lis/oms1p0/pox')
 
         header = etree.SubElement(root, 'imsx_POXHeader')
         header_info = etree.SubElement(header, 'imsx_POXResponseHeaderInfo')
@@ -153,5 +164,6 @@ class OutcomeRequest():
             language = etree.SubElement(result_score, 'language')
             language.text = 'en'
             text_string = etree.SubElement(result_score, 'textString')
-            text_string.text = self.options['score']
+            text_string.text = self.options['score'].__str__()
 
+        return etree.tostring(root, xml_declaration = True, encoding = 'utf-8')

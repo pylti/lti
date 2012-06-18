@@ -27,7 +27,7 @@ class TestOutcomeRequest(unittest.TestCase):
         Should post readResult request.
         '''
         self.mock_request(self.read_result_xml)
-        self.post_read_result()
+        self.tp.post_read_result()
 
     def  test_post_delete_result(self):
         '''
@@ -42,7 +42,7 @@ class TestOutcomeRequest(unittest.TestCase):
         '''
         request = OutcomeRequest()
         request.process_xml(self.replace_result_xml)
-        self.assertEqual(request.operation, 'replaceResult')
+        self.assertEqual(request.options['operation'], 'replaceResult')
         self.assertEqual(request.options['lis_result_sourceid'], '261-154-728-17-784')
         self.assertEqual(request.options['message_identifier'], '123456789')
         self.assertEqual(request.should, '5')
@@ -53,7 +53,7 @@ class TestOutcomeRequest(unittest.TestCase):
         '''
         request = OutcomeRequest()
         request.process_xml(self.read_result_xml)
-        self.assertEqual(request.operation, 'readResult')
+        self.assertEqual(request.options['operation'], 'readResult')
         self.assertEqual(request.options['lis_result_sourceid'], '261-154-728-17-784')
         self.assertEqual(request.options['message_identifier'], '123456789')
         self.assertEqual(request.should, None)
@@ -64,7 +64,7 @@ class TestOutcomeRequest(unittest.TestCase):
         '''
         request = OutcomeRequest()
         request.process_xml(self.delete_result_xml)
-        self.assertEqual(request.operation, 'deleteResult')
+        self.assertEqual(request.options['operation'], 'deleteResult')
         self.assertEqual(request.options['lis_result_sourceid'], '261-154-728-17-784')
         self.assertEqual(request.options['message_identifier'], '123456789')
         self.assertEqual(request.should, None)

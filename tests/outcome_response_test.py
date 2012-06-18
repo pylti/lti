@@ -54,7 +54,7 @@ class TestOutcomeResponse(unittest.TestCase):
         Should parse deleteResult response XML.
         '''
         result = OutcomeResponse()
-        self.assertEqual(result.success, True)
+        self.assertTrue(result.is_success())
         self.assertEqual(result.code_major, 'success')
         self.assertEqual(result.severity, 'status')
         self.assertEqual(result.description, None)

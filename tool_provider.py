@@ -1,5 +1,6 @@
 from launch_params import LaunchParamsMixin
 from request_validator import RequestValidatorMixin
+from outcome_request import OutcomeRequest
 from urllib import quote
 from collections import defaultdict
 
@@ -74,26 +75,26 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
 
         Returns OutcomeResponse object and stores it in self.outcome_request
         '''
-        return self.new_request.post_replace_result(score)
+        return self.new_request().post_replace_result(score)
 
     def post_delete_result(self):
         '''
         POSTs a delete request to the Tool Consumer.
         '''
-        return self.new_request.post_delete_result()
+        return self.new_request().post_delete_result()
 
     def post_read_result(self):
         '''
         POSTs the given score to the Tool Consumer with a replaceResult, the
         returned OutcomeResponse will have the score.
         '''
-        return self.new_request.post_read_result()
+        return self.new_request().post_read_result()
 
     def last_outcome_request(self):
         '''
         Returns the most recent OutcomeRequest.
         '''
-        return self.outcome_requests.last
+        return self.outcome_requests[-1]
 
     def last_outcome_success(self):
         '''
@@ -121,5 +122,13 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         return self.launch_params['launch_presentation_return_url'] + q_string
 
     def new_request(self):
-        # TODO: Implement OutcomeRequest 
-        pass
+        opts = defaultdict(lambda: None)
+        opts = { 
+                'consumer_key': self.consumer_key, 
+                'consumer_secret': self.consumer_secret, 
+                'lis_outcome_service_url': self.launch_params['lis_outcome_service_url'], 
+                'lis_result_sourcedid': self.launch_params['lis_result_sourcedid']
+                }
+        self.outcome_requests.append(OutcomeRequest(opts = opts))
+        self.last_outcome_request = self.outcome_requests[-1]
+        return self.last_outcome_request
