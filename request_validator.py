@@ -1,14 +1,18 @@
+import oauth2
+
 class RequestValidatorMixin():
     '''
     A 'mixin' for OAuth request validation.
     '''
+    def __init__(self):
+        self.oauth_server = oauth2.Server()
+
     def is_valid_request(self, request, handle_error = True):
         '''
         Validates an OAuth request using the python-oauth2 library:
             https://github.com/simplegeo/python-oauth2
         '''
-        # TODO
-        return False  
+        pass
 
     def valid_request(self, request):
         '''

@@ -1,7 +1,7 @@
-from test_helper import create_test_tp, create_test_tc,\
-        create_params_tp, create_params_tc
+from test_helper import create_test_tp, create_test_tc, create_params_tp
 
 import unittest
+import httplib2
 
 class DontTestLaunchParams():
     def test_process_params(self):
@@ -15,11 +15,8 @@ class DontTestLaunchParams():
                 self.assertEquals(self.tool.launch_params[key], val)
 
         # Test roles
-        self.assertTrue(sorted(self.tool.roles) == sorted(['learner'\
+        self.assertTrue(sorted(self.tool.roles) == sorted(['learner',\
                 'instructor', 'observer']))
-
-        # Test params
-        self.assertTrue(sorted(self.tool.params) == sorted(self.params))
 
     def test_custom_extension_parameters(self):
         '''
@@ -44,11 +41,11 @@ class DontTestLaunchParams():
         '''
         Should not accept invalid request.
         '''
-        # TODO: create request, and validate
-        pass
+        # Create request, 
+        request = httplib2.Http.request('/test?key=value', method = 'POST')
 
-        #request = Net::HTTP::Post.new('/test?key=value')
-        #@tool.valid_request?(request).should == false
+        # Validate request
+        self.too.is_valid_request(request)
 
 class TestProviderLaunchParams(unittest.TestCase, DontTestLaunchParams):
     '''
@@ -64,4 +61,4 @@ class TestConsumerLaunchParams(unittest.TestCase, DontTestLaunchParams):
     '''
     def setUp(self):
         self.params = create_params_tp()
-        self.tool = create_test_tc()
+        self.tool = create_test_tc(params = self.params)
