@@ -14,9 +14,14 @@ class RequestValidatorMixin():
         Validates an OAuth request using the python-oauth2 library:
             https://github.com/simplegeo/python-oauth2
 
-        Raises a 'MissingSignature' exception if signature verification fails.
         '''
-        self.oauth_server.verify_request(request, self.consumer)
+        try:
+            self.oauth_server.verify_request(request, self.consumer)
+        except oauth2.MissingSignature, e:
+            if handle_error:
+                return False
+            else:
+                raise e
 
     def valid_request(self, request):
         '''
