@@ -49,11 +49,12 @@ def create_params_tc():
     })
     return params
 
-def create_test_tc():
+def create_test_tc(params = None):
     '''
     Returns a new ToolConsumer.
     '''
-    tc = ToolConsumer('12345', 'secret', params = create_params_tc())
+    params = create_params_tc() if params == None else params
+    tc = ToolConsumer('12345', 'secret', params)
     tc.launch_url = 'http://dr-chuck.com/ims/php-simple/tool.php'
     tc.timestamp = '1251600739'
     tc.nonce = 'c8350c0e47782d16d2fa48b2090c1d8f'
