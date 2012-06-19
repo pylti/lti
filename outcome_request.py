@@ -1,5 +1,6 @@
 from collections import defaultdict
 from lxml import etree
+from StringIO import StringIO
 
 import oauth2
 import textwrap
@@ -109,29 +110,22 @@ class OutcomeRequest():
         '''
         Parse Outcome Request data from XML.
         '''
-        # TODO: This is horribly ugly
-        root = etree.fromstring(xml)
-        try:
-            self.options['message_identifier'] = root.iter('imsx_messageIdentifier').next();
-        except:
-            self.options['message_identifier'] = None
-        try:
-            self.options['lis_result_sourcedid'] = root.iter('imsx_sourcedId').next()
-        except:
-            self.options['lis_result_sourcedid'] = None
-        try:
-            root.iter('deleteResultRequest').first()
-            self.options['operation'] = DELETE_REQUEST
-        except:
-            try:
-                root.iter('readResultRequest').first()
-                self.options['operation'] = READ_REQUEST 
-            except:
-                self.options['operation'] = REPLACE_REQUEST 
-                try:
-                    self.options['score'] = root.iter('textString')
-                except:
-                    self.options['score'] = 0.0
+        context = etree.iterparse(StringIO(xml))
+        for action, elem in context:
+            if 'imsx_messageIdentifier' in elem.tag:
+                self.options['message_identifier'] = elem.text
+            elif 'imsx_sourcedId' in elem.tag:
+                self.options['lis_result_sourcedid'] = elem.text
+            elif 'deleteResultRequest' in elem.tag:
+                self.options['operation'] = DELETE_REQUEST
+            elif 'readResultRequest' in elem.tag:
+                self.options['operation'] = READ_REQUEST
+            elif 'replaceResult' in elem.tag:
+                self.options['operation'] = REPLACE_REQUEST
+            elif 'textString' in elem.tag:
+                self.options['score'] = elem.text
+            elif 'sourcedId' in elem.tag:
+                self.options['lis_result_sourcedid'] = elem.text
 
     def has_required_attributes(self):
         return self.options['consumer_key'] != None\

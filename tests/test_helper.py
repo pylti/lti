@@ -32,8 +32,9 @@ def create_params_tc():
     '''
     Creates a set of launch parameters for a ToolConsumer.
     '''
-    return {
-            'resource_link_id': '120988f929-274612',
+    params = create_params_tp()
+    params.update({
+            #'resource_link_id': '120988f929-274612',
             'user_id': '292832126',
             'roles': 'Instructor',
             'lis_person_name_full': 'Jane Q. Public',
@@ -45,13 +46,14 @@ def create_params_tc():
             'lti_message_type': 'basic-lti-launch-request',
             'tool_consumer_instance_guid': 'lmsng.school.edu',
             'tool_consumer_instance_description': 'University of School (LMSng)',
-    }
+    })
+    return params
 
 def create_test_tc():
     '''
     Returns a new ToolConsumer.
     '''
-    tc = ToolConsumer('12345', 'secret', create_params_tc())
+    tc = ToolConsumer('12345', 'secret', params = create_params_tc())
     tc.launch_url = 'http://dr-chuck.com/ims/php-simple/tool.php'
     tc.timestamp = '1251600739'
     tc.nonce = 'c8350c0e47782d16d2fa48b2090c1d8f'

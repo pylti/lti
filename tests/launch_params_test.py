@@ -9,7 +9,7 @@ class DontTestLaunchParams():
         '''
         for (key, val) in create_params_tp().iteritems():
             if not 'custom_' in key and not 'ext_' in key:
-                self.assertEquals(self.tool.launch_params['key'], val)
+                self.assertEquals(self.tool.launch_params[key], val)
 
         # TODO: Test roles
 
@@ -21,7 +21,7 @@ class DontTestLaunchParams():
         '''
         self.assertEquals(self.tool.get_custom_param('param1'), 'custom1')
         self.assertEquals(self.tool.get_custom_param('param2'), 'custom2')
-        self.assertEquals(self.tool.get_ext_params('lti_message_type'),
+        self.assertEquals(self.tool.get_ext_param('lti_message_type'),
                 'extension-lti-launch')
         self.tool.set_custom_param('param3', 'custom3')
         self.tool.set_ext_param('user_id', 'bob')

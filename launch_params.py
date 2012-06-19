@@ -101,22 +101,22 @@ class LaunchParamsMixin():
                 self.ext_params[key] = params[key]
 
     def set_custom_param(self, key, val):
-      self.custom_params[key] = val
+      self.custom_params['custom_' + key] = val
 
     def get_custom_param(self, key):
-      self.custom_params[key]
+      return self.custom_params['custom_' + key]
 
     def set_non_spec_param(self, key, val):
       self.non_spec_params[key] = val
 
     def get_non_spec_param(self, key):
-      self.non_spec_params[key]
+      return self.non_spec_params[key]
 
     def set_ext_param(self, key, val):
-      self.ext_params[key] = val
+      self.ext_params['ext_' + key] = val
 
     def get_ext_param(self, key):
-      self.ext_params[key]
+      return self.ext_params['ext_' + key]
     
     def to_params(self):
         '''
@@ -126,11 +126,11 @@ class LaunchParamsMixin():
         params = {}
         custom_params = {}
         for key in self.custom_params:
-            custom_params['custom_' + key] = self.custom_params[key]
+            custom_params[key] = self.custom_params[key]
         ext_params = {}
         for key in self.ext_params:
-            ext_params['ext_' + key] = self.ext_params[key]
-        params.extend(self.launch_params)
-        params.extend(custom_params)
-        params.extend(ext_params)
+            ext_params[key] = self.ext_params[key]
+        params.update(self.launch_params)
+        params.update(custom_params)
+        params.update(ext_params)
         return params
