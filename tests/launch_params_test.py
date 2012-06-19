@@ -1,4 +1,5 @@
-from test_helper import create_test_tp, create_test_tc, create_params_tp
+from test_helper import create_test_tp, create_test_tc,\
+        create_params_tp, create_params_tc
 
 import unittest
 
@@ -7,13 +8,18 @@ class DontTestLaunchParams():
         '''
         Should process parameters.
         '''
-        for (key, val) in create_params_tp().iteritems():
-            if not 'custom_' in key and not 'ext_' in key:
+        for (key, val) in self.params.iteritems():
+            if not 'custom_' in key\
+                    and not 'ext_' in key\
+                    and not 'roles' in key:
                 self.assertEquals(self.tool.launch_params[key], val)
 
-        # TODO: Test roles
+        # Test roles
+        self.assertTrue(sorted(self.tool.roles) == sorted(['learner'\
+                'instructor', 'observer']))
 
-        # TODO: Test params
+        # Test params
+        self.assertTrue(sorted(self.tool.params) == sorted(self.params))
 
     def test_custom_extension_parameters(self):
         '''
@@ -49,6 +55,7 @@ class TestProviderLaunchParams(unittest.TestCase, DontTestLaunchParams):
     Tests the LaunchParamsMixin component of the ToolProvider.
     '''
     def setUp(self):
+        self.params = create_params_tp()
         self.tool = create_test_tp()
 
 class TestConsumerLaunchParams(unittest.TestCase, DontTestLaunchParams):
@@ -56,4 +63,5 @@ class TestConsumerLaunchParams(unittest.TestCase, DontTestLaunchParams):
     Tests the LaunchParamsMixin component of the ToolConsumer.
     '''
     def setUp(self):
+        self.params = create_params_tp()
         self.tool = create_test_tc()
