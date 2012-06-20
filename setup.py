@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'ims_lti_py',
-    version = '0.1',
+    version = '0.2',
     description = 'A Python library to help implement IMS LTI tool consumers and providers',
     author = 'Anson MacKeracher',
     author_email = 'anson@tophatmonocle.com',
