@@ -1,2 +1,5 @@
 *.pyc
 tags
+build/
+dist/
+*.egg-info/

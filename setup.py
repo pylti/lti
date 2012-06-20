@@ -13,6 +13,6 @@ setup(
     install_requires = ['lxml', 'oauth2'],
     license = 'MIT License',
     keywords = 'lti',
-    zip_save = True,
+    zip_safe = True,
     test_suite = 'tests'
 )
