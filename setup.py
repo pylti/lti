@@ -1,9 +1,7 @@
 from setuptools import setup, find_packages
 
-PKG = 'ims_lti_py'
-
 setup(
-    name = PKG,
+    name = 'ims_lti_py',
     version = '0.1',
     description = 'A Ruby library to help implement IMS LTI tool consumers and providers',
     author = 'Anson MacKeracher',
