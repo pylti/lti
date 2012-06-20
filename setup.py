@@ -12,5 +12,5 @@ setup(
     license = 'MIT License',
     keywords = 'lti',
     zip_safe = True,
-    test_suite = 'tests'
+    test_suite = 'tests',
 )
