@@ -62,8 +62,8 @@ class TestToolConfig(unittest.TestCase):
 
         config.set_custom_param('custom2', 'customval2')
 
-        config.set_ext_param('example.com', { 'extkey1': 'extval1' })
-        config.set_ext_param('example.com', { 'extkey2': 'extval2' })
+        config.set_ext_params('example.com', { 'extkey1': 'extval1' })
+        config.set_ext_param('example.com', 'extkey2', 'extval2')
         config.set_ext_param('example.com', 'extopt1', 
                 { 'optkey1': 'optval1', 'optkey2': 'optval2' })
         config.set_ext_param('two.example.com', 'ext1key', 'ext1val')
