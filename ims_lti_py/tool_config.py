@@ -8,6 +8,23 @@ LTI_NAMESPACES = {
         "lticp": 'http://www.imsglobal.org/xsd/imslticp_v1p0',
         }
 
+accessors = [
+        'title',
+        'description',
+        'launch_url',
+        'secure_launch_url',
+        'icon',
+        'secure_icon',
+        'cartridge_bundle',
+        'cartridge_icon',
+        'vendor_code',
+        'vendor_name',
+        'vendor_description',
+        'vendor_url',
+        'vendor_contant_email',
+        'vendor_contant_name'
+]
+
 class ToolConfig():
     '''
     Object used to represent LTI configuration.
@@ -18,18 +35,22 @@ class ToolConfig():
 
     TODO: Usage description
     '''
-    def __init__(self, opts = defaultdict(lambda: None)):
+    def __init__(self, **kwargs):
         '''
         Create a new ToolConfig with the given options.
         '''
-        self.custom_params = opts.pop('custom_params') or\
-                defaultdict(lambda: None)
-        self.extensions = opts.pop('extensions') or\
-                defaultdict(lambda: None)
-        self.opts = defaultdict(lambda: None)
+        # Initialize all class accessors to None
+        for opt in accessors:
+            setattr(self, opt, None)
 
-        for (key, val) in opts.iteritems():
-            self.opts[key] = val
+        self.custom_params = kwargs.pop('custom_params') or\
+                defaultdict(lambda: None)
+        self.extensions = kwargs.pop('extensions') or\
+                defaultdict(lambda: None)
+
+        # Iterate over all provided options and save to class instance members
+        for (key, val) in kwargs.iteritems():
+            setattr(self, key, val)
 
     def create_from_xml(self):
         '''
@@ -90,6 +111,3 @@ class ToolConfig():
         '''
         # TODO Generte XML
         pass
-
-
-
