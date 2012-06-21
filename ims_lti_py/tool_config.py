@@ -52,7 +52,8 @@ class ToolConfig():
         for (key, val) in kwargs.iteritems():
             setattr(self, key, val)
 
-    def create_from_xml(self):
+    @staticmethod
+    def create_from_xml():
         '''
         Create a ToolConfig from the given XML.
         '''
