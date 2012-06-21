@@ -1,5 +1,5 @@
 from test_helper import create_test_tp
-from outcome_request import OutcomeRequest
+from ims_lti_py import OutcomeRequest
 
 import unittest
 

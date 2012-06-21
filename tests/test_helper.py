@@ -1,9 +1,5 @@
-import sys, os
-cwd = os.getcwd()
-sys.path.append(cwd)
-
-from tool_provider import ToolProvider
-from tool_consumer import ToolConsumer
+from ims_lti_py import ToolProvider
+from ims_lti_py import ToolConsumer
 
 def create_params_tp():
     '''

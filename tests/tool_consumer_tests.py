@@ -1,4 +1,4 @@
-from tool_consumer import ToolConsumer
+from ims_lti_py import ToolConsumer
 from test_helper import create_test_tc
 import unittest
 

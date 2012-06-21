@@ -1,4 +1,4 @@
-from outcome_response import OutcomeResponse 
+from ims_lti_py import OutcomeResponse 
 
 import unittest
 import textwrap
