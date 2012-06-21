@@ -78,7 +78,7 @@ class TestToolConfig(unittest.TestCase):
         Should read an XML config.
         '''
         config = ToolConfig.create_from_xml(cc_lti_xml)
-        self.assertEqual(config.to_xml() == cc_lti_xml)
+        self.assertEqual(config.to_xml(), cc_lti_xml)
 
     def test_invalid_config_xml(self):
         '''
