@@ -1,4 +1,9 @@
 from collections import defaultdict
+from lxml import etree
+
+from utils import InvalidLTIConfigError
+
+import StringIO
 
 # Namespaces used for parsing configuration XML
 LTI_NAMESPACES = {
@@ -53,12 +58,13 @@ class ToolConfig():
             setattr(self, key, val)
 
     @staticmethod
-    def create_from_xml():
+    def create_from_xml(xml):
         '''
         Create a ToolConfig from the given XML.
         '''
-        # TODO: WTF!?
-        pass
+        config = ToolConfig()
+        config.process_xml(xml)
+        return config 
 
     def set_custom_param(self, key, val):
         '''
@@ -99,16 +105,79 @@ class ToolConfig():
         return self.extensions[ext_key][param_key] if self.extensions[ext_key]\
                 else None
 
-    def process_xml(xml):
+    def process_xml(self, xml):
         '''
         Parse tool configuration data out of the Common Cartridge LTI link XML.
         '''
-        # TODO Parse XML
-        pass
+        context = etree.iterparse(StringIO.StringIO(xml))
+        for action, elem in context:
+            if 'blti:title' in elem.tag:
+                self.title = elem.text
+            elif 'blti:description' in elem.tag:
+                self.description = elem.tag
+            elif 'blti:launch_url' in elem.tag:
+                self.launch_url = elem.text
+            elif 'blti:secure_launch_url' in elem.tag:
+                self.secure_launch_url = elem.text
+            elif 'blti:icon' in elem.tag:
+                self.icon = elem.text
+            elif 'blti:secure_icon' in elem.tag:
+                self.secure_icon = elem.text
+            #elif 'blti:vendor
 
-    def to_xml(opts = defaultdict(lambda: None)):
+            # TODO: Custom params
+            # TODO: Extension params
+
+    def to_xml(self, opts = defaultdict(lambda: None)):
         '''
         Generate XML from the current settings.
         '''
-        # TODO Generte XML
-        pass
+        if not self.launch_url or not self.secure_launch_url:
+            raise InvalidLTIConfigError('Invalid LTI configuration')
+
+        NSMAP = {
+            'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0',
+            'blti': 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
+            'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
+            'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
+            }
+
+        root = etree.Element('cartridge_basiclti_link', nsmap = NSMAP)
+        
+        for key in ['title', 'description', 'launch_url', 'secure_launch_url']:
+            option = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'], key))
+            option.text = getattr(self, key)
+
+        vendor_keys = ['name', 'code', 'description', 'url']
+        if any('vendor_' + key for key in vendor_keys) or\
+                self.vendor_contact_email:
+                    vendor_node = etree.SubElement(root, '{%s}%s'
+                            %(NSMAP['blti'], key))
+                    for key in vendor_keys:
+                        if getattr(self, 'vendor_' + key) != None:
+                            v_node = etree.SubElement(vendor_node,
+                                    '{%s}%s' %(NSMAP['lticp'], key))
+                            v_node.text = getattr(self, 'vendor_' + key)
+                    if self.vendor_contact_email:
+                        v_node = etree.SubElement(vendor_node,
+                                '{%s}%s' %(NSMAP['lticp'], 'contact'))
+                        c_name = etree.SubElement(v_node,
+                                '{%s}%s' %(NSMAP['lticp'], 'name'))
+                        c_name.text = self.vendor_contact_name
+                        c_email = etree.SubElement(v_node,
+                                '{%s}%s' %(NSMAP['lticp'], 'email'))
+                        c_email.text = self.vendor_contact_email
+
+        # Custom params
+        if len(self.custom_params) != 0:
+            custom_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
+                'custom'))
+            for (key, val) in self.custom_params.iteritems():
+                c_node = etree.SubElement(custom_node, '{%s}%s'
+                        %(NSMAP['lticm'], 'property'))
+                c_node.set('name', key)
+                c_node.text = val
+
+        # Extension params
+
+        return etree.tostring(root, xml_declaration = True, encoding = 'utf-8')
