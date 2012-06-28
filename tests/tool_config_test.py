@@ -3,8 +3,7 @@ from ims_lti_py import ToolConfig, InvalidLTIConfigError
 import textwrap
 import unittest
 
-cc_lti_xml = textwrap.dedent('''
-<?xml version="1.0" encoding="UTF-8"?>
+cc_lti_xml = textwrap.dedent('''<?xml version="1.0" encoding="UTF-8"?>
 <cartridge_basiclti_link xsi:schemaLocation="http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd" xmlns:lticm="http://www.imsglobal.org/xsd/imslticm_v1p0" xmlns:blti="http://www.imsglobal.org/xsd/imsbasiclti_v1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:lticp="http://www.imsglobal.org/xsd/imslticp_v1p0" xmlns="http://www.imsglobal.org/xsd/imslticc_v1p0">
   <blti:title>Test Config</blti:title>
   <blti:description>Description of boringness</blti:description>
@@ -36,13 +35,9 @@ cc_lti_xml = textwrap.dedent('''
     <lticm:property name="extkey1">extval1</lticm:property>
   </blti:extensions>
   <cartridge_bundle identifierref="BLTI001_Bundle"/>
-</cartridge_basiclti_link>
-''')
+</cartridge_basiclti_link>''')
 
 class TestToolConfig(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_generate_xml(self):
         '''
         Should generate the expected config xml.
@@ -82,7 +77,7 @@ class TestToolConfig(unittest.TestCase):
 
     def test_invalid_config_xml(self):
         '''
-        Should now allow creating invalid config xml.
+        Should not allow creating invalid config xml.
         '''
         config = ToolConfig(title = 'Test Config')
         self.assertRaises(InvalidLTIConfigError, config.to_xml())
