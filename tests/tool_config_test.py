@@ -34,14 +34,7 @@ class TestToolConfig(unittest.TestCase):
         config.cartridge_bundle = 'BLTI001_Bundle'
 
         xml = config.to_xml()
-        for i in range(0, len(cc_lti_xml) - 1):
-            if xml[i] != cc_lti_xml[i]:
-                print 'FAILED AT %s != %s' %(xml[i-25:i+25],
-                        cc_lti_xml[i-25:i+25])
-                print '\n' + xml
-                print '\n' + cc_lti_xml
-                import ipdb; ipdb.set_trace()
-        #self.assertEqual(xml, cc_lti_xml)
+        self.assertEqual(xml, cc_lti_xml)
 
     def test_read_xml_config(self):
         '''
