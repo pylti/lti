@@ -138,11 +138,14 @@ class ToolConfig():
         NSMAP = {
             'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0',
             'blti': 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
-            'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
+            'xsi': "http://www.w3.org/2001/XMLSchema-instance",
             'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
+            'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
             }
 
-        root = etree.Element('cartridge_basiclti_link', nsmap = NSMAP)
+        root = etree.Element('cartridge_basiclti_link', attrib = {
+                    '{%s}%s' %(NSMAP['xsi'], 'schemaLocation'): 'http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd',
+                    }, nsmap = NSMAP)
         
         for key in ['title', 'description', 'launch_url', 'secure_launch_url']:
             option = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'], key))
@@ -152,7 +155,7 @@ class ToolConfig():
         if any('vendor_' + key for key in vendor_keys) or\
                 self.vendor_contact_email:
                     vendor_node = etree.SubElement(root, '{%s}%s'
-                            %(NSMAP['blti'], key))
+                            %(NSMAP['blti'], 'vendor'))
                     for key in vendor_keys:
                         if getattr(self, 'vendor_' + key) != None:
                             v_node = etree.SubElement(vendor_node,
@@ -179,5 +182,31 @@ class ToolConfig():
                 c_node.text = val
 
         # Extension params
+        if len(self.extensions) != 0:
+            for (key, params) in self.extensions.iteritems():
+                extension_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
+                    'extensions'), platform = key)
+                for key, val in params.iteritems():
+                    if isinstance(val, dict):
+                        options_node = etree.SubElement(extension_node,
+                                '{%s}%s' %(NSMAP['lticm'], 'options'), name =
+                                key)
+                        for key, val in val.iteritems():
+                            property_node = etree.SubElement(options_node,
+                                    '{%s}%s' %(NSMAP['lticm'], 'property'), 
+                                    name = key)
+                            property_node.text = val
+                    else:
+                        param_node = etree.SubElement(extension_node, '{%s}%s'
+                                %(NSMAP['lticm'], 'property'), name = key)
+                        param_node.text = val
 
-        return etree.tostring(root, xml_declaration = True, encoding = 'utf-8')
+        if getattr(self, 'cartridge_bundle'):
+            identifierref = etree.SubElement(root, 'cartridge_bundle',
+                    identifierref = self.cartridge_bundle)
+
+        if getattr(self, 'cartridge_icon'):
+            identifierref = etree.SubElement(root, 'cartridge_icon',
+                    identifierref = self.cartridge_icon)
+
+        return '<?xml version="1.0" encoding="UTF-8"?>' + etree.tostring(root)
