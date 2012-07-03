@@ -16,8 +16,8 @@ accessors = [
         'vendor_name',
         'vendor_description',
         'vendor_url',
-        'vendor_contant_email',
-        'vendor_contant_name'
+        'vendor_contact_email',
+        'vendor_contact_name'
 ]
 
 class ToolConfig():
@@ -100,14 +100,67 @@ class ToolConfig():
         Parse tool configuration data out of the Common Cartridge LTI link XML.
         '''
         root = objectify.fromstring(xml, parser = etree.XMLParser())
-        self.title = root.title.text
-        self.description = root.description.text
-        self.launch_url = root.description.text
-        self.secure_launch_url = root.description.secure_launch_url
-        self.icon = root.icon.text
-        self.secure_icon = root.secure_icon.text
-        self.cartridge_bundle = root.cartridge_bundle.attr['identifierref']
-        self.cartridge_icon = root.cartridge_icon.attr['identifierred']
+        # Parse all children of the root node
+        for child in root.getchildren():
+            if 'title' in child.tag:
+                self.title = child.text
+            if 'description' in child.tag:
+                self.description = child.text
+            if 'secure_launch_url' in child.tag:
+                self.secure_launch_url = child.text
+            elif 'launch_url' in child.tag:
+                self.launch_url = child.text
+            if 'icon' in child.tag:
+                self.icon = child.text
+            if 'secure_icon' in child.tag:
+                self.secure_icon = child.text
+            if 'cartridge_bundle' in child.tag:
+                self.cartridge_bundle = child.attrib['identifierref']
+            if 'catridge_icon' in child.tag:
+                self.cartridge_icon = child.atrib['identifierref']
+
+            if 'vendor' in child.tag:
+                # Parse vendor tag
+                for v_child in child.getchildren():
+                    if 'code' in v_child.tag:
+                        self.vendor_code = v_child.text
+                    if 'description' in v_child.tag:
+                        self.vendor_description = v_child.text
+                    if 'name' in v_child.tag:
+                        self.vendor_name = v_child.text
+                    if 'url' in v_child.tag:
+                        self.vendor_url = v_child.text
+                    if 'contact' in v_child.tag:
+                        # Parse contact tag for email and name
+                        for c_child in v_child:
+                            if 'name' in c_child.tag:
+                                self.vendor_contact_name = c_child.text
+                            if 'email' in c_child.tag:
+                                self.vendor_contact_email = c_child.text
+
+            if 'custom' in child.tag:
+                # Parse custom tags
+                for custom_child in child.getchildren():
+                    self.custom_params[custom_child.attrib['name']] =\
+                            custom_child.text
+
+            if 'extensions' in child.tag:
+                platform = child.attrib['platform']
+                properties = {}
+
+                # Parse extension tags
+                for ext_child in child.getchildren():
+                    if 'property' in ext_child.tag:
+                        properties[ext_child.attrib['name']] = ext_child.text
+                    elif 'options' in ext_child.tag:
+                        opt_name = ext_child.attrib['name']
+                        options = {}
+                        for option_child in ext_child.getchildren():
+                            options[option_child.attrib['name']] =\
+                                    option_child.text
+                        properties[opt_name] = options
+
+                self.set_ext_params(platform, properties)
 
     def to_xml(self, opts = defaultdict(lambda: None)):
         '''
@@ -142,7 +195,7 @@ class ToolConfig():
                             v_node = etree.SubElement(vendor_node,
                                     '{%s}%s' %(NSMAP['lticp'], key))
                             v_node.text = getattr(self, 'vendor_' + key)
-                    if self.vendor_contact_email:
+                    if getattr(self, 'vendor_contact_email'):
                         v_node = etree.SubElement(vendor_node,
                                 '{%s}%s' %(NSMAP['lticp'], 'contact'))
                         c_name = etree.SubElement(v_node,
@@ -156,7 +209,7 @@ class ToolConfig():
         if len(self.custom_params) != 0:
             custom_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
                 'custom'))
-            for (key, val) in self.custom_params.iteritems():
+            for (key, val) in sorted(self.custom_params.items()):
                 c_node = etree.SubElement(custom_node, '{%s}%s'
                         %(NSMAP['lticm'], 'property'))
                 c_node.set('name', key)
@@ -164,7 +217,7 @@ class ToolConfig():
 
         # Extension params
         if len(self.extensions) != 0:
-            for (key, params) in self.extensions.iteritems():
+            for (key, params) in sorted(self.extensions.items()):
                 extension_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
                     'extensions'), platform = key)
                 for key, val in params.iteritems():
