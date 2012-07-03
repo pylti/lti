@@ -31,8 +31,9 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         Set launch data from a ToolConfig.
         '''
-        # TODO: Implement ToolConfig
-        pass
+        if self.launch_url == None:
+            self.launch_url = config.launch_url
+            self.custom_params.update(config.customparams)
 
     def has_required_params(self):
         '''
