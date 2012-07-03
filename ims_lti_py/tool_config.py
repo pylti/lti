@@ -1,17 +1,7 @@
 from collections import defaultdict
-from lxml import etree
+from lxml import etree, objectify
 
 from utils import InvalidLTIConfigError
-
-import StringIO
-
-# Namespaces used for parsing configuration XML
-LTI_NAMESPACES = {
-        "xmlns": 'http://www.imsglobal.org/xsd/imslticc_v1p0',
-        "blti": 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
-        "lticm": 'http://www.imsglobal.org/xsd/imslticm_v1p0',
-        "lticp": 'http://www.imsglobal.org/xsd/imslticp_v1p0',
-        }
 
 accessors = [
         'title',
@@ -109,24 +99,15 @@ class ToolConfig():
         '''
         Parse tool configuration data out of the Common Cartridge LTI link XML.
         '''
-        context = etree.iterparse(StringIO.StringIO(xml))
-        for action, elem in context:
-            if 'blti:title' in elem.tag:
-                self.title = elem.text
-            elif 'blti:description' in elem.tag:
-                self.description = elem.tag
-            elif 'blti:launch_url' in elem.tag:
-                self.launch_url = elem.text
-            elif 'blti:secure_launch_url' in elem.tag:
-                self.secure_launch_url = elem.text
-            elif 'blti:icon' in elem.tag:
-                self.icon = elem.text
-            elif 'blti:secure_icon' in elem.tag:
-                self.secure_icon = elem.text
-            #elif 'blti:vendor
-
-            # TODO: Custom params
-            # TODO: Extension params
+        root = objectify.fromstring(xml, parser = etree.XMLParser())
+        self.title = root.title.text
+        self.description = root.description.text
+        self.launch_url = root.description.text
+        self.secure_launch_url = root.description.secure_launch_url
+        self.icon = root.icon.text
+        self.secure_icon = root.secure_icon.text
+        self.cartridge_bundle = root.cartridge_bundle.attr['identifierref']
+        self.cartridge_icon = root.cartridge_icon.attr['identifierred']
 
     def to_xml(self, opts = defaultdict(lambda: None)):
         '''
@@ -136,7 +117,6 @@ class ToolConfig():
             raise InvalidLTIConfigError('Invalid LTI configuration')
 
         NSMAP = {
-            'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0',
             'blti': 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
             'xsi': "http://www.w3.org/2001/XMLSchema-instance",
             'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
@@ -145,6 +125,7 @@ class ToolConfig():
 
         root = etree.Element('cartridge_basiclti_link', attrib = {
                     '{%s}%s' %(NSMAP['xsi'], 'schemaLocation'): 'http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd',
+                    'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0'
                     }, nsmap = NSMAP)
         
         for key in ['title', 'description', 'launch_url', 'secure_launch_url']:
