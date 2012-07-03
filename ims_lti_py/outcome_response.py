@@ -1,5 +1,5 @@
 from collections import defaultdict
-from lxml import etree
+from lxml import etree, objectify
 
 CODE_MAJOR_CODES = [
         'success',
@@ -34,15 +34,17 @@ class OutcomeResponse():
         for (key, val) in opts.iteritems():
             self.options[key] = val
 
-    def from_post_response(self, post_response):
+    @staticmethod
+    def from_post_response(post_response):
         '''
         Convenience method for creating a new OutcomeResponse from a response
         object.
         '''
         response = OutcomeResponse()
         response.post_response = post_response
-        response.reponse_code = post_response.code
-        xml = post_response.body
+        response.reponse_code = post_response.status_code
+        xml = post_response.data
+        import ipdb; ipdb.set_trace()
         response.process_xml(xml)
         return response
 
@@ -64,12 +66,31 @@ class OutcomeResponse():
     def has_error(self):
         return self.severity == 'error'
 
-    def process_xml(xml):
+    def process_xml(self, xml):
         '''
         Parse OutcomeResponse data form XML.
         '''
-        # TODO
-        pass
+        root = objectify.fromstring(xml)
+        # Get message idenifier from header info
+        self.message_identifier = root.imsx_POXHeader.\
+                imsx_POXResponseHeaderInfo.\
+                imsx_messageIdentifier
+
+        status_node = root.imsx_POXHeader.\
+                imsx_POXResponseHeaderInfo.\
+                imsx_statusInfo
+
+        # Get status parameters from header info status
+        self.code_major = status_node.codeMajor
+        self.description = status_node.description
+        self.message_ref_identifier = status_node.\
+                MessageRefIdentifier
+        self.operation = status_node.operationRefIdentifier
+            
+        # Get results from body
+        if root.imsx_POXBody.readResultResponse != None:
+            self.score = root.imsx_POXBody.readResultResponse.\
+                    resultScore.textString
 
     def generate_response_xml(self):
         '''
