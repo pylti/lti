@@ -87,18 +87,18 @@ class LaunchParamsMixin():
         the LAUNCH_DATA_PARAMETERS list, or that start with 'custom_' or
         'ext_'.
         '''
-        for key in params.iterkeys():
+        for key, val in params.items():
             if key in LAUNCH_DATA_PARAMETERS:
                 if key == 'roles':
                     # Roles are a list of ',' delimited strings
                     self.roles = [role.lower() for role in
-                            params[key].split(',')]
+                            val.split(',')]
                 else:
-                    self.launch_params[key] = params[key]
+                    setattr(self, key, val)
             elif 'custom_' in key:
-                self.custom_params[key] = params[key]
+                self.custom_params[key] = val
             elif 'ext_' in key:
-                self.ext_params[key] = params[key]
+                self.ext_params[key] = val
 
     def set_custom_param(self, key, val):
       self.custom_params['custom_' + key] = val
