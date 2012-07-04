@@ -11,7 +11,7 @@ class TestToolConsumer(unittest.TestCase):
         result = tc.generate_launch_data()
         self.assertNotEqual(result, None)
         self.assertEqual(result['oauth_signature'],
-                'TPFPK4u3NwmtLt0nDMP1G1zG30U=')
+                'Pu0/uzLQ7sjTp4vsF55lzfYZMJM=')
 
     def test_url_query_parameters(self):
         '''
@@ -22,14 +22,14 @@ class TestToolConsumer(unittest.TestCase):
         result = tc.generate_launch_data()
         self.assertNotEqual(result, None)
         self.assertEquals(result['oauth_signature'], 
-                'uF7LooyefQN5aocx7UlYQ4tQM5k=')
+                'lpi9xKVVXZB6xewfh/PUeasHiwU=')
         self.assertEquals(result['c'], '3 &a')
 
     def test_signature_port(self):
         '''
         Should generate a correct signature with a non-standard port.
         '''
-        tc = ToolConsumer('12345', 'secret', {'resource_list_id': 1})
+        tc = ToolConsumer('12345', 'secret', {'resource_link_id': 1})
         tc.timestamp = '1251600739'
         tc.nonce = 'c8350c0e47782d16d2fa48b2090c1d8f'
 
@@ -39,14 +39,22 @@ class TestToolConsumer(unittest.TestCase):
             self.assertNotEqual(ld, None)
             self.assertEquals(ld['oauth_signature'], sig)
 
-        test_url('http://dr-chuck.com:123/ims/php-simple/tool.php', 'HdHJri8Z7OhnMhxX27hSPB5W+SI=')
-        test_url('http://dr-chuck.com/ims/php-simple/tool.php', 'bTcODyqQSdogpn1mJAugGB2c2F4=')
-        test_url('http://dr-chuck.com:80/ims/php-simple/tool.php', 'bTcODyqQSdogpn1mJAugGB2c2F4=')
-        test_url('http://dr-chuck.com:443/ims/php-simple/tool.php', 'n0P6aFgyv6ikNsMiNNG/KjxMZ8w=')
-        test_url('https://dr-chuck.com/ims/php-simple/tool.php', '9DoVeq1RYnidTgF71Zg16SNJFpY=')
-        test_url('https://dr-chuck.com:443/ims/php-simple/tool.php', '9DoVeq1RYnidTgF71Zg16SNJFpY=')
-        test_url('https://dr-chuck.com:80/ims/php-simple/tool.php', '4L1f5SctEX0num3GPElvMKq2w+s=')
-        test_url('https://dr-chuck.com:80/ims/php-simple/tool.php?oi=hoyt', 'dvvQchwqhDH1nFGzWbgVxmcUysc=')
+        test_url('http://dr-chuck.com:123/ims/php-simple/tool.php',
+                'Y/QdFIdVeGkXnnT77h8FXaSp4T4=')
+        test_url('http://dr-chuck.com/ims/php-simple/tool.php',
+                'mSoeJJMmtFCmMYgpHZ8hCnc5Gzo=')
+        test_url('http://dr-chuck.com:80/ims/php-simple/tool.php',
+                'mSoeJJMmtFCmMYgpHZ8hCnc5Gzo=')
+        test_url('http://dr-chuck.com:443/ims/php-simple/tool.php',
+                'KaISX3G2Q+zHW/BZI1vNKyGoblo=')
+        test_url('https://dr-chuck.com/ims/php-simple/tool.php',
+                'yCtVB+/6njhnKKzxvYkIR8hUD3Q=')
+        test_url('https://dr-chuck.com:443/ims/php-simple/tool.php',
+                'yCtVB+/6njhnKKzxvYkIR8hUD3Q=')
+        test_url('https://dr-chuck.com:80/ims/php-simple/tool.php',
+                'tz94qHbVCmx2u/PZyO4l0XXWU+s=')
+        test_url('https://dr-chuck.com:80/ims/php-simple/tool.php?oi=hoyt',
+                'jRCj3U8JwHI4rEsgNMihOSE8xCQ=')
 
     def test_uri_query_parameters(self):
         '''

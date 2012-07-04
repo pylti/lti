@@ -1,7 +1,5 @@
 from test_helper import create_test_tp, create_test_tc, create_params_tp
 
-from httplib2 import Http
-
 import unittest
 
 class DontTestLaunchParams():
@@ -13,7 +11,7 @@ class DontTestLaunchParams():
             if not 'custom_' in key\
                     and not 'ext_' in key\
                     and not 'roles' in key:
-                self.assertEquals(self.tool.launch_params[key], val)
+                self.assertEquals(getattr(self.tool, key), val)
 
         # Test roles
         self.assertTrue(sorted(self.tool.roles) == sorted(['learner',\
