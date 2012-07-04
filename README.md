@@ -4,7 +4,7 @@ Python port of the useful [ims-lti](https://github.com/instructure/ims-lti) Ruby
 
 ## Installation
 
-TODO
+If you have setuptools, simply run `python setup.py install` to install the library to your current environment.
 
 ## Dependencies
 
