@@ -1,4 +1,3 @@
-from collections import defaultdict
 from lxml import etree, objectify
 
 CODE_MAJOR_CODES = [
@@ -14,6 +13,19 @@ SEVERITY_CODES = [
         'error'
 ]
 
+accessors = [
+    'request_type',
+    'score',
+    'message_identifier',
+    'response_code',
+    'post_response',
+    'code_major',
+    'severity',
+    'description',
+    'operation',
+    'message_ref_identifier'
+]
+
 class OutcomeResponse():
     '''
     This class consumes & generates LTI Outcome Responses.
@@ -27,12 +39,14 @@ class OutcomeResponse():
     OutcomeRequest to the TC. A TC will use it to generate proper response XML
     to send back to a TP.
     ''' 
-    def __init__(self, opts = defaultdict(lambda: None)):
-        self.code_major = None
+    def __init__(self, **kwargs):
+        # Initialize all class accessors to None
+        for opt in accessors:
+            setattr(self, opt, None)
 
         # Store specified options in our options member
-        for (key, val) in opts.iteritems():
-            self.options[key] = val
+        for (key, val) in kwargs.iteritems():
+            setattr(self, key, val)
 
     @staticmethod
     def from_post_response(post_response):
@@ -44,7 +58,6 @@ class OutcomeResponse():
         response.post_response = post_response
         response.reponse_code = post_response.status_code
         xml = post_response.data
-        import ipdb; ipdb.set_trace()
         response.process_xml(xml)
         return response
 
@@ -81,24 +94,27 @@ class OutcomeResponse():
                 imsx_statusInfo
 
         # Get status parameters from header info status
-        self.code_major = status_node.codeMajor
-        self.description = status_node.description
-        self.message_ref_identifier = status_node.\
-                MessageRefIdentifier
-        self.operation = status_node.operationRefIdentifier
+        self.code_major = status_node.imsx_codeMajor
+        self.severity = status_node.imsx_severity
+        self.description = status_node.imsx_description
+        self.message_ref_identifier = str(status_node.\
+                imsx_messageRefIdentifier)
+        self.operation = status_node.imsx_operationRefIdentifier
             
-        # Get results from body
-        if root.imsx_POXBody.readResultResponse != None:
-            self.score = root.imsx_POXBody.readResultResponse.\
-                    resultScore.textString
+        try:
+            # Try to get the score
+            self.score = str(root.imsx_POXBody.readResultResponse.\
+                    result.resultScore.textString)
+        except AttributeError, e:
+            # Not a readResult, just ignore!
+            pass
 
     def generate_response_xml(self):
         '''
         Generate XML based on the current configuration.
         '''
         root = etree.Element('imsx_POXEnvelopeResponse', xmlns =
-                'http://www.imsglobal.org/lis/oms1p0/pox',
-                xml_declaration = True, encoding = 'utf-8')
+                'http://www.imsglobal.org/lis/oms1p0/pox')
 
         header = etree.SubElement(root, 'imsx_POXHeader')
         header_info = etree.SubElement(header, 'imsx_POXResponseHeaderInfo')
@@ -106,32 +122,31 @@ class OutcomeResponse():
         version.text = 'V1.0'
         message_identifier = etree.SubElement(header_info,
                 'imsx_messageIdentifier')
-        message_identifier.text = self.options['message_identifier']
-        status_info = etree.SubElement(header, 'imsx_statusInfo')
+        message_identifier.text = str(self.message_identifier)
+        status_info = etree.SubElement(header_info, 'imsx_statusInfo')
         code_major = etree.SubElement(status_info, 'imsx_codeMajor')
-        code_major.text = self.options['code_major']
+        code_major.text = str(self.code_major)
         severity = etree.SubElement(status_info, 'imsx_severity')
-        severity.text = self.options['severity']
+        severity.text = str(self.severity)
         description = etree.SubElement(status_info, 'imsx_description')
-        description.text = self.options['description']
+        description.text = str(self.description)
         message_ref_identifier = etree.SubElement(status_info,
                 'imsx_messageRefIdentifier')
-        message_ref_identifier.text = self.options['message_ref_identifier']
-        operation_ref_identifier= etree.SubElement(status_info,
+        message_ref_identifier.text = str(self.message_ref_identifier)
+        operation_ref_identifier = etree.SubElement(status_info,
                 'imsx_operationRefIdentifier')
-        operation_ref_identifier.message_ref_identifiertexa = self.options['operation']
+        operation_ref_identifier.text = str(self.operation)
 
         body = etree.SubElement(root, 'imsx_POXBody')
-        request = etree.SubElement(body, '%s%s' %(self.options['operation'],
-            'Request'))
-        record = etree.SubElement(request, 'resultRecord')
-        guid = etree.SubElement(record, 'sourceGUID')
-        guid.text = self.options['lis_result_sourcedid']
+        response = etree.SubElement(body, '%s%s' %(self.operation,
+            'Response'))
         
-        if self.options['score']:
-            result = etree.SubElement(record, 'result')
+        if self.score:
+            result = etree.SubElement(response, 'result')
             result_score = etree.SubElement(result, 'resultScore')
             language = etree.SubElement(result_score, 'language')
             language.text = 'en'
             text_string = etree.SubElement(result_score, 'textString')
-            text_string.text = self.options['score']
+            text_string.text = str(self.score)
+
+        return '<?xml version="1.0" encoding="UTF-8"?>' + etree.tostring(root) 
