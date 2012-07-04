@@ -1,5 +1,5 @@
 from collections import defaultdict
-from urllib2 import urlparse
+from urllib2 import urlparse, unquote
 
 import textwrap
 import oauth2
@@ -71,11 +71,11 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
                 }
 
         uri = urlparse.urlparse(self.launch_url)
-        params = {}
         if uri.query != '':
             for param in uri.query.split('&'):
                 key, val = param.split('=')
-                params[key] = val
+                if params.get(key) == None:
+                    params[key] = str(val)
 
         request = oauth2.Request(method = 'POST', 
                 url = self.launch_url,
@@ -87,4 +87,12 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
         # Request was made by an HTML form in the user's browser.
         # Return the dict of post parameters ready for embedding
         # in an html view.
-        return request
+        return_params = {}
+        for key in request:
+            if request[key] == None:
+                return_params[key] = None
+            elif isinstance(request[key], list):
+                return_params[key] = request.get_parameter(key)
+            else:
+                return_params[key] = unquote(request.get_parameter(key))
+        return return_params

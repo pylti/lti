@@ -49,6 +49,10 @@ class LaunchParamsMixin():
     def __init__(self):
         # These dictionaries return a 'None' object when accessing a key that
         # is not in the dictionary.
+
+        for param in LAUNCH_DATA_PARAMETERS:
+            setattr(self, param, None)
+
         self.launch_params = defaultdict(lambda: None)
         self.custom_params = defaultdict(lambda: None)
         self.ext_params = defaultdict(lambda: None)
@@ -94,11 +98,11 @@ class LaunchParamsMixin():
                     self.roles = [role.lower() for role in
                             val.split(',')]
                 else:
-                    setattr(self, key, val)
+                    setattr(self, key, str(val))
             elif 'custom_' in key:
-                self.custom_params[key] = val
+                self.custom_params[key] = str(val)
             elif 'ext_' in key:
-                self.ext_params[key] = val
+                self.ext_params[key] = str(val)
 
     def set_custom_param(self, key, val):
       self.custom_params['custom_' + key] = val
@@ -130,7 +134,9 @@ class LaunchParamsMixin():
         ext_params = {}
         for key in self.ext_params:
             ext_params[key] = self.ext_params[key]
-        params.update(self.launch_params)
+        for key in LAUNCH_DATA_PARAMETERS:
+            if hasattr(self, key):
+                params[key] = getattr(self, key)
         params.update(custom_params)
         params.update(ext_params)
         return params

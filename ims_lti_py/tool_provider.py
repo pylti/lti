@@ -4,6 +4,16 @@ from outcome_request import OutcomeRequest
 from urllib import quote
 from collections import defaultdict
 
+accessors = [
+    'consumer_key',
+    'consumer_secret',
+    'outcome_requests',
+    'lti_errormsg',
+    'lti_errorlog',
+    'lti_msg',
+    'lti_log'
+]
+
 class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
     '''
     Implements the LTI Tool Provider.
@@ -14,6 +24,9 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         Create new ToolProvider.
         '''
         super(ToolProvider, self).__init__()
+
+        for param in accessors:
+            setattr(self, param, None)
 
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
@@ -46,26 +59,25 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         Check if the request was an LTI Launch Request.
         '''
-        return self.launch_params['lti_message_type'] ==\
-                'basic-lti-launch-request'
+        return self.lti_message_type == 'basic-lti-launch-request'
 
     def is_outcome_service(self):
         '''
         Check if the Tool Launch expects an Outcome Result.
         '''
-        return (self.launch_params['lis_outcome_service_url']and
-                self.launch_params['lis_result_sourcedid'])
+        return (self.lis_outcome_service_url and
+                self.lis_result_sourcedid)
 
     def username(self, default = None):
         '''
         Return the full, given, or family name if set.
         '''
-        if self.launch_params['lis_person_name_given']:
-            return self.launch_params['lis_person_name_given']
-        elif self.launch_params['lis_person_name_family']:
-            return self.launch_params['lis_person_name_family']
-        elif self.launch_params['lis_person_name_full']:
-            return self.launch_params['lis_person_name_full']
+        if self.lis_person_name_given:
+            return self.lis_person_name_given
+        elif self.lis_person_name_family:
+            return self.lis_person_name_family
+        elif self.lis_person_name_full:
+            return self.lis_person_name_full
         else:
             return default
 
@@ -109,25 +121,25 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         If the Tool Consumer sent a return URL, add any set messages to the
         URL.
         '''
-        if not self.launch_params['launch_presentation_return_url']:
+        if not self.launch_presentation_return_url:
             return None
 
         messages = []
         for message in ['lti_errormsg', 'lti_errorlog', 'lti_msg', 'lti_log']:
-            if self.launch_params[message]:
+            if hasattr(self, message) and getattr(self, message) != None:
                 messages.append('%s=%s' %(message,
-                    quote(self.launch_params[message])))
+                    quote(getattr(self, message))))
 
         q_string = '?' + '&'.join(messages) if messages else ''
-        return self.launch_params['launch_presentation_return_url'] + q_string
+        return self.launch_presentation_return_url + q_string
 
     def new_request(self):
         opts = defaultdict(lambda: None)
         opts = { 
                 'consumer_key': self.consumer_key, 
                 'consumer_secret': self.consumer_secret, 
-                'lis_outcome_service_url': self.launch_params['lis_outcome_service_url'], 
-                'lis_result_sourcedid': self.launch_params['lis_result_sourcedid']
+                'lis_outcome_service_url': self.lis_outcome_service_url, 
+                'lis_result_sourcedid': self.lis_result_sourcedid
                 }
         self.outcome_requests.append(OutcomeRequest(opts = opts))
         self.last_outcome_request = self.outcome_requests[-1]
