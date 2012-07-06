@@ -1,12 +1,16 @@
 import oauth2
 
-class RequestValidatorMixin():
+class RequestValidatorMixin(object):
     '''
     A 'mixin' for OAuth request validation.
     '''
     def __init__(self):
+        super(RequestValidatorMixin, self).__init__()
+
         self.oauth_server = oauth2.Server()
-        self.oath_consumer = oauth2.Consumer(self.consumer_key,
+        signature_method = oauth2.SignatureMethod_HMAC_SHA1()
+        self.oauth_server.add_signature_method(signature_method)
+        self.oauth_consumer = oauth2.Consumer(self.consumer_key,
                 self.consumer_secret)
 
     def is_valid_request(self, request, handle_error = True):
@@ -16,29 +20,20 @@ class RequestValidatorMixin():
 
         '''
         try:
-            self.oauth_server.verify_request(request, self.consumer)
+            oauth_request = oauth2.Request(method = request.method, url =
+                    request.url, parameters = request.form)
+            self.oauth_server.verify_request(oauth_request, 
+                    self.oauth_consumer, None)
         except oauth2.MissingSignature, e:
             if handle_error:
                 return False
             else:
                 raise e
+        # Signature was valid
+        return True
 
     def valid_request(self, request):
         '''
         Check whether the OAuth-signed request is valid and throw error if not.
         '''
         self.is_valid_request(request, False)
-
-    def request_oauth_nonce(self):
-        '''
-        Convenience method for getting the oauth nonce from the request.
-        '''
-        return self.oauth_signature_validator\
-                and self.oath_signature_validator.request.oath_nonce
-
-    def request_oauth_timestamp(self):
-        '''
-        Convenience method for getting the oath timestamp from the request.
-        '''
-        return self.oath_signature_validator\
-                and self.oauth_signature_validator.request.oauth_timestamp
