@@ -17,7 +17,7 @@ accessors = [
 ]
 
 class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
-    def __init__(self, consumer_key, consumer_secret, params):
+    def __init__(self, consumer_key, consumer_secret, params = {}):
         '''
         Create new ToolConsumer.
         '''
@@ -40,7 +40,7 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         if self.launch_url == None:
             self.launch_url = config.launch_url
-            self.custom_params.update(config.customparams)
+            self.custom_params.update(config.custom_params)
 
     def has_required_params(self):
         '''
