@@ -1,19 +1,17 @@
 from collections import defaultdict
 from urllib2 import urlparse, unquote
 
-import textwrap
 import oauth2
+import time
 
 from launch_params import LaunchParamsMixin
 from request_validator import RequestValidatorMixin
-from utils import InvalidLTIConfigError
+from utils import InvalidLTIConfigError, generate_identifier
 
 accessors = [
     'consumer_key',
     'consumer_secret',
     'launch_url',
-    'timestamp',
-    'nonce'
 ]
 
 class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
@@ -21,14 +19,17 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         Create new ToolConsumer.
         '''
-        super(ToolConsumer, self).__init__()
-
         # Initialize all class accessors to None
         for opt in accessors:
             setattr(self, opt, None)
 
+        # These are hyper important class members that we init first
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
+
+        # Call superclass initializers
+        super(ToolConsumer, self).__init__()
+
         self.non_spec_params = defaultdict(lambda: None)
 
         self.launch_url = params.get('launch_url')
@@ -54,7 +55,7 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
     def generate_launch_data(self):
         # Validate params
         if not self.has_required_params():
-            raise InvalidLTIConfigError(textwrap.dedent('ToolConsumer does not have all required attributes'))
+            raise InvalidLTIConfigError('ToolConsumer does not have all required attributes: consumer_key = %s, consumer_secret = %s, resource_link_id = %s, launch_url = %s' %(self.consumer_key, self.consumer_secret, self.resource_link_id, self.launch_url))
 
         params = self.to_params()
         params['lti_version'] = 'LTI-1.0'
@@ -63,12 +64,13 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
         # Get new OAuth consumer
         consumer = oauth2.Consumer(key = self.consumer_key,\
                 secret = self.consumer_secret)
-        
-        options = {
-                'oauth_nonce': self.nonce,
-                'oauth_timestamp': self.timestamp,
-                'oauth_scheme': 'body'
-                }
+
+        params.update({
+            'oauth_nonce': str(generate_identifier()),
+            'oauth_timestamp': str(int(time.time())),
+            'oauth_scheme': 'body',
+            'oauth_consumer_key': consumer.key
+        })
 
         uri = urlparse.urlparse(self.launch_url)
         if uri.query != '':
