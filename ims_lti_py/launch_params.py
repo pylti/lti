@@ -10,9 +10,6 @@ LAUNCH_DATA_PARAMETERS = [
         'launch_presentation_document_target',
         'launch_presentation_height',
         'launch_presentation_locale',
-        'launch_presentation_return_url',
-        'launch_presentation_width',
-        'lis_course_offering_sourcedid',
         'lis_course_section_sourcedid',
         'lis_outcome_service_url',
         'lis_person_contact_email_primary',
@@ -45,15 +42,18 @@ LAUNCH_DATA_PARAMETERS = [
         'user_image'
 ]
 
-class LaunchParamsMixin():
+class LaunchParamsMixin(object):
     def __init__(self):
-        # These dictionaries return a 'None' object when accessing a key that
-        # is not in the dictionary.
+        super(LaunchParamsMixin, self).__init__()
 
         for param in LAUNCH_DATA_PARAMETERS:
             setattr(self, param, None)
 
-        self.launch_params = defaultdict(lambda: None)
+        # We only support oauth 1.0 for now
+        self.oauth_version = '1.0'
+
+        # These dictionaries return a 'None' object when accessing a key that
+        # is not in the dictionary.
         self.custom_params = defaultdict(lambda: None)
         self.ext_params = defaultdict(lambda: None)
 
@@ -94,9 +94,13 @@ class LaunchParamsMixin():
         for key, val in params.items():
             if key in LAUNCH_DATA_PARAMETERS:
                 if key == 'roles':
-                    # Roles are a list of ',' delimited strings
-                    self.roles = [role.lower() for role in
-                            val.split(',')]
+                    if isinstance(val, list):
+                        # If it's already a list, no need to parse
+                        self.roles = [role.lower() for role in val]
+                    else:
+                        # If it's a ',' delimited string, split
+                        self.roles = [role.lower() for role in
+                                val.split(',')]
                 else:
                     setattr(self, key, str(val))
             elif 'custom_' in key:
