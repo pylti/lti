@@ -2,7 +2,6 @@ from collections import defaultdict
 from lxml import etree, objectify
 
 import oauth2
-import textwrap
 
 from outcome_response import OutcomeResponse
 from utils import InvalidLTIConfigError
@@ -117,31 +116,45 @@ class OutcomeRequest():
                 body = self.generate_request_xml(),
                 headers = { 'Content-Type': 'application/xml' })
 
-        self.outcome_response =OutcomeResponse.from_post_response(response)
+        self.outcome_response = OutcomeResponse.from_post_response(response)
 
     def process_xml(self, xml):
         '''
         Parse Outcome Request data from XML.
         '''
-        root = objectify.fromstring(xml)
-        import ipdb; ipdb.set_trace()
-        self.message_identifier = root.imsx_POXHeader.\
-                imsx_POXRequestHeaderInfo.imsx_messageIdentifier
         try:
-            self.operation = REPLACE_REQUEST
-            result = root.imsx_POXBody.replaceResultRequest
-            self.lis_result_sourcedid = result.resultRecord.\
-                    sourceGUID.sourcedId
-        except:
-            pass
+            root = objectify.fromstring(xml)
+            self.message_identifier = str(root.imsx_POXHeader.\
+                    imsx_POXRequestHeaderInfo.imsx_messageIdentifier)
+            try:
+                result = root.imsx_POXBody.replaceResultRequest
+                self.operation = REPLACE_REQUEST
+                # Get result sourced id from resultRecord
+                self.lis_result_sourcedid = result.resultRecord.\
+                        sourcedGUID.sourcedId
+                self.score = str(result.resultRecord.result.\
+                        resultScore.textString)
+            except:
+                pass
 
-        try:
-            result = root.imsx_POXBody.deleteResultRequest
-        except:
-            pass
+            try:
+                result = root.imsx_POXBody.deleteResultRequest
+                self.operation = DELETE_REQUEST
+                # Get result sourced id from resultRecord
+                self.lis_result_sourcedid = result.resultRecord.\
+                        sourcedGUID.sourcedId
+            except:
+                pass
 
-        try:
-            result = root.imsx_POXBody.readResultRequest
+            try:
+                result = root.imsx_POXBody.readResultRequest
+                self.operation = READ_REQUEST
+                # Get result sourced id from resultRecord
+                self.lis_result_sourcedid = result.resultRecord.\
+                        sourcedGUID.sourcedId
+            except:
+                pass
+
         except:
             pass
 

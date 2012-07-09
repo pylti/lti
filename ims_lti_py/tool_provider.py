@@ -118,7 +118,7 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         OutcomeRequest.
         '''
         return self.last_outcome_request and\
-                self.last_outcome_request.is_outcome_post_successful()
+                self.last_outcome_request.was_outcome_post_successful()
 
     def build_return_url(self):
         '''
