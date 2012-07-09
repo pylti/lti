@@ -11,24 +11,24 @@ class TestOutcomeRequest(unittest.TestCase):
         self.read_result_xml = self.expected_xml[:] %('<readResultRequest><resultRecord><sourcedGUID><sourcedId>261-154-728-17-784</sourcedId></sourcedGUID></resultRecord></readResultRequest>')
         self.delete_result_xml = self.expected_xml[:] %('<deleteResultRequest><resultRecord><sourcedGUID><sourcedId>261-154-728-17-784</sourcedId></sourcedGUID></resultRecord></deleteResultRequest>')
          
-    #def test_post_replace_result(self):
-    #    '''
-    #    Should post replaceResult rquest.
-    #    '''
-    #    self.tp.post_replace_result(5)
-    #    self.assetFalse(self.tp.last_outcome_success)
+    def test_post_replace_result(self):
+        '''
+        Should post replaceResult rquest.
+        '''
+        self.tp.post_replace_result(5)
+        self.assetFalse(self.tp.last_outcome_success)
 
-    #def test_post_read_result(self):
-    #    '''
-    #    Should post readResult request.
-    #    '''
-    #    self.tp.post_read_result()
+    def test_post_read_result(self):
+        '''
+        Should post readResult request.
+        '''
+        self.tp.post_read_result()
 
-    #def  test_post_delete_result(self):
-    #    '''
-    #    Should post deleteResult request.
-    #    '''
-    #    self.tp.post_delete_result()
+    def  test_post_delete_result(self):
+        '''
+        Should post deleteResult request.
+        '''
+        self.tp.post_delete_result()
 
     def test_parse_replace_result_xml(self):
         '''
