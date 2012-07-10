@@ -4,7 +4,7 @@ from lxml import etree, objectify
 import oauth2
 
 from outcome_response import OutcomeResponse
-from utils import InvalidLTIConfigError
+from utils import InvalidLTIConfigError, InvalidLTIRequestError
 
 REPLACE_REQUEST = 'replaceResult'
 DELETE_REQUEST = 'deleteResult'
@@ -60,21 +60,21 @@ class OutcomeRequest():
         '''
         self.operation = REPLACE_REQUEST
         self.score = score
-        self.post_outcome_request()
+        return self.post_outcome_request()
 
     def post_delete_result(self):
         '''
         POSTs a deleteRequest to the Tool Consumer.
         '''
         self.operation = DELETE_REQUEST
-        self.post_outcome_request()
+        return self.post_outcome_request()
 
     def post_read_result(self):
         '''
         POSTS a readResult to the Tool Consumer.
         '''
         self.operation = READ_REQUEST
-        self.post_outcome_request()
+        return self.post_outcome_request()
 
     def is_replace_request(self):
         '''
@@ -116,45 +116,43 @@ class OutcomeRequest():
                 body = self.generate_request_xml(),
                 headers = { 'Content-Type': 'application/xml' })
 
-        self.outcome_response = OutcomeResponse.from_post_response(response)
+        self.outcome_response = OutcomeResponse.from_post_response(response,
+                content)
+        return self.outcome_response
 
     def process_xml(self, xml):
         '''
         Parse Outcome Request data from XML.
         '''
+        root = objectify.fromstring(xml)
+        self.message_identifier = str(root.imsx_POXHeader.\
+                imsx_POXRequestHeaderInfo.imsx_messageIdentifier)
         try:
-            root = objectify.fromstring(xml)
-            self.message_identifier = str(root.imsx_POXHeader.\
-                    imsx_POXRequestHeaderInfo.imsx_messageIdentifier)
-            try:
-                result = root.imsx_POXBody.replaceResultRequest
-                self.operation = REPLACE_REQUEST
-                # Get result sourced id from resultRecord
-                self.lis_result_sourcedid = result.resultRecord.\
-                        sourcedGUID.sourcedId
-                self.score = str(result.resultRecord.result.\
-                        resultScore.textString)
-            except:
-                pass
+            result = root.imsx_POXBody.replaceResultRequest
+            self.operation = REPLACE_REQUEST
+            # Get result sourced id from resultRecord
+            self.lis_result_sourcedid = result.resultRecord.\
+                    sourcedGUID.sourcedId
+            self.score = str(result.resultRecord.result.\
+                    resultScore.textString)
+        except:
+            pass
 
-            try:
-                result = root.imsx_POXBody.deleteResultRequest
-                self.operation = DELETE_REQUEST
-                # Get result sourced id from resultRecord
-                self.lis_result_sourcedid = result.resultRecord.\
-                        sourcedGUID.sourcedId
-            except:
-                pass
+        try:
+            result = root.imsx_POXBody.deleteResultRequest
+            self.operation = DELETE_REQUEST
+            # Get result sourced id from resultRecord
+            self.lis_result_sourcedid = result.resultRecord.\
+                    sourcedGUID.sourcedId
+        except:
+            pass
 
-            try:
-                result = root.imsx_POXBody.readResultRequest
-                self.operation = READ_REQUEST
-                # Get result sourced id from resultRecord
-                self.lis_result_sourcedid = result.resultRecord.\
-                        sourcedGUID.sourcedId
-            except:
-                pass
-
+        try:
+            result = root.imsx_POXBody.readResultRequest
+            self.operation = READ_REQUEST
+            # Get result sourced id from resultRecord
+            self.lis_result_sourcedid = result.resultRecord.\
+                    sourcedGUID.sourcedId
         except:
             pass
 
@@ -166,11 +164,11 @@ class OutcomeRequest():
                 and self.operation != None
 
     def generate_request_xml(self):
-        root = etree.Element('imsx_POXEnvelopeResponse', xmlns =
+        root = etree.Element('imsx_POXEnvelopeRequest', xmlns =
                 'http://www.imsglobal.org/lis/oms1p0/pox')
 
         header = etree.SubElement(root, 'imsx_POXHeader')
-        header_info = etree.SubElement(header, 'imsx_POXResponseHeaderInfo')
+        header_info = etree.SubElement(header, 'imsx_POXRequestHeaderInfo')
         version = etree.SubElement(header_info, 'imsx_version')
         version.text = 'V1.0'
         message_identifier = etree.SubElement(header_info,
@@ -180,8 +178,11 @@ class OutcomeRequest():
         request = etree.SubElement(body, '%s%s' %(self.operation,
             'Request'))
         record = etree.SubElement(request, 'resultRecord')
-        guid = etree.SubElement(record, 'sourcedId')
-        guid.text = self.lis_result_sourcedid
+
+        guid = etree.SubElement(record, 'sourceGUID')
+        
+        sourcedid = etree.SubElement(guid, 'sourcedId')
+        sourcedid.text = self.lis_result_sourcedid
         
         if self.score:
             result = etree.SubElement(record, 'result')
