@@ -1,7 +1,6 @@
 from ims_lti_py import OutcomeResponse 
 
 import unittest
-import textwrap
 
 class TestOutcomeResponse(unittest.TestCase):
     def setUp(self):

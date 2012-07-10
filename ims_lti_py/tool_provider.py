@@ -23,13 +23,17 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         Create new ToolProvider.
         '''
-        super(ToolProvider, self).__init__()
-
+        # Initialize all class accessors to None
         for param in accessors:
             setattr(self, param, None)
 
+        # These are hyper important class members that we init first
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
+        
+        # Call superclass initializers
+        super(ToolProvider, self).__init__()
+
         self.non_spec_params = defaultdict(lambda: None)
         self.outcome_requests = []
         self.process_params(params)
@@ -114,7 +118,7 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         OutcomeRequest.
         '''
         return self.last_outcome_request and\
-                self.last_outcome_request.is_outcome_post_successful()
+                self.last_outcome_request.was_outcome_post_successful()
 
     def build_return_url(self):
         '''

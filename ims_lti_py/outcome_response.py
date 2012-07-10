@@ -49,16 +49,15 @@ class OutcomeResponse():
             setattr(self, key, val)
 
     @staticmethod
-    def from_post_response(post_response):
+    def from_post_response(post_response, content):
         '''
         Convenience method for creating a new OutcomeResponse from a response
         object.
         '''
         response = OutcomeResponse()
         response.post_response = post_response
-        response.reponse_code = post_response.status_code
-        xml = post_response.data
-        response.process_xml(xml)
+        response.reponse_code = post_response.status
+        response.process_xml(content)
         return response
 
     def is_success(self):
@@ -83,30 +82,33 @@ class OutcomeResponse():
         '''
         Parse OutcomeResponse data form XML.
         '''
-        root = objectify.fromstring(xml)
-        # Get message idenifier from header info
-        self.message_identifier = root.imsx_POXHeader.\
-                imsx_POXResponseHeaderInfo.\
-                imsx_messageIdentifier
-
-        status_node = root.imsx_POXHeader.\
-                imsx_POXResponseHeaderInfo.\
-                imsx_statusInfo
-
-        # Get status parameters from header info status
-        self.code_major = status_node.imsx_codeMajor
-        self.severity = status_node.imsx_severity
-        self.description = status_node.imsx_description
-        self.message_ref_identifier = str(status_node.\
-                imsx_messageRefIdentifier)
-        self.operation = status_node.imsx_operationRefIdentifier
-            
         try:
-            # Try to get the score
-            self.score = str(root.imsx_POXBody.readResultResponse.\
-                    result.resultScore.textString)
-        except AttributeError, e:
-            # Not a readResult, just ignore!
+            root = objectify.fromstring(xml)
+            # Get message idenifier from header info
+            self.message_identifier = root.imsx_POXHeader.\
+                    imsx_POXResponseHeaderInfo.\
+                    imsx_messageIdentifier
+
+            status_node = root.imsx_POXHeader.\
+                    imsx_POXResponseHeaderInfo.\
+                    imsx_statusInfo
+
+            # Get status parameters from header info status
+            self.code_major = status_node.imsx_codeMajor
+            self.severity = status_node.imsx_severity
+            self.description = status_node.imsx_description
+            self.message_ref_identifier = str(status_node.\
+                    imsx_messageRefIdentifier)
+            self.operation = status_node.imsx_operationRefIdentifier
+                
+            try:
+                # Try to get the score
+                self.score = str(root.imsx_POXBody.readResultResponse.\
+                        result.resultScore.textString)
+            except AttributeError, e:
+                # Not a readResult, just ignore!
+                pass
+        except:
             pass
 
     def generate_response_xml(self):

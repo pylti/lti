@@ -6,4 +6,4 @@ from outcome_request import OutcomeRequest
 from outcome_response import OutcomeResponse
 
 # Exceptions
-from utils import InvalidLTIConfigError
+from utils import InvalidLTIConfigError, InvalidLTIRequestError
