@@ -49,16 +49,15 @@ class OutcomeResponse():
             setattr(self, key, val)
 
     @staticmethod
-    def from_post_response(post_response):
+    def from_post_response(post_response, content):
         '''
         Convenience method for creating a new OutcomeResponse from a response
         object.
         '''
         response = OutcomeResponse()
         response.post_response = post_response
-        response.reponse_code = post_response.status_code
-        xml = post_response.data
-        response.process_xml(xml)
+        response.reponse_code = post_response.status
+        response.process_xml(content)
         return response
 
     def is_success(self):
