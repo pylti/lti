@@ -20,10 +20,20 @@ class RequestValidatorMixin(object):
 
         '''
         try:
-            oauth_request = oauth2.Request(method = request.method, url =
-                    request.url, parameters = request.form)
+            params = {}
+            import ipdb; ipdb.set_trace()
+            if len(request.form) > 1:
+                for key, val in request.form:
+                    params[key] = val
+            import ipdb; ipdb.set_trace()
+
+            oauth_request = oauth2.Request.from_request(
+                    request.method, 
+                    request.url,
+                    headers = request.headers,
+                    parameters = params)
             self.oauth_server.verify_request(oauth_request, 
-                    self.oauth_consumer, None)
+                    self.oauth_consumer, {})
         except oauth2.MissingSignature, e:
             if handle_error:
                 return False
