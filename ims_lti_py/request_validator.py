@@ -21,11 +21,9 @@ class RequestValidatorMixin(object):
         '''
         try:
             params = {}
-            import ipdb; ipdb.set_trace()
             if len(request.form) > 1:
-                for key, val in request.form:
-                    params[key] = val
-            import ipdb; ipdb.set_trace()
+                for key in request.form:
+                    params[key] = request.form[key]
 
             oauth_request = oauth2.Request.from_request(
                     request.method, 
