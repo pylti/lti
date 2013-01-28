@@ -20,17 +20,14 @@ class RequestValidatorMixin(object):
 
         '''
         try:
-            params = {}
-            if len(request.form) > 1:
-                for key in request.form:
-                    params[key] = request.form[key]
+            params = request.form.copy()
 
             oauth_request = oauth2.Request.from_request(
-                    request.method, 
+                    request.method,
                     request.url,
                     headers = request.headers,
                     parameters = params)
-            self.oauth_server.verify_request(oauth_request, 
+            self.oauth_server.verify_request(oauth_request,
                     self.oauth_consumer, {})
         except oauth2.MissingSignature, e:
             if handle_error:
