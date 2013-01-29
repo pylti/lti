@@ -2,47 +2,48 @@ from collections import defaultdict
 
 # List of the standard launch parameters for an LTI launch
 LAUNCH_DATA_PARAMETERS = [
-        'context_id',
-        'context_label',
-        'context_title',
-        'context_type',
-        'launch_presentation_css_url',
-        'launch_presentation_document_target',
-        'launch_presentation_height',
-        'launch_presentation_locale',
-        'launch_presentation_return_url',
-        'launch_presentation_width',
-        'lis_course_section_sourcedid',
-        'lis_outcome_service_url',
-        'lis_person_contact_email_primary',
-        'lis_person_name_family',
-        'lis_person_name_full',
-        'lis_person_name_given',
-        'lis_person_sourcedid',
-        'lis_result_sourcedid',
-        'lti_message_type',
-        'lti_version',
-        'oauth_callback',
-        'oauth_consumer_key',
-        'oauth_nonce',
-        'oauth_signature',
-        'oauth_signature_method',
-        'oauth_timestamp',
-        'oauth_version',
-        'resource_link_description',
-        'resource_link_id',
-        'resource_link_title',
-        'roles',
-        'tool_consumer_info_product_family_code',
-        'tool_consumer_info_version',
-        'tool_consumer_instance_contact_email',
-        'tool_consumer_instance_description',
-        'tool_consumer_instance_guid',
-        'tool_consumer_instance_name',
-        'tool_consumer_instance_url',
-        'user_id',
-        'user_image'
+    'context_id',
+    'context_label',
+    'context_title',
+    'context_type',
+    'launch_presentation_css_url',
+    'launch_presentation_document_target',
+    'launch_presentation_height',
+    'launch_presentation_locale',
+    'launch_presentation_return_url',
+    'launch_presentation_width',
+    'lis_course_section_sourcedid',
+    'lis_outcome_service_url',
+    'lis_person_contact_email_primary',
+    'lis_person_name_family',
+    'lis_person_name_full',
+    'lis_person_name_given',
+    'lis_person_sourcedid',
+    'lis_result_sourcedid',
+    'lti_message_type',
+    'lti_version',
+    'oauth_callback',
+    'oauth_consumer_key',
+    'oauth_nonce',
+    'oauth_signature',
+    'oauth_signature_method',
+    'oauth_timestamp',
+    'oauth_version',
+    'resource_link_description',
+    'resource_link_id',
+    'resource_link_title',
+    'roles',
+    'tool_consumer_info_product_family_code',
+    'tool_consumer_info_version',
+    'tool_consumer_instance_contact_email',
+    'tool_consumer_instance_description',
+    'tool_consumer_instance_guid',
+    'tool_consumer_instance_name',
+    'tool_consumer_instance_url',
+    'user_id',
+    'user_image'
 ]
+
 
 class LaunchParamsMixin(object):
     def __init__(self):
@@ -111,23 +112,23 @@ class LaunchParamsMixin(object):
                 self.ext_params[key] = str(val)
 
     def set_custom_param(self, key, val):
-      self.custom_params['custom_' + key] = val
+        self.custom_params['custom_' + key] = val
 
     def get_custom_param(self, key):
-      return self.custom_params['custom_' + key]
+        return self.custom_params['custom_' + key]
 
     def set_non_spec_param(self, key, val):
-      self.non_spec_params[key] = val
+        self.non_spec_params[key] = val
 
     def get_non_spec_param(self, key):
-      return self.non_spec_params[key]
+        return self.non_spec_params[key]
 
     def set_ext_param(self, key, val):
-      self.ext_params['ext_' + key] = val
+        self.ext_params['ext_' + key] = val
 
     def get_ext_param(self, key):
-      return self.ext_params['ext_' + key]
-    
+        return self.ext_params['ext_' + key]
+
     def to_params(self):
         '''
         Createa a new dictionary with all launch data. Custom / Extension keys
