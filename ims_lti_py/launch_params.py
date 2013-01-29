@@ -99,11 +99,10 @@ class LaunchParamsMixin(object):
                 if key == 'roles':
                     if isinstance(val, list):
                         # If it's already a list, no need to parse
-                        self.roles = [role.lower() for role in val]
+                        self.roles = list(val)
                     else:
                         # If it's a ',' delimited string, split
-                        self.roles = [role.lower() for role in
-                                val.split(',')]
+                        self.roles = val.split(',')
                 else:
                     setattr(self, key, str(val))
             elif 'custom_' in key:

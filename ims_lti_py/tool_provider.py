@@ -3,6 +3,7 @@ from request_validator import RequestValidatorMixin
 from outcome_request import OutcomeRequest
 from urllib import quote
 from collections import defaultdict
+import re
 
 accessors = [
     'consumer_key',
@@ -43,7 +44,8 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         Check whether the Launch Paramters set the role.
         '''
-        return self.roles and role.lower() in self.roles
+        return self.roles and any([re.search(role, our_role, re.I)
+                                   for our_role in self.roles])
 
     def is_student(self):
         '''
