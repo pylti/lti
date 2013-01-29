@@ -14,12 +14,13 @@ accessors = [
     'lti_log'
 ]
 
+
 class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
     '''
     Implements the LTI Tool Provider.
     '''
-    
-    def __init__(self, consumer_key, consumer_secret, params = {}):
+
+    def __init__(self, consumer_key, consumer_secret, params={}):
         '''
         Create new ToolProvider.
         '''
@@ -30,7 +31,7 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         # These are hyper important class members that we init first
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        
+
         # Call superclass initializers
         super(ToolProvider, self).__init__()
 
@@ -49,15 +50,17 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         Convenience method for checking if the user has 'learner' or 'student'
         role.
         '''
-        return self.has_role('learner') or self.has_role('student')
+        return any((self.has_role('learner'),
+                    self.has_role('student')))
 
     def is_instructor(self):
         '''
         Convenience method for checking if user has 'instructor', 'faculty'
         or 'staff' role.
         '''
-        return self.has_role('instructor') or self.has_role('faculty') or\
-                self.has_role('staff')
+        return any((self.has_role('instructor'),
+                    self.has_role('faculty'),
+                    self.has_role('staff')))
 
     def is_launch_request(self):
         '''
@@ -72,7 +75,7 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         return (self.lis_outcome_service_url and
                 self.lis_result_sourcedid)
 
-    def username(self, default = None):
+    def username(self, default=None):
         '''
         Return the full, given, or family name if set.
         '''
@@ -117,8 +120,8 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         Convenience method for determining the success of the last
         OutcomeRequest.
         '''
-        return self.last_outcome_request and\
-                self.last_outcome_request.was_outcome_post_successful()
+        return all((self.last_outcome_request,
+                    self.last_outcome_request.was_outcome_post_successful()))
 
     def build_return_url(self):
         '''
@@ -130,21 +133,21 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
 
         messages = []
         for message in ['lti_errormsg', 'lti_errorlog', 'lti_msg', 'lti_log']:
-            if hasattr(self, message) and getattr(self, message) != None:
-                messages.append('%s=%s' %(message,
-                    quote(getattr(self, message))))
+            if hasattr(self, message) and getattr(self, message) is not None:
+                messages.append('%s=%s' % (message,
+                                quote(getattr(self, message))))
 
         q_string = '?' + '&'.join(messages) if messages else ''
         return self.launch_presentation_return_url + q_string
 
     def new_request(self):
         opts = defaultdict(lambda: None)
-        opts = { 
-                'consumer_key': self.consumer_key, 
-                'consumer_secret': self.consumer_secret, 
-                'lis_outcome_service_url': self.lis_outcome_service_url, 
-                'lis_result_sourcedid': self.lis_result_sourcedid
-                }
-        self.outcome_requests.append(OutcomeRequest(opts = opts))
+        opts = {
+            'consumer_key': self.consumer_key,
+            'consumer_secret': self.consumer_secret,
+            'lis_outcome_service_url': self.lis_outcome_service_url,
+            'lis_result_sourcedid': self.lis_result_sourcedid
+        }
+        self.outcome_requests.append(OutcomeRequest(opts=opts))
         self.last_outcome_request = self.outcome_requests[-1]
         return self.last_outcome_request
