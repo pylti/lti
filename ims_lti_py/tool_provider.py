@@ -1,5 +1,6 @@
 from launch_params import LaunchParamsMixin
-from request_validator import RequestValidatorMixin
+from request_validator import RequestValidatorMixin, \
+    FlaskRequestValidatorMixin, DjangoRequestValidatorMixin
 from outcome_request import OutcomeRequest
 from urllib import quote
 from collections import defaultdict
@@ -38,6 +39,7 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
 
         self.non_spec_params = defaultdict(lambda: None)
         self.outcome_requests = []
+        self.params = params
         self.process_params(params)
 
     def has_role(self, role):
@@ -59,6 +61,8 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         '''
         Convenience method for checking if user has 'instructor', 'faculty'
         or 'staff' role.
+
+        Currently this does not support the TeachingAssistant role
         '''
         return any((self.has_role('instructor'),
                     self.has_role('faculty'),
@@ -153,3 +157,17 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         self.outcome_requests.append(OutcomeRequest(opts=opts))
         self.last_outcome_request = self.outcome_requests[-1]
         return self.last_outcome_request
+
+
+class DjangoToolProvider(DjangoRequestValidatorMixin, ToolProvider):
+    '''
+    OAuth ToolProvider that works with Django requests
+    '''
+    pass
+
+
+class FlaskToolProvider(FlaskRequestValidatorMixin, ToolProvider):
+    '''
+    OAuth ToolProvider that works with Flask requests
+    '''
+    pass
