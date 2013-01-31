@@ -185,7 +185,12 @@ class DjangoToolProvider(DjangoRequestValidatorMixin, ToolProvider):
     '''
     OAuth ToolProvider that works with Django requests
     '''
-    pass
+
+    def error_redirect(self, errormsg='', errorlog=''):
+        from django.shortcuts import redirect
+        self.lti_errormsg = errormsg
+        self.lti_errorlog = errorlog
+        return redirect(self.build_return_url())
 
 
 class FlaskToolProvider(FlaskRequestValidatorMixin, ToolProvider):
