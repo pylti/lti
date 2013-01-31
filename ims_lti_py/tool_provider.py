@@ -2,9 +2,17 @@ from launch_params import LaunchParamsMixin
 from request_validator import RequestValidatorMixin, \
     FlaskRequestValidatorMixin, DjangoRequestValidatorMixin
 from outcome_request import OutcomeRequest
-from urllib import quote
 from collections import defaultdict
 import re
+from urllib import urlencode
+from urlparse import urlsplit, urlunsplit
+
+try:
+    from urlparse import parse_qsl
+except ImportError:
+    # fall back for Python 2.5
+    from cgi import parse_qsl  # NOQA
+
 
 accessors = [
     'consumer_key',
@@ -137,14 +145,28 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         if not self.launch_presentation_return_url:
             return None
 
-        messages = []
-        for message in ['lti_errormsg', 'lti_errorlog', 'lti_msg', 'lti_log']:
-            if hasattr(self, message) and getattr(self, message) is not None:
-                messages.append('%s=%s' % (message,
-                                quote(getattr(self, message))))
+        lti_message_fields = ['lti_errormsg', 'lti_errorlog',
+                              'lti_msg', 'lti_log']
 
-        q_string = '?' + '&'.join(messages) if messages else ''
-        return self.launch_presentation_return_url + q_string
+        messages = dict([(key, getattr(self, key))
+                         for key in lti_message_fields
+                         if getattr(self, key, None)])
+
+        # Disassemble original return URL and reassemble with our options added
+        original = urlsplit(self.launch_presentation_return_url)
+
+        combined = messages.copy()
+        combined.update(dict(parse_qsl(original.query)))
+
+        combined_query = urlencode(combined)
+
+        return urlunsplit((
+            original.scheme,
+            original.netloc,
+            original.path,
+            combined_query,
+            original.fragment
+        ))
 
     def new_request(self):
         opts = defaultdict(lambda: None)
