@@ -186,7 +186,19 @@ class DjangoToolProvider(DjangoRequestValidatorMixin, ToolProvider):
     OAuth ToolProvider that works with Django requests
     '''
 
+    def success_redirect(self, msg='', log=''):
+        '''
+        Shortcut for redirecting Django view to LTI Consumer with messages
+        '''
+        from django.shortcuts import redirect
+        self.lti_msg = msg
+        self.lti_log = log
+        return redirect(self.build_return_url())
+
     def error_redirect(self, errormsg='', errorlog=''):
+        '''
+        Shortcut for redirecting Django view to LTI Consumer with errors
+        '''
         from django.shortcuts import redirect
         self.lti_errormsg = errormsg
         self.lti_errorlog = errorlog
