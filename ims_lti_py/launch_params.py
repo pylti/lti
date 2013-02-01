@@ -85,7 +85,7 @@ class LaunchParamsMixin(object):
         '''
         if roles_list and isinstance(roles_list, list):
             self.roles = [].extend(roles_list)
-        elif roles_list and isinstance(roles_list, str):
+        elif roles_list and isinstance(roles_list, basestring):
             self.roles = [role.lower() for role in roles_list.split(',')]
 
     def process_params(self, params):
@@ -104,11 +104,11 @@ class LaunchParamsMixin(object):
                         # If it's a ',' delimited string, split
                         self.roles = val.split(',')
                 else:
-                    setattr(self, key, str(val))
+                    setattr(self, key, unicode(val))
             elif 'custom_' in key:
-                self.custom_params[key] = str(val)
+                self.custom_params[key] = unicode(val)
             elif 'ext_' in key:
-                self.ext_params[key] = str(val)
+                self.ext_params[key] = unicode(val)
 
     def set_custom_param(self, key, val):
         self.custom_params['custom_' + key] = val
