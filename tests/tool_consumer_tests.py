@@ -88,3 +88,16 @@ class TestToolConsumer(unittest.TestCase):
         self.assertEqual(result['user_id'], '2')
         self.assertEqual(result['lti_message_type'],
                 'basic-lti-launch-request')
+
+    def test_allow_lti_version_in_params(self):
+        '''
+        Should not overwrite an LTI version passed in params
+        '''
+        tc = ToolConsumer('12345', 'secret', {
+            'resource_link_id': 1,
+            'user_id': 2,
+            'lti_version': 'LTI-1.0p'
+        })
+
+        result = tc.generate_launch_data()
+        self.assertEqual(result['lti_version'], 'LTI-1.0p')

@@ -58,7 +58,10 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
             raise InvalidLTIConfigError('ToolConsumer does not have all required attributes: consumer_key = %s, consumer_secret = %s, resource_link_id = %s, launch_url = %s' %(self.consumer_key, self.consumer_secret, self.resource_link_id, self.launch_url))
 
         params = self.to_params()
-        params['lti_version'] = 'LTI-1.0'
+
+        if not params.get('lit_version', None):
+            params['lti_version'] = 'LTI-1.0'
+
         params['lti_message_type'] = 'basic-lti-launch-request'
 
         # Get new OAuth consumer
