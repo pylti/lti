@@ -10,7 +10,7 @@ The easiest way to get the most recent stable build is to grab from the cheesesh
 pip install ims_lti_py
 ```
 
-If you have setuptools, simply run `python setup.py install` to install the library to your current environment.
+Or, if you have setuptools, simply run `python setup.py install` to install the library to your current environment.
 
 ## Dependencies
 
