@@ -179,7 +179,7 @@ class OutcomeRequest():
             'Request'))
         record = etree.SubElement(request, 'resultRecord')
 
-        guid = etree.SubElement(record, 'sourceGUID')
+        guid = etree.SubElement(record, 'sourcedGUID')
         
         sourcedid = etree.SubElement(guid, 'sourcedId')
         sourcedid.text = self.lis_result_sourcedid
