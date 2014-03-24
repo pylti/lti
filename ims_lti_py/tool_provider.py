@@ -1,6 +1,10 @@
 from launch_params import LaunchParamsMixin
-from request_validator import RequestValidatorMixin, \
-    FlaskRequestValidatorMixin, DjangoRequestValidatorMixin
+from request_validator import (
+    RequestValidatorMixin,
+    FlaskRequestValidatorMixin,
+    DjangoRequestValidatorMixin,
+    WebObRequestValidatorMixin
+)
 from outcome_request import OutcomeRequest
 from collections import defaultdict
 import re
@@ -209,4 +213,11 @@ class FlaskToolProvider(FlaskRequestValidatorMixin, ToolProvider):
     '''
     OAuth ToolProvider that works with Flask requests
     '''
+    pass
+
+
+class WebObToolProvider(WebObRequestValidatorMixin, ToolProvider):
+    """
+    OAuth Tool Provider that works with WebOb requests.
+    """
     pass
