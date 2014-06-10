@@ -56,7 +56,7 @@ class OutcomeResponse():
         '''
         response = OutcomeResponse()
         response.post_response = post_response
-        response.reponse_code = post_response.status
+        response.response_code = post_response.status
         response.process_xml(content)
         return response
 
