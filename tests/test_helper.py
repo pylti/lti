@@ -45,16 +45,25 @@ def create_params_tc():
     })
     return params
 
+
+
 def create_test_tc(params = None):
     '''
     Returns a new ToolConsumer.
     '''
     params = create_params_tc() if params == None else params
-    tc = ToolConsumer('12345', 'secret', params)
+    consumer_key = '12345'
+    tc = ToolConsumer(consumer_key, 'secret', params)
     tc.launch_url = 'http://dr-chuck.com/ims/php-simple/tool.php'
     tc.timestamp = '1251600739'
     tc.nonce = 'c8350c0e47782d16d2fa48b2090c1d8f'
     tc.set_non_spec_param('lis_person_sourced_id', 'school.edu:user')
     tc.set_non_spec_param('basiclti_submit', 'Launch Endpoint with BasicLTI Data')
+    tc._params_update = lambda:{
+            'oauth_nonce': "c8350c0e47782d16d2fa48b2090c1d8f",
+            'oauth_timestamp': "1251600739",
+            'oauth_scheme': 'body',
+        }
+
 
     return tc

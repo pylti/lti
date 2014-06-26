@@ -3,9 +3,6 @@ from test_helper import create_test_tc
 import unittest
 
 class TestToolConsumer(unittest.TestCase):
-    # TODO: These cases keep failing since we generate a random nonce and use
-    # the current timestamp inside of ToolConsumer. Replace this with generated
-    # members, and generate them here to actually implement these tests.
     def test_signature(self):
         '''
         Should generate correct oauth signature.
@@ -14,7 +11,7 @@ class TestToolConsumer(unittest.TestCase):
         result = tc.generate_launch_data()
         self.assertNotEqual(result, None)
         self.assertEqual(result['oauth_signature'],
-                'ZXogq5KUR0ukZijtSjt4qh/S4Vc=')
+                'o8Oh2XbGx5Wa1yvcEdsdOydoYV4=')
 
     def test_url_query_parameters(self):
         '''
@@ -25,16 +22,14 @@ class TestToolConsumer(unittest.TestCase):
         result = tc.generate_launch_data()
         self.assertNotEqual(result, None)
         self.assertEquals(result['oauth_signature'], 
-                'lpi9xKVVXZB6xewfh/PUeasHiwU=')
+                'kiObbrNVu4vHzd0+yVDHvrsvegQ=')
         self.assertEquals(result['c'], '3 &a')
 
     def test_signature_port(self):
         '''
         Should generate a correct signature with a non-standard port.
         '''
-        tc = ToolConsumer('12345', 'secret', {'resource_link_id': 1})
-        tc.timestamp = '1251600739'
-        tc.nonce = 'c8350c0e47782d16d2fa48b2090c1d8f'
+        tc = create_test_tc({'resource_link_id': 1})
 
         def test_url(url, sig):
             tc.launch_url = url
@@ -43,21 +38,21 @@ class TestToolConsumer(unittest.TestCase):
             self.assertEquals(ld['oauth_signature'], sig)
 
         test_url('http://dr-chuck.com:123/ims/php-simple/tool.php',
-                'Y/QdFIdVeGkXnnT77h8FXaSp4T4=')
+                'I2zrOsXkLvBMbb5HzRXZrZAQVOg=')
         test_url('http://dr-chuck.com/ims/php-simple/tool.php',
-                'mSoeJJMmtFCmMYgpHZ8hCnc5Gzo=')
+                'L3VZIDWMLqBVqkGqpBLSjems/QY=')
         test_url('http://dr-chuck.com:80/ims/php-simple/tool.php',
-                'mSoeJJMmtFCmMYgpHZ8hCnc5Gzo=')
+                'L3VZIDWMLqBVqkGqpBLSjems/QY=')
         test_url('http://dr-chuck.com:443/ims/php-simple/tool.php',
-                'KaISX3G2Q+zHW/BZI1vNKyGoblo=')
+                'NCkKyc8X+XbULcVTuHagTATxcLM=')
         test_url('https://dr-chuck.com/ims/php-simple/tool.php',
-                'yCtVB+/6njhnKKzxvYkIR8hUD3Q=')
+                'hjIv46SZHK8hEBF0n79Z8al47Oo=')
         test_url('https://dr-chuck.com:443/ims/php-simple/tool.php',
-                'yCtVB+/6njhnKKzxvYkIR8hUD3Q=')
+                'hjIv46SZHK8hEBF0n79Z8al47Oo=')
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php',
-                'tz94qHbVCmx2u/PZyO4l0XXWU+s=')
+                '94N4Am1bvyInWNXM4WSNyoOMmUc=')
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php?oi=hoyt',
-                'jRCj3U8JwHI4rEsgNMihOSE8xCQ=')
+                'g724Rvpu1fC/kkb6sZEmzScUcLg=')
 
     def test_uri_query_parameters(self):
         '''
