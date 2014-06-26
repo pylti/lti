@@ -98,6 +98,6 @@ class TestToolConsumer(unittest.TestCase):
             'user_id': 2,
             'lti_version': 'LTI-1.0p'
         })
-
+        tc.launch_url = 'http://www.yahoo.com?user_id=123&lti_message_type=1234'
         result = tc.generate_launch_data()
-        self.assertEqual(result['lti_version'], 'LTI-1.0p')
+        self.assertEqual(result['lti_version'], 'LTI-1.0')
