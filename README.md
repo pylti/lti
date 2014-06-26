@@ -15,7 +15,7 @@ Or, if you have setuptools, simply run `python setup.py install` to install the 
 ## Dependencies
 
  * [lxml](https://github.com/lxml/lxml)
- * [python-oath2](https://github.com/simplegeo/python-oauth2)
+ * [python-oauth2](https://github.com/simplegeo/python-oauth2)
 
 ## Usage
 
