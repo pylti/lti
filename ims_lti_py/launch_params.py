@@ -65,7 +65,7 @@ class LaunchParamsMixin(object):
         Set the roles for the current launch.
 
         Full list of roles can be found here:
-        http://www.imsglobal.org/LTI/v1p1pd/ltiIMGv1p1pd.html#_Toc309649700
+        http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560479
 
         LIS roles include:
         * Student

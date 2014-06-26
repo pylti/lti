@@ -26,7 +26,7 @@ class ToolConfig():
 
     Capable of creating and reading the Common Cartridge XML representation of
     LTI links as described here:
-        http://www.imsglobal.org/LTI/v1p1pd/ltiIMGv1p1pd.html#_Toc309649689
+        http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560470
 
     TODO: Usage description
     '''

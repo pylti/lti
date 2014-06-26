@@ -26,7 +26,7 @@ class OutcomeRequest():
     '''
     Class for consuming & generating LTI Outcome Requests.
 
-    Outcome Request documentation: http://www.imsglobal.org/lti/v1p1pd/ltiIMGv1p1pd.html#_Toc309649691
+    Outcome Request documentation: http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560472
 
     This class can be used both by Tool Providers and Tool Consumers, though
     they each use it differently. The TP will use it to POST an OAuth-signed
@@ -165,7 +165,7 @@ class OutcomeRequest():
 
     def generate_request_xml(self):
         root = etree.Element('imsx_POXEnvelopeRequest', xmlns =
-                'http://www.imsglobal.org/lis/oms1p0/pox')
+                'http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0')
 
         header = etree.SubElement(root, 'imsx_POXHeader')
         header_info = etree.SubElement(header, 'imsx_POXRequestHeaderInfo')
