@@ -6,7 +6,7 @@ import oauth2
 
 class MockResponse(object):
     def __init__(self):
-        self.status_code = '200'
+        self.status = '200'
         self.data = '<xml/>'
 
 # Fake OAuth requests

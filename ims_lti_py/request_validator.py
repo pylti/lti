@@ -96,3 +96,18 @@ class DjangoRequestValidatorMixin(RequestValidatorMixin):
                 (dict(request.POST.iteritems())
                     if request.method == 'POST'
                     else parameters))
+
+
+class WebObRequestValidatorMixin(RequestValidatorMixin):
+    '''
+    A mixin for OAuth request validation using WebOb
+    '''
+    def parse_request(self, request, parameters=None, fake_method=None):
+        '''
+        Parse WebOb request
+        '''
+        return (request.method,
+                request.url,
+                request.headers,
+                request.POST.mixed())
+

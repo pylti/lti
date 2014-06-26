@@ -30,7 +30,7 @@ class OutcomeResponse():
     '''
     This class consumes & generates LTI Outcome Responses.
   
-    Response documentation: http://www.imsglobal.org/lti/v1p1pd/ltiIMGv1p1pd.html#_Toc309649691
+    Response documentation: http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560472
 
     Error code documentation: http://www.imsglobal.org/gws/gwsv1p0/imsgws_baseProfv1p0.html#1639667
 
@@ -56,7 +56,7 @@ class OutcomeResponse():
         '''
         response = OutcomeResponse()
         response.post_response = post_response
-        response.reponse_code = post_response.status
+        response.response_code = post_response.status
         response.process_xml(content)
         return response
 
@@ -116,7 +116,7 @@ class OutcomeResponse():
         Generate XML based on the current configuration.
         '''
         root = etree.Element('imsx_POXEnvelopeResponse', xmlns =
-                'http://www.imsglobal.org/lis/oms1p0/pox')
+                'http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0')
 
         header = etree.SubElement(root, 'imsx_POXHeader')
         header_info = etree.SubElement(header, 'imsx_POXResponseHeaderInfo')
