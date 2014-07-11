@@ -176,7 +176,6 @@ class ToolConfig():
                       '{%s}%s' %(NSMAP['lticm'], 'options'), name =
                       key)
                 for key, val in val.iteritems():
-                    print 'key',key,'val',val
                     self.recursive_options(options_node,{key:val})
             else:
                 param_node = etree.SubElement(element, '{%s}%s'
