@@ -184,7 +184,7 @@ class OutcomeRequest():
         sourcedid = etree.SubElement(guid, 'sourcedId')
         sourcedid.text = self.lis_result_sourcedid
         
-        if self.score:
+        if self.score != None:
             result = etree.SubElement(record, 'result')
             result_score = etree.SubElement(result, 'resultScore')
             language = etree.SubElement(result_score, 'language')
