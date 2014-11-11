@@ -13,6 +13,7 @@ READ_REQUEST = 'readResult'
 accessors = [
     'operation',
     'score',
+    'result_data'
     'outcome_response',
     'message_identifier',
     'lis_outcome_service_url',
@@ -37,7 +38,7 @@ class OutcomeRequest():
         for accessor in accessors:
             setattr(self, accessor, None)
 
-        # Store specified options in our accessors 
+        # Store specified options in our accessors
         for (key, val) in opts.iteritems():
             setattr(self, key, val)
 
@@ -54,12 +55,22 @@ class OutcomeRequest():
         request.process_xml(post_request.data)
         return request
 
-    def post_replace_result(self, score):
+    def post_replace_result(self, score, result_data=None):
         '''
         POSTs the given score to the Tool Consumer with a replaceResult.
+
+        OPTIONAL:
+            result_data must be a dictionary
+            Note: ONLY ONE of these values can be in the dict at a time,
+            due to the Canvas specification.
+
+            'text' : str text
+            'url' : str url
         '''
         self.operation = REPLACE_REQUEST
         self.score = score
+        if result_data:
+            self.result_data = result_data
         return self.post_outcome_request()
 
     def post_delete_result(self):
@@ -180,10 +191,10 @@ class OutcomeRequest():
         record = etree.SubElement(request, 'resultRecord')
 
         guid = etree.SubElement(record, 'sourcedGUID')
-        
+
         sourcedid = etree.SubElement(guid, 'sourcedId')
         sourcedid.text = self.lis_result_sourcedid
-        
+
         if self.score:
             result = etree.SubElement(record, 'result')
             result_score = etree.SubElement(result, 'resultScore')
@@ -191,5 +202,14 @@ class OutcomeRequest():
             language.text = 'en'
             text_string = etree.SubElement(result_score, 'textString')
             text_string.text = self.score.__str__()
+
+        if self.result_data:
+            resultData = etree.SubElement(result, 'resultData')
+            if 'text' in self.result_data:
+                resultDataText = etree.SubElement(resultData, 'text')
+                resultDataText.text = self.result_data['text']
+            elif 'url' in self.result_data:
+                resultDataURL = etree.SubElement(resultData, 'url')
+                resultDataURL.text = self.result_data['url']
 
         return etree.tostring(root, xml_declaration = True, encoding = 'utf-8')

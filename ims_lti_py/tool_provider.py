@@ -102,13 +102,21 @@ class ToolProvider(LaunchParamsMixin, RequestValidatorMixin, object):
         else:
             return default
 
-    def post_replace_result(self, score):
+    def post_replace_result(self, score, result_data=None):
         '''
         POSTs the given score to the Tool Consumer with a replaceResult.
 
         Returns OutcomeResponse object and stores it in self.outcome_request
+
+        OPTIONAL:
+            result_data must be a dictionary
+            Note: ONLY ONE of these values can be in the dict at a time,
+            due to the Canvas specification.
+
+            'text' : str text
+            'url' : str url
         '''
-        return self.new_request().post_replace_result(score)
+        return self.new_request().post_replace_result(score, result_data)
 
     def post_delete_result(self):
         '''
