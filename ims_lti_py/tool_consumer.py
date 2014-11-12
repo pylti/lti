@@ -52,6 +52,13 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
                 self.resource_link_id and\
                 self.launch_url
 
+    def _params_update(self):
+        return {
+            'oauth_nonce': str(generate_identifier()),
+            'oauth_timestamp': str(int(time.time())),
+            'oauth_scheme': 'body'
+        }
+
     def generate_launch_data(self):
         # Validate params
         if not self.has_required_params():
@@ -68,12 +75,8 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
         consumer = oauth2.Consumer(key = self.consumer_key,\
                 secret = self.consumer_secret)
 
-        params.update({
-            'oauth_nonce': str(generate_identifier()),
-            'oauth_timestamp': str(int(time.time())),
-            'oauth_scheme': 'body',
-            'oauth_consumer_key': consumer.key
-        })
+        params.update(self._params_update())
+        params.update({'oauth_consumer_key': consumer.key})
 
         uri = urlparse.urlparse(self.launch_url)
         if uri.query != '':

@@ -14,8 +14,8 @@ class DontTestLaunchParams():
                 self.assertEquals(getattr(self.tool, key), val)
 
         # Test roles
-        self.assertTrue(sorted(self.tool.roles) == sorted(['learner',\
-                'instructor', 'observer']))
+        self.assertTrue(sorted(self.tool.roles) == sorted(['Learner',\
+                'Instructor', 'Observer']))
 
     def test_custom_extension_parameters(self):
         '''

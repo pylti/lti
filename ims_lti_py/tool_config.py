@@ -20,13 +20,20 @@ accessors = [
         'vendor_contact_name'
 ]
 
+NSMAP = {
+    'blti': 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
+    'xsi': "http://www.w3.org/2001/XMLSchema-instance",
+    'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
+    'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
+    }
+
 class ToolConfig():
     '''
     Object used to represent LTI configuration.
 
     Capable of creating and reading the Common Cartridge XML representation of
     LTI links as described here:
-        http://www.imsglobal.org/LTI/v1p1pd/ltiIMGv1p1pd.html#_Toc309649689
+        http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560470
 
     TODO: Usage description
     '''
@@ -162,6 +169,19 @@ class ToolConfig():
 
                 self.set_ext_params(platform, properties)
 
+    def recursive_options(self,element,params):
+        for key, val in params.iteritems():
+            if isinstance(val, dict):
+                options_node = etree.SubElement(element,
+                      '{%s}%s' %(NSMAP['lticm'], 'options'), name =
+                      key)
+                for key, val in val.iteritems():
+                    self.recursive_options(options_node,{key:val})
+            else:
+                param_node = etree.SubElement(element, '{%s}%s'
+                          %(NSMAP['lticm'], 'property'), name = key)
+                param_node.text = val
+
     def to_xml(self, opts = defaultdict(lambda: None)):
         '''
         Generate XML from the current settings.
@@ -169,12 +189,6 @@ class ToolConfig():
         if not self.launch_url or not self.secure_launch_url:
             raise InvalidLTIConfigError('Invalid LTI configuration')
 
-        NSMAP = {
-            'blti': 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
-            'xsi': "http://www.w3.org/2001/XMLSchema-instance",
-            'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
-            'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
-            }
 
         root = etree.Element('cartridge_basiclti_link', attrib = {
                     '{%s}%s' %(NSMAP['xsi'], 'schemaLocation'): 'http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd',
@@ -220,20 +234,7 @@ class ToolConfig():
             for (key, params) in sorted(self.extensions.items()):
                 extension_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
                     'extensions'), platform = key)
-                for key, val in params.iteritems():
-                    if isinstance(val, dict):
-                        options_node = etree.SubElement(extension_node,
-                                '{%s}%s' %(NSMAP['lticm'], 'options'), name =
-                                key)
-                        for key, val in val.iteritems():
-                            property_node = etree.SubElement(options_node,
-                                    '{%s}%s' %(NSMAP['lticm'], 'property'), 
-                                    name = key)
-                            property_node.text = val
-                    else:
-                        param_node = etree.SubElement(extension_node, '{%s}%s'
-                                %(NSMAP['lticm'], 'property'), name = key)
-                        param_node.text = val
+                self.recursive_options(extension_node,params)
 
         if getattr(self, 'cartridge_bundle'):
             identifierref = etree.SubElement(root, 'cartridge_bundle',

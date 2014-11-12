@@ -26,7 +26,7 @@ class TestToolProvider(unittest.TestCase):
         self.tp.lti_log = 'lms message'
         self.assertEqual(self.tp.build_return_url(),
                 self.params['launch_presentation_return_url'] +
-                '?lti_errormsg=user%20error%20message&lti_errorlog=lms%20error%20log&lti_msg=user%20message&lti_log=lms%20message')
+                '?lti_msg=user+message&lti_errormsg=user+error+message&lti_errorlog=lms+error+log&lti_log=lms+message')
 
     def test_roles(self):
         '''

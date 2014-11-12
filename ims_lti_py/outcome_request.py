@@ -26,7 +26,7 @@ class OutcomeRequest():
     '''
     Class for consuming & generating LTI Outcome Requests.
 
-    Outcome Request documentation: http://www.imsglobal.org/lti/v1p1pd/ltiIMGv1p1pd.html#_Toc309649691
+    Outcome Request documentation: http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560472
 
     This class can be used both by Tool Providers and Tool Consumers, though
     they each use it differently. The TP will use it to POST an OAuth-signed
@@ -109,12 +109,34 @@ class OutcomeRequest():
                 secret =  self.consumer_secret)
 
         client = oauth2.Client(consumer)
+        # monkey_patch_headers ensures that Authorization header is NOT lower cased
+        monkey_patch_headers = True
+        monkey_patch_function = None
+        if monkey_patch_headers:
+            import httplib2
+            http = httplib2.Http
+
+            normalize = http._normalize_headers
+            def my_normalize(self,headers):
+                print "My Normalize" , headers
+                ret = normalize(self,headers)
+                if ret.has_key('authorization'):
+                    ret['Authorization'] = ret.pop('authorization')
+                print "My Normalize" , ret
+                return ret
+            http._normalize_headers = my_normalize
+            monkey_patch_function = normalize
 
         response, content = client.request(
                 self.lis_outcome_service_url,
                 'POST',
                 body = self.generate_request_xml(),
                 headers = { 'Content-Type': 'application/xml' })
+
+        if monkey_patch_headers and monkey_patch_function:
+            import httplib2
+            http = httplib2.Http
+            http._normalize_headers = monkey_patch_function
 
         self.outcome_response = OutcomeResponse.from_post_response(response,
                 content)
@@ -165,7 +187,7 @@ class OutcomeRequest():
 
     def generate_request_xml(self):
         root = etree.Element('imsx_POXEnvelopeRequest', xmlns =
-                'http://www.imsglobal.org/lis/oms1p0/pox')
+                'http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0')
 
         header = etree.SubElement(root, 'imsx_POXHeader')
         header_info = etree.SubElement(header, 'imsx_POXRequestHeaderInfo')
@@ -180,10 +202,10 @@ class OutcomeRequest():
         record = etree.SubElement(request, 'resultRecord')
 
         guid = etree.SubElement(record, 'sourcedGUID')
-        
+
         sourcedid = etree.SubElement(guid, 'sourcedId')
         sourcedid.text = self.lis_result_sourcedid
-        
+
         if self.score:
             result = etree.SubElement(record, 'result')
             result_score = etree.SubElement(result, 'resultScore')
