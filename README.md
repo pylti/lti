@@ -2,6 +2,12 @@
 
 Python port of the useful [ims-lti](https://github.com/instructure/ims-lti) Ruby library. Makes integrating with LTI pretty easy.
 
+## Status
+
+[![Circle CI](https://circleci.com/gh/tophatmonocle/ims_lti_py.png?style=badge)](https://circleci.com/gh/tophatmonocle/ims_lti_py)
+
+The next version of this library is under development. Tests are failing and PRs are welcome!
+
 ## Installation
 
 The easiest way to get the most recent stable build is to grab from the cheeseshop:
