@@ -69,7 +69,8 @@ class OutcomeRequest():
         '''
         self.operation = REPLACE_REQUEST
         self.score = score
-        if result_data:
+        self.result_data = result_data
+        if result_data != None:
             if len(result_data) > 1:
                 error_msg = 'Dictionary result_data can only have one entry. %s entries were found.' % len(result_data)
                 raise InvalidLTIConfigError(error_msg)
@@ -77,8 +78,9 @@ class OutcomeRequest():
                 error_msg = 'Dictionary result_data can only have the key "text" or the key "url".'
                 raise InvalidLTIConfigError(error_msg)
             else:
-                self.result_data = result_data
-        return self.post_outcome_request()
+                return self.post_outcome_request()
+        else:
+            return self.post_outcome_request()
 
     def post_delete_result(self):
         '''
