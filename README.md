@@ -4,7 +4,7 @@ Python port of the useful [ims-lti](https://github.com/instructure/ims-lti) Ruby
 
 ## Status
 
-Develop: [![Circle CI](https://circleci.com/gh/tophatmonocle/ims_lti_py/tree/develop.png?style=badge)](https://circleci.com/gh/tophatmonocle/ims_lti_py/tree/develop)
+[![Circle CI](https://circleci.com/gh/tophatmonocle/ims_lti_py/tree/develop.png?style=badge)](https://circleci.com/gh/tophatmonocle/ims_lti_py/tree/develop)
 
 The next version of this library is under development. Tests are failing and PRs are welcome!
 
