@@ -13,7 +13,7 @@ READ_REQUEST = 'readResult'
 accessors = [
     'operation',
     'score',
-    'result_data'
+    'result_data',
     'outcome_response',
     'message_identifier',
     'lis_outcome_service_url',
