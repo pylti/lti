@@ -66,7 +66,7 @@ class ToolConsumer(LaunchParamsMixin, RequestValidatorMixin, object):
 
         params = self.to_params()
 
-        if not params.get('lit_version', None):
+        if 'lti_version' not in params:
             params['lti_version'] = 'LTI-1.0'
 
         params['lti_message_type'] = 'basic-lti-launch-request'

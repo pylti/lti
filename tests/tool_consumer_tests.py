@@ -11,7 +11,7 @@ class TestToolConsumer(unittest.TestCase):
         result = tc.generate_launch_data()
         self.assertNotEqual(result, None)
         self.assertEqual(result['oauth_signature'],
-                'o8Oh2XbGx5Wa1yvcEdsdOydoYV4=')
+                'Ni3UTet25Mx9fjChugHCs/5ZaVk=')
 
     def test_url_query_parameters(self):
         '''
@@ -22,7 +22,7 @@ class TestToolConsumer(unittest.TestCase):
         result = tc.generate_launch_data()
         self.assertNotEqual(result, None)
         self.assertEquals(result['oauth_signature'], 
-                'kiObbrNVu4vHzd0+yVDHvrsvegQ=')
+                'WMASmofl0mKS20rlC8aw6pEh9FI=')
         self.assertEquals(result['c'], '3 &a')
 
     def test_signature_port(self):
@@ -38,21 +38,21 @@ class TestToolConsumer(unittest.TestCase):
             self.assertEquals(ld['oauth_signature'], sig)
 
         test_url('http://dr-chuck.com:123/ims/php-simple/tool.php',
-                'I2zrOsXkLvBMbb5HzRXZrZAQVOg=')
+                'GBdmYAMU9noJKLZpv2BPnEN6rkY=')
         test_url('http://dr-chuck.com/ims/php-simple/tool.php',
-                'L3VZIDWMLqBVqkGqpBLSjems/QY=')
+                'Kctk9REY2GcDk0NQl+RvOcVOYC4=')
         test_url('http://dr-chuck.com:80/ims/php-simple/tool.php',
-                'L3VZIDWMLqBVqkGqpBLSjems/QY=')
+                'Kctk9REY2GcDk0NQl+RvOcVOYC4=')
         test_url('http://dr-chuck.com:443/ims/php-simple/tool.php',
-                'NCkKyc8X+XbULcVTuHagTATxcLM=')
+                '3jQGMDmrPlrrzckFu7M9QClFcjU=')
         test_url('https://dr-chuck.com/ims/php-simple/tool.php',
-                'hjIv46SZHK8hEBF0n79Z8al47Oo=')
+                'KLd5hidxIMdN5b4nmmCYLTQuq/o=')
         test_url('https://dr-chuck.com:443/ims/php-simple/tool.php',
-                'hjIv46SZHK8hEBF0n79Z8al47Oo=')
+                'KLd5hidxIMdN5b4nmmCYLTQuq/o=')
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php',
-                '94N4Am1bvyInWNXM4WSNyoOMmUc=')
+                'bbd6hYAvQYW/5UZu1+/DvMXwvGk=')
         test_url('https://dr-chuck.com:80/ims/php-simple/tool.php?oi=hoyt',
-                'g724Rvpu1fC/kkb6sZEmzScUcLg=')
+                'xj+c/6OnADlWa5w1QLFTgOE1Mkk=')
 
     def test_uri_query_parameters(self):
         '''
@@ -91,8 +91,8 @@ class TestToolConsumer(unittest.TestCase):
         tc = ToolConsumer('12345', 'secret', {
             'resource_link_id': 1,
             'user_id': 2,
-            'lti_version': 'LTI-1.0p'
+            'lti_version': 'LTI-1.0p',
+            'launch_url': 'http://www.yahoo.com?user_id=123&lti_message_type=1234'
         })
-        tc.launch_url = 'http://www.yahoo.com?user_id=123&lti_message_type=1234'
         result = tc.generate_launch_data()
-        self.assertEqual(result['lti_version'], 'LTI-1.0')
+        self.assertEqual(result['lti_version'], 'LTI-1.0p')
