@@ -1,4 +1,5 @@
 from lxml import etree, objectify
+from utils import InvalidLTIConfigError
 
 CODE_MAJOR_CODES = [
     'success',
@@ -13,7 +14,7 @@ SEVERITY_CODES = [
     'error'
 ]
 
-accessors = [
+VALID_ATTRIBUTES = [
     'request_type',
     'score',
     'message_identifier',
@@ -44,12 +45,17 @@ class OutcomeResponse():
     '''
     def __init__(self, **kwargs):
         # Initialize all class accessors to None
-        for opt in accessors:
-            setattr(self, opt, None)
+        for attr in VALID_ATTRIBUTES:
+            setattr(self, attr, None)
 
         # Store specified options in our options member
         for (key, val) in kwargs.iteritems():
-            setattr(self, key, val)
+            if key in VALID_ATTRIBUTES:
+                setattr(self, key, val)
+            else:
+                raise InvalidLTIConfigError(
+                    "Invalid outcome response option: {}".format(key)
+                )
 
     @staticmethod
     def from_post_response(post_response, content):
@@ -59,7 +65,7 @@ class OutcomeResponse():
         '''
         response = OutcomeResponse()
         response.post_response = post_response
-        response.response_code = post_response.status
+        response.response_code = post_response.status_code
         response.process_xml(content)
         return response
 

@@ -1,7 +1,9 @@
 from collections import defaultdict
 from lxml import etree, objectify
 
-import oauth2
+import requests
+from requests_oauthlib import OAuth1
+from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_AUTH_HEADER
 
 from outcome_response import OutcomeResponse
 from utils import InvalidLTIConfigError
@@ -10,7 +12,7 @@ REPLACE_REQUEST = 'replaceResult'
 DELETE_REQUEST = 'deleteResult'
 READ_REQUEST = 'readResult'
 
-accessors = [
+VALID_ATTRIBUTES = [
     'operation',
     'score',
     'result_data',
@@ -22,7 +24,6 @@ accessors = [
     'consumer_secret',
     'post_request'
 ]
-
 
 class OutcomeRequest():
     '''
@@ -37,12 +38,17 @@ class OutcomeRequest():
     '''
     def __init__(self, opts=defaultdict(lambda: None)):
         # Initialize all our accessors to None
-        for accessor in accessors:
-            setattr(self, accessor, None)
+        for attr in VALID_ATTRIBUTES:
+            setattr(self, attr, None)
 
         # Store specified options in our accessors
         for (key, val) in opts.iteritems():
-            setattr(self, key, val)
+            if key in VALID_ATTRIBUTES:
+                setattr(self, key, val)
+            else:
+                raise InvalidLTIConfigError(
+                    "Invalid outcome request option: {}".format(key)
+                )
 
     @staticmethod
     def from_post_request(post_request):
@@ -121,7 +127,7 @@ class OutcomeRequest():
     def was_outcome_post_successful(self):
         return self.outcome_response and self.outcome_response.is_success()
 
-    def post_outcome_request(self):
+    def post_outcome_request(self, **kwargs):
         '''
         POST an OAuth signed request to the Tool Consumer.
         '''
@@ -129,43 +135,15 @@ class OutcomeRequest():
             raise InvalidLTIConfigError(
                 'OutcomeRequest does not have all required attributes')
 
-        consumer = oauth2.Consumer(key=self.consumer_key,
-                                   secret=self.consumer_secret)
+        header_oauth = OAuth1(self.consumer_key, self.consumer_secret,
+                       signature_type=SIGNATURE_TYPE_AUTH_HEADER, **kwargs)
 
-        client = oauth2.Client(consumer)
-        # monkey_patch_headers ensures that Authorization
-        # header is NOT lower cased
-        monkey_patch_headers = True
-        monkey_patch_function = None
-        if monkey_patch_headers:
-            import httplib2
-            http = httplib2.Http
-
-            normalize = http._normalize_headers
-
-            def my_normalize(self, headers):
-                print("My Normalize", headers)
-                ret = normalize(self, headers)
-                if 'authorization' in ret:
-                    ret['Authorization'] = ret.pop('authorization')
-                print("My Normalize", ret)
-                return ret
-            http._normalize_headers = my_normalize
-            monkey_patch_function = normalize
-
-        response, content = client.request(
-            self.lis_outcome_service_url,
-            'POST',
-            body=self.generate_request_xml(),
-            headers={'Content-Type': 'application/xml'})
-
-        if monkey_patch_headers and monkey_patch_function:
-            import httplib2
-            http = httplib2.Http
-            http._normalize_headers = monkey_patch_function
-
-        self.outcome_response = OutcomeResponse.from_post_response(response,
-                                                                   content)
+        headers = {'Content-type': 'application/xml'}
+        resp = requests.post(self.lis_outcome_service_url, auth=header_oauth,
+                             data=self.generate_request_xml(),
+                             headers=headers)
+        outcome_resp = OutcomeResponse.from_post_response(resp, resp.content)
+        self.outcome_response = outcome_resp
         return self.outcome_response
 
     def process_xml(self, xml):

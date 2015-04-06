@@ -3,7 +3,7 @@ from lxml import etree, objectify
 
 from utils import InvalidLTIConfigError
 
-accessors = [
+VALID_ATTRIBUTES = [
         'title',
         'description',
         'launch_url',
@@ -42,17 +42,24 @@ class ToolConfig():
         Create a new ToolConfig with the given options.
         '''
         # Initialize all class accessors to None
-        for opt in accessors:
-            setattr(self, opt, None)
+        for attr in VALID_ATTRIBUTES:
+            setattr(self, attr, None)
 
-        self.custom_params = kwargs.pop('custom_params') if\
-                kwargs.get('custom_params') else defaultdict(lambda: None)
-        self.extensions = kwargs.pop('extensions') if kwargs.get('extensions')\
-                else defaultdict(lambda: None)
+        for attr in ['custom_params', 'extensions']:
+            if attr in kwargs:
+                attr_val = kwargs.pop(attr)
+            else:
+                attr_val = defaultdict(lambda: None)
+            setattr(self, attr, attr_val)
 
         # Iterate over all provided options and save to class instance members
         for (key, val) in kwargs.iteritems():
-            setattr(self, key, val)
+            if key in VALID_ATTRIBUTES:
+                setattr(self, key, val)
+            else:
+                raise InvalidLTIConfigError(
+                    "Invalid outcome request option: {}".format(key)
+                )
 
     @staticmethod
     def create_from_xml(xml):
@@ -91,16 +98,15 @@ class ToolConfig():
         '''
         Set the provided parameter in a set of extension parameters.
         '''
-        if not self.extensions[ext_key]:
-            self.extensions[ext_key] = defaultdict(lambda: None)
+        self.extensions.setdefault(ext_key, defaultdict(lambda: None))
         self.extensions[ext_key][param_key] = val
 
     def get_ext_param(self, ext_key, param_key):
         '''
         Get specific param in set of provided extension parameters.
         '''
-        return self.extensions[ext_key][param_key] if self.extensions[ext_key]\
-                else None
+        if ext_key in self.extensions:
+            return self.extensions[ext_key].get(param_key)
 
     def process_xml(self, xml):
         '''

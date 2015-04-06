@@ -1,4 +1,10 @@
+__version__ = '0.7.0'
+
+DEFAULT_LTI_VERSION = 'LTI-1.0'
+
 # Classes
+from launch_params import LaunchParams
+from tool_base import ToolBase
 from tool_config import ToolConfig
 from tool_consumer import ToolConsumer
 from tool_provider import ToolProvider

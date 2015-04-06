@@ -1,5 +1,7 @@
-from collections import defaultdict
 import sys
+from collections import defaultdict, MutableMapping
+
+from ims_lti_py import DEFAULT_LTI_VERSION
 
 py   = sys.version_info
 if py <  (2, 6, 0): bytes=str
@@ -8,149 +10,151 @@ def touni(s, enc='utf8', err='strict'):
     return s.decode(enc, err) if isinstance(s, bytes) else unicode(s)
 
 
-# List of the standard launch parameters for an LTI launch
-LAUNCH_DATA_PARAMETERS = [
+LAUNCH_PARAMS_REQUIRED = [
+    'lti_message_type',
+    'lti_version',
+    'resource_link_id'
+]
+
+LAUNCH_PARAMS_RECOMMENDED = [
+    'resource_link_description',
+    'resource_link_title',
+    'user_id',
+    'user_image',
+    'roles',
+    'lis_person_name_given',
+    'lis_person_name_family',
+    'lis_person_name_full',
+    'lis_person_contact_email_primary',
+    'role_scope_mentor',
     'context_id',
     'context_label',
     'context_title',
     'context_type',
-    'launch_presentation_css_url',
-    'launch_presentation_document_target',
-    'launch_presentation_height',
     'launch_presentation_locale',
-    'launch_presentation_return_url',
+    'launch_presentation_document_target',
+    'launch_presentation_css_url',
     'launch_presentation_width',
-    'lis_course_section_sourcedid',
-    'lis_outcome_service_url',
-    'lis_person_contact_email_primary',
-    'lis_person_name_family',
-    'lis_person_name_full',
-    'lis_person_name_given',
-    'lis_person_sourcedid',
-    'lis_result_sourcedid',
-    'lti_message_type',
-    'lti_version',
-    'oauth_callback',
-    'oauth_consumer_key',
-    'oauth_nonce',
-    'oauth_signature',
-    'oauth_signature_method',
-    'oauth_timestamp',
-    'oauth_version',
-    'resource_link_description',
-    'resource_link_id',
-    'resource_link_title',
-    'roles',
+    'launch_presentation_height',
+    'launch_presentation_return_url',
     'tool_consumer_info_product_family_code',
     'tool_consumer_info_version',
-    'tool_consumer_instance_contact_email',
-    'tool_consumer_instance_description',
     'tool_consumer_instance_guid',
     'tool_consumer_instance_name',
+    'tool_consumer_instance_description',
     'tool_consumer_instance_url',
-    'user_id',
-    'user_image'
+    'tool_consumer_instance_contact_email',
 ]
 
+LAUNCH_PARAMS_LIS = [
+    'lis_course_section_sourcedid',
+    'lis_course_offering_sourcedid',
+    'lis_outcome_service_url',
+    'lis_person_sourcedid',
+    'lis_result_sourcedid',
+]
 
-class LaunchParamsMixin(object):
-    def __init__(self):
-        super(LaunchParamsMixin, self).__init__()
+LAUNCH_PARAMS_RETURN_URL = [
+    'lti_errormsg',
+    'lti_errorlog',
+    'lti_msg',
+    'lti_log'
+]
 
-        for param in LAUNCH_DATA_PARAMETERS:
-            setattr(self, param, None)
+LAUNCH_PARAMS_OAUTH = [
+    'oauth_consumer_key',
+    'oauth_signature_method',
+    'oauth_timestamp',
+    'oauth_nonce',
+    'oauth_version',
+    'oauth_signature',
+    'oauth_callback'
+]
 
-        # We only support oauth 1.0 for now
-        self.oauth_version = '1.0'
+LAUNCH_PARAMS_IS_LIST = [
+    'roles',
+    'role_scope_mentor',
+    'context_type'
+]
 
-        # These dictionaries return a 'None' object when accessing a key that
-        # is not in the dictionary.
-        self.custom_params = defaultdict(lambda: None)
-        self.ext_params = defaultdict(lambda: None)
+LAUNCH_PARAMS = LAUNCH_PARAMS_REQUIRED + \
+                LAUNCH_PARAMS_RECOMMENDED + \
+                LAUNCH_PARAMS_RETURN_URL + \
+                LAUNCH_PARAMS_OAUTH + \
+                LAUNCH_PARAMS_LIS
 
-    def roles(self, roles_list):
-        '''
-        Set the roles for the current launch.
+def valid_param(param):
+    if param.startswith('custom_') or param.startswith('ext_'):
+        return True
+    elif param in LAUNCH_PARAMS:
+        return True
+    return False
 
-        Full list of roles can be found here:
-        http://www.imsglobal.org/LTI/v1p1/ltiIMGv1p1.html#_Toc319560479
+class InvalidLaunchParamError(ValueError):
 
-        LIS roles include:
-        * Student
-        * Faculty
-        * Member
-        * Learner
-        * Instructor
-        * Mentor
-        * Staff
-        * Alumni
-        * ProspectiveStudent
-        * Guest
-        * Other
-        * Administrator
-        * Observer
-        * None
-        '''
-        if roles_list and isinstance(roles_list, list):
-            self.roles = [].extend(roles_list)
-        elif roles_list and isinstance(roles_list, basestring):
-            self.roles = [role.lower() for role in roles_list.split(',')]
+    def __init__(self, param):
+        message = "{} is not a valid launch param".format(param)
+        super(Exception, self).__init__(message)
 
-    def process_params(self, params):
-        '''
-        Populates the launch data from a dictionary. Only cares about keys in
-        the LAUNCH_DATA_PARAMETERS list, or that start with 'custom_' or
-        'ext_'.
-        '''
-        for key, val in params.items():
-            if key in LAUNCH_DATA_PARAMETERS and val != 'None':
-                if key == 'roles':
-                    if isinstance(val, list):
-                        # If it's already a list, no need to parse
-                        self.roles = list(val)
-                    else:
-                        # If it's a ',' delimited string, split
-                        self.roles = val.split(',')
-                else:
-                    setattr(self, key, touni(val))
-            elif 'custom_' in key:
-                self.custom_params[key] = touni(val)
-            elif 'ext_' in key:
-                self.ext_params[key] = touni(val)
+class LaunchParams(MutableMapping):
+    """
+    Represents the params for an LTI launch request. Provides dict-like
+    behavior through the use of the MutableMapping ABC mixin.  Strictly
+    enforces that params are valid LTI params.
+    """
 
-    def set_custom_param(self, key, val):
-        self.custom_params['custom_' + key] = val
+    def __init__(self, *args, **kwargs):
 
-    def get_custom_param(self, key):
-        return self.custom_params['custom_' + key]
+        self._params = dict()
+        self.update(*args, **kwargs)
 
-    def set_non_spec_param(self, key, val):
-        self.non_spec_params[key] = val
+        # now verify we only got valid launch params
+        for k in self.keys():
+            if not valid_param(k):
+                raise InvalidLaunchParamError(k)
 
-    def get_non_spec_param(self, key):
-        return self.non_spec_params[key]
+        # enforce some defaults
+        if 'lti_version' not in self:
+            self['lti_version'] = DEFAULT_LTI_VERSION
+        if 'lti_message_type' not in self:
+            self['lti_message_type'] = 'basic-lti-launch-request'
 
-    def set_ext_param(self, key, val):
-        self.ext_params['ext_' + key] = val
+    def set_non_spec_param(self, param, val):
+        self._params[param] = val
 
-    def get_ext_param(self, key):
-        return self.ext_params['ext_' + key]
+    def get_non_spec_param(self, param):
+        return self._params.get(param)
 
-    def to_params(self):
-        '''
-        Createa a new dictionary with all launch data. Custom / Extension keys
-        will be included. Roles are set as a ',' separated string.
-        '''
-        params = {}
-        custom_params = {}
-        for key in self.custom_params:
-            custom_params[key] = self.custom_params[key]
-        ext_params = {}
-        for key in self.ext_params:
-            ext_params[key] = self.ext_params[key]
-        for key in LAUNCH_DATA_PARAMETERS:
-            if hasattr(self, key):
-                params[key] = getattr(self, key)
-        params.update(custom_params)
-        params.update(ext_params)
-        return params
+    def _param_value(self, param):
+        if param in LAUNCH_PARAMS_IS_LIST:
+            return [x.strip() for x in self._params[param].split(',')]
+        else:
+            return self._params[param]
+
+    def __len__(self):
+        return len(self._params)
+
+    def __getitem__(self, item):
+        if not valid_param(item):
+            raise KeyError("{} is not a valid launch param".format(item))
+        try:
+            return self._param_value(item)
+        except KeyError:
+            # catch and raise new KeyError in the proper context
+            raise KeyError(item)
+
+    def __setitem__(self, key, value):
+        if not valid_param(key):
+            raise InvalidLaunchParamError(key)
+        if key in LAUNCH_PARAMS_IS_LIST:
+            if isinstance(value, list):
+                value = ','.join([x.strip() for x in value])
+        self._params[key] = value
+
+    def __delitem__(self, key):
+        if key in self._params:
+            del self._params[key]
+
+    def __iter__(self):
+        return iter(self._params)
+

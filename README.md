@@ -21,13 +21,15 @@ Or, if you have setuptools, simply run `python setup.py install` to install the 
 ## Dependencies
 
  * [lxml](https://github.com/lxml/lxml)
- * [python-oauth2](https://github.com/simplegeo/python-oauth2)
+ * [oauthlib](https://github.com/idan/oauthlib)
 
 ## Usage
 
 TODO
 
 ## Testing
-ims-lti-py unit tests can be run with the [nose](http://readthedocs.org/docs/nose/en/latest/) Python library. Once installed, just run
+ims-lti-py unit tests can be run by executing
 
-    nosetests tests/
+    python setup.py test
+
+Optionally, you can use [tox](https://tox.readthedocs.org/) with the provided `tox.ini` file

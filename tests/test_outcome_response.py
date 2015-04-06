@@ -1,25 +1,48 @@
 from ims_lti_py import OutcomeResponse
-
+from lxml import etree
+import mock
 import unittest
 
+RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<imsx_POXEnvelopeResponse xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
+    <imsx_POXHeader>
+        <imsx_POXResponseHeaderInfo>
+            <imsx_version>V1.0</imsx_version>
+            <imsx_messageIdentifier></imsx_messageIdentifier>
+            <imsx_statusInfo>
+                <imsx_codeMajor>success</imsx_codeMajor>
+                <imsx_severity>status</imsx_severity>
+                <imsx_description></imsx_description>
+                <imsx_messageRefIdentifier>123456789</imsx_messageRefIdentifier>
+                <imsx_operationRefIdentifier>replaceResult</imsx_operationRefIdentifier>
+            </imsx_statusInfo>
+        </imsx_POXResponseHeaderInfo>
+    </imsx_POXHeader>
+    <imsx_POXBody>
+        <replaceResultResponse/>
+    </imsx_POXBody>
+</imsx_POXEnvelopeResponse>
+"""
+
+def normalize_xml(xml_str):
+    parser = etree.XMLParser(remove_blank_text=True)
+    root = etree.XML(xml_str, parser)
+    return etree.tostring(root, with_tail=False)
+
 class TestOutcomeResponse(unittest.TestCase):
-    def setUp(self):
-        self.response_xml = '<?xml version="1.0" encoding="UTF-8"?><imsx_POXEnvelopeResponse xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0"><imsx_POXHeader><imsx_POXResponseHeaderInfo><imsx_version>V1.0</imsx_version><imsx_messageIdentifier></imsx_messageIdentifier><imsx_statusInfo><imsx_codeMajor>success</imsx_codeMajor><imsx_severity>status</imsx_severity><imsx_description></imsx_description><imsx_messageRefIdentifier>123456789</imsx_messageRefIdentifier><imsx_operationRefIdentifier>replaceResult</imsx_operationRefIdentifier></imsx_statusInfo></imsx_POXResponseHeaderInfo></imsx_POXHeader><imsx_POXBody><replaceResultResponse/></imsx_POXBody></imsx_POXEnvelopeResponse>'
 
     def mock_response(self, response_xml):
-        class mock_resp():
-            def __init__(self):
-                self.status = '200'
-                self.data = response_xml
-
-        return mock_resp()
+        resp = mock.Mock()
+        resp.status_code = '200'
+        resp.data = response_xml
+        return resp
 
     def test_parse_replace_result_response_xml(self):
         '''
         Should parse replaceResult response XML.
         '''
-        fake = self.mock_response(self.response_xml)
-        response = OutcomeResponse.from_post_response(fake, self.response_xml)
+        fake = self.mock_response(RESPONSE_XML)
+        response = OutcomeResponse.from_post_response(fake, RESPONSE_XML)
         self.assertTrue(response.is_success())
         self.assertEqual(response.code_major, 'success')
         self.assertEqual(response.severity, 'status')
@@ -32,7 +55,7 @@ class TestOutcomeResponse(unittest.TestCase):
         '''
         Should parse readResult response XML.
         '''
-        read_xml = self.response_xml.replace(\
+        read_xml = RESPONSE_XML.replace(\
                 '<replaceResultResponse/>',\
                 '''<readResultResponse>
 <result>
@@ -55,7 +78,7 @@ class TestOutcomeResponse(unittest.TestCase):
         '''
         Should parse deleteResult response XML.
         '''
-        delete_xml = self.response_xml.replace('replaceResult', 'deleteResult')
+        delete_xml = RESPONSE_XML.replace('replaceResult', 'deleteResult')
         fake = self.mock_response(delete_xml)
         result = OutcomeResponse.from_post_response(fake, delete_xml)
         self.assertTrue(result.is_success())
@@ -70,7 +93,7 @@ class TestOutcomeResponse(unittest.TestCase):
         '''
         Should recognize a failure response.
         '''
-        failure_xml = self.response_xml.replace('success', 'failure')
+        failure_xml = RESPONSE_XML.replace('success', 'failure')
         fake = self.mock_response(failure_xml)
         result = OutcomeResponse.from_post_response(fake, failure_xml)
         self.assertTrue(result.is_failure())
@@ -80,5 +103,7 @@ class TestOutcomeResponse(unittest.TestCase):
         Should generate response XML.
         '''
         response = OutcomeResponse()
-        response.process_xml(self.response_xml)
-        self.assertEqual(response.generate_response_xml(), self.response_xml)
+        response.process_xml(RESPONSE_XML)
+        correct = normalize_xml(RESPONSE_XML)
+        got = normalize_xml(response.generate_response_xml())
+        self.assertEqual(got, correct)
