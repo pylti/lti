@@ -1,5 +1,5 @@
 
-from ims_lti_py import ToolProvider
+from dce_lti_py import ToolProvider
 from django.shortcuts import redirect
 
 class DjangoToolProvider(ToolProvider):

@@ -1,5 +1,5 @@
-from ims_lti_py import ToolConsumer, LaunchParams
-from ims_lti_py.utils import parse_qs, InvalidLTIConfigError
+from dce_lti_py import ToolConsumer, LaunchParams
+from dce_lti_py.utils import parse_qs, InvalidLTIConfigError
 import unittest
 
 from oauthlib.common import generate_client_id, generate_token, unquote

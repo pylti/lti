@@ -1,7 +1,7 @@
 
 import unittest
 from oauthlib.common import generate_client_id, generate_token
-from ims_lti_py import LaunchParams, ToolBase, DEFAULT_LTI_VERSION
+from dce_lti_py import LaunchParams, ToolBase, DEFAULT_LTI_VERSION
 
 
 def create_tb(key=None, secret=None, lp=None):

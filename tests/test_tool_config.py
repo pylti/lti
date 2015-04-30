@@ -1,5 +1,5 @@
 
-from ims_lti_py import ToolConfig, InvalidLTIConfigError
+from dce_lti_py import ToolConfig, InvalidLTIConfigError
 from lxml import etree
 import unittest
 

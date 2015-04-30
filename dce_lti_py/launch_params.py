@@ -1,7 +1,7 @@
 import sys
 from collections import defaultdict, MutableMapping
 
-from ims_lti_py import DEFAULT_LTI_VERSION
+from dce_lti_py import DEFAULT_LTI_VERSION
 
 py   = sys.version_info
 if py <  (2, 6, 0): bytes=str

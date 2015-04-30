@@ -1,7 +1,7 @@
 import unittest
 
-from ims_lti_py import LaunchParams, DEFAULT_LTI_VERSION, InvalidLTIConfigError
-from ims_lti_py.launch_params import InvalidLaunchParamError
+from dce_lti_py import LaunchParams, DEFAULT_LTI_VERSION, InvalidLTIConfigError
+from dce_lti_py.launch_params import InvalidLaunchParamError
 
 class TestLaunchParams(unittest.TestCase):
 

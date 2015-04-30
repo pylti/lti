@@ -1,5 +1,5 @@
-from ims_lti_py.outcome_request import REPLACE_REQUEST
-from ims_lti_py import OutcomeRequest, OutcomeResponse, InvalidLTIConfigError
+from dce_lti_py.outcome_request import REPLACE_REQUEST
+from dce_lti_py import OutcomeRequest, OutcomeResponse, InvalidLTIConfigError
 
 import unittest
 from oauthlib.common import unquote

@@ -25,18 +25,17 @@ here = os.path.abspath(os.path.dirname(__file__))
 def read(path):
     return codecs.open(os.path.join(here, path), 'r', 'utf-8').read()
 
-version_file = read('ims_lti_py/__init__.py')
+version_file = read('dce_lti_py/__init__.py')
 version = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", version_file, re.M).group(1)
 
 setup(
-    name='ims_lti_py',
+    name='dce_lti_py',
     version=version,
-    description=('A Python library to help implement IMS '
-                 'LTI tool consumers and providers'),
-    author='Anson MacKeracher',
-    author_email='anson@tophatmonocle.com',
-    url='https://github.com/tophatmonocle/ims_lti_py',
-    packages=['ims_lti_py'],
+    description='A python library for building and/or consuming LTI apps',
+    author='Jay Luker',
+    author_email='jay_luker@harvard.edu',
+    url='https://github.com/harvard-dce/dce_lti_py',
+    packages=['dce_lti_py'],
     install_requires=['lxml', 'oauthlib', 'requests-oauthlib'],
     license='MIT License',
     keywords='lti',

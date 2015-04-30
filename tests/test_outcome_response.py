@@ -1,4 +1,4 @@
-from ims_lti_py import OutcomeResponse
+from dce_lti_py import OutcomeResponse
 from lxml import etree
 import mock
 import unittest
