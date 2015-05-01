@@ -2,7 +2,7 @@ import os
 import re
 import sys
 import codecs
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from setuptools.command.test import test as TestCommand
 class PyTest(TestCommand):
@@ -35,7 +35,7 @@ setup(
     author='Jay Luker',
     author_email='jay_luker@harvard.edu',
     url='https://github.com/harvard-dce/dce_lti_py',
-    packages=['dce_lti_py'],
+    packages=find_packages(),
     install_requires=['lxml', 'oauthlib', 'requests-oauthlib'],
     license='MIT License',
     keywords='lti',
