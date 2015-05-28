@@ -77,11 +77,17 @@ LAUNCH_PARAMS_IS_LIST = [
     'context_type'
 ]
 
+LAUNCH_PARAMS_CANVAS = [
+    'selection_directive',
+    'text'    
+]
+
 LAUNCH_PARAMS = LAUNCH_PARAMS_REQUIRED + \
                 LAUNCH_PARAMS_RECOMMENDED + \
                 LAUNCH_PARAMS_RETURN_URL + \
                 LAUNCH_PARAMS_OAUTH + \
-                LAUNCH_PARAMS_LIS
+                LAUNCH_PARAMS_LIS + \
+                LAUNCH_PARAMS_CANVAS
 
 def valid_param(param):
     if param.startswith('custom_') or param.startswith('ext_'):
