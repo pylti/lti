@@ -1,6 +1,12 @@
 dce_lti_py change log
 =====================
 
+0.7.3 (2015-05-28)
+------------------
+
+* added some launch params specific to the Canvas editor
+* added contributor section to README
+
 0.7.2 (2015-05-01)
 ------------------
 

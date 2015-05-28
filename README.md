@@ -97,3 +97,8 @@ ims-lti-py unit tests can be run by executing
     python setup.py test
 
 Optionally, you can use [tox](https://tox.readthedocs.org/) with the provided `tox.ini` file
+
+## Contributors
+
+* Jay Luker \<<jay_luker@harvard.edu>\> [@lbjay](http://github.com/lbjay), maintainer
+* Reinhard Engels \<<reinhard_engels@harvard.edu>\> [@brainheart](https://github.com/brainheart)
