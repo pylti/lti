@@ -136,7 +136,8 @@ class OutcomeRequest():
                 'OutcomeRequest does not have all required attributes')
 
         header_oauth = OAuth1(self.consumer_key, self.consumer_secret,
-                       signature_type=SIGNATURE_TYPE_AUTH_HEADER, **kwargs)
+                       signature_type=SIGNATURE_TYPE_AUTH_HEADER,
+                       force_include_body=True, **kwargs)
 
         headers = {'Content-type': 'application/xml'}
         resp = requests.post(self.lis_outcome_service_url, auth=header_oauth,

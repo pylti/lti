@@ -127,6 +127,6 @@ class TestOutcomeRequest(unittest.TestCase):
             'oauth_nonce="my_nonce", oauth_timestamp="1234567890", '
             'oauth_version="1.0", oauth_signature_method="HMAC-SHA1", '
             'oauth_consumer_key="consumer", '
-            'oauth_signature="rbvjzAHwXPs/e41Runtu6w9Gv+w="')
+            'oauth_body_hash="glWvnsZZ8lMif1ATz8Tx64CTTaY=", '
+            'oauth_signature="XR6A1CmUauXZdJZXa1pJpTQi6OQ="')
         self.assertEqual(auth_header, correct)
-
