@@ -1,6 +1,11 @@
 dce_lti_py change log
 =====================
 
+0.7.4 (2015-10-16)
+--------------------
+
+Include oauth_body_hash parameter in outcome request
+
 0.7.3 (2015-05-28)
 ------------------
 

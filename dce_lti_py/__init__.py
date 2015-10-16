@@ -1,4 +1,4 @@
-__version__ = '0.7.3'
+__version__ = '0.7.4'
 
 DEFAULT_LTI_VERSION = 'LTI-1.0'
 

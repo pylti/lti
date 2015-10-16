@@ -41,6 +41,6 @@ setup(
     keywords='lti',
     zip_safe=True,
     test_suite='tests',
-    tests_require=['pytest', 'mock', 'httmock'],
+    tests_require=['pytest', 'mock==1.0.1', 'httmock'],
     cmdclass={'test': PyTest}
 )
