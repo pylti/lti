@@ -102,3 +102,4 @@ Optionally, you can use [tox](https://tox.readthedocs.org/) with the provided `t
 
 * Jay Luker \<<jay_luker@harvard.edu>\> [@lbjay](http://github.com/lbjay), maintainer
 * Reinhard Engels \<<reinhard_engels@harvard.edu>\> [@brainheart](https://github.com/brainheart)
+* Michael Wheeler [@michaelwheeler](https://github.com/michaelwheeler)
