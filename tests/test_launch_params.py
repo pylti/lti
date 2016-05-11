@@ -53,7 +53,8 @@ class TestLaunchParams(unittest.TestCase):
         lp.set_non_spec_param('foo', 'bar')
         self.assertEqual(lp.get_non_spec_param('foo'), 'bar')
         self.assertEqual(lp._params['foo'], 'bar')
-        self.assertRaises(KeyError, lp.get('foo'))
+        with self.assertRaises(KeyError):
+            lp['foo']
 
     def test_dict_behavior(self):
 
