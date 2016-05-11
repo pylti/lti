@@ -1,5 +1,5 @@
 
-from dce_lti_py import ToolProvider
+from lti import ToolProvider
 from django.shortcuts import redirect
 
 class DjangoToolProvider(ToolProvider):
@@ -32,4 +32,3 @@ class DjangoToolProvider(ToolProvider):
         self.lti_errormsg = errormsg
         self.lti_errorlog = errorlog
         return redirect(self.build_return_url())
-

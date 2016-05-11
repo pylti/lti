@@ -1,5 +1,4 @@
-
-from dce_lti_py import ToolProvider
+from lti import ToolProvider
 
 class FlaskToolProvider(ToolProvider):
     '''
@@ -11,4 +10,3 @@ class FlaskToolProvider(ToolProvider):
         headers = request.headers.copy()
         url = request.url
         return ToolProvider.from_unpacked_request(secret, params, url, headers)
-

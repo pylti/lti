@@ -1,7 +1,7 @@
 import sys
 from collections import defaultdict, MutableMapping
 
-from dce_lti_py import DEFAULT_LTI_VERSION
+from lti import DEFAULT_LTI_VERSION
 
 py   = sys.version_info
 if py <  (2, 6, 0): bytes=str
@@ -79,7 +79,7 @@ LAUNCH_PARAMS_IS_LIST = [
 
 LAUNCH_PARAMS_CANVAS = [
     'selection_directive',
-    'text'    
+    'text'
 ]
 
 LAUNCH_PARAMS = LAUNCH_PARAMS_REQUIRED + \
@@ -163,4 +163,3 @@ class LaunchParams(MutableMapping):
 
     def __iter__(self):
         return iter(self._params)
-

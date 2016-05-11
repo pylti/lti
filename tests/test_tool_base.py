@@ -1,7 +1,7 @@
 
 import unittest
 from oauthlib.common import generate_client_id, generate_token
-from dce_lti_py import LaunchParams, ToolBase, DEFAULT_LTI_VERSION
+from lti import LaunchParams, ToolBase, DEFAULT_LTI_VERSION
 
 
 def create_tb(key=None, secret=None, lp=None):
@@ -92,4 +92,3 @@ class TestToolBase(unittest.TestCase):
         tb.set_ext_param('baz', 'blergh')
         self.assertEqual(tb.launch_params['ext_baz'], 'blergh')
         self.assertEqual(tb.get_ext_param('baz'), 'blergh')
-

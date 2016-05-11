@@ -1,7 +1,7 @@
 import unittest
 
-from dce_lti_py import LaunchParams, DEFAULT_LTI_VERSION, InvalidLTIConfigError
-from dce_lti_py.launch_params import InvalidLaunchParamError
+from lti import LaunchParams, DEFAULT_LTI_VERSION, InvalidLTIConfigError
+from lti.launch_params import InvalidLaunchParamError
 
 class TestLaunchParams(unittest.TestCase):
 
@@ -79,4 +79,3 @@ class TestLaunchParams(unittest.TestCase):
             'lti_message_type': 'bar',
             'resource_link_id': 1
         })
-

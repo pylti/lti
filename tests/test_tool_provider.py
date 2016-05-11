@@ -6,8 +6,8 @@ from oauthlib.common import generate_client_id
 from oauthlib.common import generate_token
 from oauthlib.oauth1 import SignatureOnlyEndpoint
 
-from dce_lti_py import LaunchParams, OutcomeRequest, ToolProvider
-from dce_lti_py.utils import parse_qs, InvalidLTIConfigError
+from lti import LaunchParams, OutcomeRequest, ToolProvider
+from lti.utils import parse_qs, InvalidLTIConfigError
 
 def create_tp(key=None, secret=None, lp=None, launch_url=None,
               launch_headers=None, tp_class=ToolProvider):
@@ -164,7 +164,7 @@ class TestDjangoToolProvider(unittest.TestCase):
 
     @patch.dict('sys.modules', mock_modules)
     def test_from_django_request(self):
-        from dce_lti_py.contrib.django import DjangoToolProvider
+        from lti.contrib.django import DjangoToolProvider
         secret = generate_token()
         mock_req = Mock()
         mock_req.POST = {'oauth_consumer_key': 'foo'}
@@ -177,7 +177,7 @@ class TestDjangoToolProvider(unittest.TestCase):
 
     @patch.dict('sys.modules', mock_modules)
     def test_success_redirect(self):
-        from dce_lti_py.contrib.django import DjangoToolProvider
+        from lti.contrib.django import DjangoToolProvider
         tp = create_tp(lp={
             'launch_presentation_return_url': 'http://example.edu/foo'
         }, tp_class=DjangoToolProvider)
@@ -192,7 +192,7 @@ class TestDjangoToolProvider(unittest.TestCase):
 
     @patch.dict('sys.modules', mock_modules)
     def test_error_redirect(self):
-        from dce_lti_py.contrib.django import DjangoToolProvider
+        from lti.contrib.django import DjangoToolProvider
         tp = create_tp(lp={
             'launch_presentation_return_url': 'http://example.edu/bar'
         }, tp_class=DjangoToolProvider)
@@ -208,7 +208,7 @@ class TestDjangoToolProvider(unittest.TestCase):
 class TestFlaskToolProvider(unittest.TestCase):
 
     def test_from_flask_request(self):
-        from dce_lti_py.contrib.flask import FlaskToolProvider
+        from lti.contrib.flask import FlaskToolProvider
         secret = generate_token()
         mock_req = Mock()
         mock_req.form = {'oauth_consumer_key': 'foo'}

@@ -1,5 +1,4 @@
-
-from dce_lti_py import ToolConfig, InvalidLTIConfigError
+from lti import ToolConfig, InvalidLTIConfigError
 from lxml import etree
 import unittest
 
@@ -86,8 +85,8 @@ class TestToolConfig(unittest.TestCase):
         '''
         Should generate the expected config xml.
         '''
-        config = ToolConfig(title = "Test Config", 
-                secure_launch_url = "https://www.example.com/lti", 
+        config = ToolConfig(title = "Test Config",
+                secure_launch_url = "https://www.example.com/lti",
                 custom_params = {"custom1": "customval1"})
         config.description ='Description of boringness'
         config.launch_url = 'http://www.example.com/lti'
@@ -103,7 +102,7 @@ class TestToolConfig(unittest.TestCase):
 
         config.set_ext_params('example.com', { 'extkey1': 'extval1' })
         config.set_ext_param('example.com', 'extkey2', 'extval2')
-        config.set_ext_param('example.com', 'extopt1', 
+        config.set_ext_param('example.com', 'extopt1',
                 { 'optkey1': 'optval1', 'optkey2': 'optval2' })
         config.set_ext_param('two.example.com', 'ext1key', 'ext1val')
 
@@ -115,8 +114,8 @@ class TestToolConfig(unittest.TestCase):
 
     def test_allow_suboptions(self):
 
-        config = ToolConfig(title = "Test Config", 
-                secure_launch_url = "https://www.example.com/lti", 
+        config = ToolConfig(title = "Test Config",
+                secure_launch_url = "https://www.example.com/lti",
                 custom_params = {"custom1": "customval1"})
         config.description ='Description of boringness'
         config.launch_url = 'http://www.example.com/lti'
@@ -132,9 +131,9 @@ class TestToolConfig(unittest.TestCase):
 
         config.set_ext_params('example.com', { 'extkey1': 'extval1' })
         config.set_ext_param('example.com', 'extkey2', 'extval2')
-        config.set_ext_param('example.com', 'extopt1', 
+        config.set_ext_param('example.com', 'extopt1',
                 { 'optkey1': 'optval1', 'optkey2': 'optval2' })
-        config.set_ext_param('example.com', 'extopt1', 
+        config.set_ext_param('example.com', 'extopt1',
                 { 'labels':{
                     'en':'Image Library',
                     'es':'Biblioteca de Imagenes'

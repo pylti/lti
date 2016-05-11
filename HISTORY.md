@@ -1,5 +1,10 @@
-dce_lti_py change log
-=====================
+lti change log
+==============
+
+0.8.0 (TBD)
+-----------
+
+* Project forked and renamed from [dce_lti_py](https://github.com/harvard-dce/dce_lti_py).
 
 0.7.4 (2015-10-16)
 --------------------
@@ -26,12 +31,10 @@ Project officially forked and renamed from [ims_lti_py](https://github.com/topha
 ------------------
 
 Updating project to utilize the oauthlib python library.
-    
+
 * convert from python-oauth2 to oauthlib & requests-oauthlib
 * refactored out use of mixin classes
 * LaunchParams as first class object
 * Major rewrite and rename of test suite
 * Use of semver version identifier
 * Use of pytest and tox for test running
-
-

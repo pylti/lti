@@ -1,5 +1,5 @@
-from dce_lti_py import ToolConsumer, LaunchParams
-from dce_lti_py.utils import parse_qs, InvalidLTIConfigError
+from lti import ToolConsumer, LaunchParams
+from lti.utils import parse_qs, InvalidLTIConfigError
 import unittest
 
 from oauthlib.common import generate_client_id, generate_token, unquote
@@ -126,4 +126,3 @@ class TestToolConsumer(unittest.TestCase):
             'oauth_signature': 'gXIAk60dLsrh6YQGT5ZGK6tHDGY=',
             })
         self.assertEqual(got, correct)
-

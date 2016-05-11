@@ -22,3 +22,6 @@ venv
 # tox
 .eggs
 .tox
+
+# pytest
+.cache
