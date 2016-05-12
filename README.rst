@@ -115,15 +115,3 @@ Unit tests can be run by executing
 This uses tox_ to set up and run the test environment.
 
 .. _tox: https://tox.readthedocs.org/
-
-
-Contributors
-============
-
-* Jay Luker <jay_luker@harvard.edu> `@lbjay`_
-* Reinhard Engels <reinhard_engels@harvard.edu> `@brainheart`_
-* Michael Wheeler `@michaelwheeler`_
-
-.. _`@lbjay`: https://github.com/lbjay
-.. _`@brainheart`: https://github.com/brainheart
-.. _`@michaelwheeler`: https://github.com/michaelwheeler
