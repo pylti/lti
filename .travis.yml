@@ -5,9 +5,6 @@ python:
 install: pip install tox-travis codecov
 script: tox
 after_success: codecov
-branches:
-  only:
-    - master
 deploy:
   provider: pypi
   user: pylti
