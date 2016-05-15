@@ -1,5 +1,5 @@
 0.8.0 (2016-05-15)
-+++++++++++
+++++++++++++++++++
 
 * Fork from dce_lti_py_, and rename to ``lti`` at version 0.7.4.
 * Convert text files to reStructured Text.
