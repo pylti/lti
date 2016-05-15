@@ -2,6 +2,12 @@
 lti: Learning Tools Interoperability
 ====================================
 
+.. image:: https://travis-ci.org/pylti/lti.svg?branch=master
+    :target: https://travis-ci.org/pylti/lti
+
+.. image:: https://codecov.io/gh/pylti/lti/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/pylti/lti
+
 ``lti`` is a Python library implementing the
 Learning Tools Interperability (LTI) standard.
 It is based on dce_lti_py_,
