@@ -1,6 +1,3 @@
-Core Contributors
------------------
-
 This project is the iterative work of several people,
 under several different project names.
 
