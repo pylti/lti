@@ -25,3 +25,6 @@ venv
 
 # pytest
 .cache
+
+# Coverage
+.coverage
