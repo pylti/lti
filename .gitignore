@@ -27,4 +27,4 @@ venv
 .cache
 
 # Coverage
-.coverage
+.coverage*
