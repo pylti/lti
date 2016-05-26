@@ -5,7 +5,7 @@ import unittest
 from oauthlib.common import unquote
 from httmock import all_requests, HTTMock
 
-EXPECTED_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+EXPECTED_XML = b'''<?xml version="1.0" encoding="UTF-8"?>
 <imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
     <imsx_POXHeader>
         <imsx_POXRequestHeaderInfo>
@@ -19,7 +19,7 @@ EXPECTED_XML = '''<?xml version="1.0" encoding="UTF-8"?>
 </imsx_POXEnvelopeRequest>
 '''
 
-REPLACE_RESULT_XML = EXPECTED_XML[:] % '''
+REPLACE_RESULT_XML = EXPECTED_XML[:] % b'''
 <replaceResultRequest>
     <resultRecord>
         <sourcedGUID>
@@ -35,7 +35,7 @@ REPLACE_RESULT_XML = EXPECTED_XML[:] % '''
 </replaceResultRequest>
 '''
 
-READ_RESULT_XML = EXPECTED_XML[:] % '''
+READ_RESULT_XML = EXPECTED_XML[:] % b'''
 <readResultRequest>
     <resultRecord>
         <sourcedGUID>
@@ -45,7 +45,7 @@ READ_RESULT_XML = EXPECTED_XML[:] % '''
 </readResultRequest>
 '''
 
-DELETE_RESULT_XML = EXPECTED_XML[:] % '''
+DELETE_RESULT_XML = EXPECTED_XML[:] % b'''
 <deleteResultRequest>
     <resultRecord>
         <sourcedGUID>
