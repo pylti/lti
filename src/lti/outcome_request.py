@@ -42,7 +42,7 @@ class OutcomeRequest():
             setattr(self, attr, None)
 
         # Store specified options in our accessors
-        for (key, val) in opts.iteritems():
+        for (key, val) in opts.items():
             if key in VALID_ATTRIBUTES:
                 setattr(self, key, val)
             else:
