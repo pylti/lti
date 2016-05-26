@@ -1,5 +1,5 @@
 from lxml import etree, objectify
-from utils import InvalidLTIConfigError
+from .utils import InvalidLTIConfigError
 
 CODE_MAJOR_CODES = [
     'success',

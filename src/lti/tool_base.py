@@ -1,5 +1,5 @@
 
-from launch_params import LaunchParams, valid_param
+from .launch_params import LaunchParams, valid_param
 
 ROLES_STUDENT = ['student', 'learner']
 ROLES_INSTRUCTOR = ['instructor', 'faculty', 'staff']

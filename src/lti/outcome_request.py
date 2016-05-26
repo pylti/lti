@@ -5,8 +5,8 @@ import requests
 from requests_oauthlib import OAuth1
 from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_AUTH_HEADER
 
-from outcome_response import OutcomeResponse
-from utils import InvalidLTIConfigError
+from .outcome_response import OutcomeResponse
+from .utils import InvalidLTIConfigError
 
 REPLACE_REQUEST = 'replaceResult'
 DELETE_REQUEST = 'deleteResult'
