@@ -8,6 +8,7 @@ after_success: codecov
 branches:
   only:
     - master
+    - /^.*$/
 deploy:
   provider: pypi
   user: pylti
