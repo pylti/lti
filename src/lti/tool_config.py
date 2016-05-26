@@ -1,7 +1,7 @@
 from collections import defaultdict
 from lxml import etree, objectify
 
-from utils import InvalidLTIConfigError
+from .utils import InvalidLTIConfigError
 
 VALID_ATTRIBUTES = [
         'title',
@@ -53,7 +53,7 @@ class ToolConfig():
             setattr(self, attr, attr_val)
 
         # Iterate over all provided options and save to class instance members
-        for (key, val) in kwargs.iteritems():
+        for (key, val) in kwargs.items():
             if key in VALID_ATTRIBUTES:
                 setattr(self, key, val)
             else:
@@ -68,7 +68,7 @@ class ToolConfig():
         '''
         config = ToolConfig()
         config.process_xml(xml)
-        return config 
+        return config
 
     def set_custom_param(self, key, val):
         '''
@@ -176,12 +176,12 @@ class ToolConfig():
                 self.set_ext_params(platform, properties)
 
     def recursive_options(self,element,params):
-        for key, val in params.iteritems():
+        for key, val in params.items():
             if isinstance(val, dict):
                 options_node = etree.SubElement(element,
                       '{%s}%s' %(NSMAP['lticm'], 'options'), name =
                       key)
-                for key, val in val.iteritems():
+                for key, val in val.items():
                     self.recursive_options(options_node,{key:val})
             else:
                 param_node = etree.SubElement(element, '{%s}%s'
@@ -200,7 +200,7 @@ class ToolConfig():
                     '{%s}%s' %(NSMAP['xsi'], 'schemaLocation'): 'http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd',
                     'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0'
                     }, nsmap = NSMAP)
-        
+
         for key in ['title', 'description', 'launch_url', 'secure_launch_url']:
             option = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'], key))
             option.text = getattr(self, key)

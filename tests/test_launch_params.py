@@ -70,9 +70,9 @@ class TestLaunchParams(unittest.TestCase):
             'foo': 'bar'
         })
 
-        self.assertItemsEqual(
-            lp.keys(),
-            ['lti_version', 'lti_message_type', 'resource_link_id']
+        self.assertEqual(
+            set(lp.keys()),
+            {'lti_version', 'lti_message_type', 'resource_link_id'}
         )
 
         self.assertEqual(dict(lp), {

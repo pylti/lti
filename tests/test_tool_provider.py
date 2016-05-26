@@ -1,5 +1,9 @@
 import unittest
-import urlparse
+
+try:
+    from urllib.parse import urlsplit
+except ImportError:
+    from urlparse import urlsplit  # Python 2
 
 from mock import Mock, patch
 from oauthlib.common import generate_client_id
@@ -87,7 +91,7 @@ class TestToolProvider(unittest.TestCase):
             'lti_log': 'lms message'
         })
         return_url = tp.build_return_url()
-        parsed = urlparse.urlsplit(return_url)
+        parsed = urlsplit(return_url)
         self.assertEqual(parsed.hostname, 'foo.edu')
         self.assertEqual(parsed.path, '/done')
         self.assertEqual(parse_qs(parsed.query), {
@@ -184,7 +188,7 @@ class TestDjangoToolProvider(unittest.TestCase):
         redirect_retval = tp.success_redirect(msg='bar', log='baz')
         self.assertEqual(redirect_retval, 'foo')
         redirect_url, = mock.shortcuts.redirect.call_args[0]
-        parsed = urlparse.urlsplit(redirect_url)
+        parsed = urlsplit(redirect_url)
         self.assertEqual(parse_qs(parsed.query), {
             'lti_msg': 'bar',
             'lti_log': 'baz'
@@ -199,7 +203,7 @@ class TestDjangoToolProvider(unittest.TestCase):
         redirect_retval = tp.error_redirect(errormsg='abcd', errorlog='efgh')
         self.assertEqual(redirect_retval, 'foo')
         redirect_url, = mock.shortcuts.redirect.call_args[0]
-        parsed = urlparse.urlsplit(redirect_url)
+        parsed = urlsplit(redirect_url)
         self.assertEqual(parse_qs(parsed.query), {
             'lti_errormsg': 'abcd',
             'lti_errorlog': 'efgh'

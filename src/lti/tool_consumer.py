@@ -4,9 +4,9 @@ from oauthlib.common import unquote
 from requests_oauthlib import OAuth1
 from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_BODY
 
-from tool_base import ToolBase
-from launch_params import LAUNCH_PARAMS_REQUIRED
-from utils import parse_qs, InvalidLTIConfigError, generate_identifier
+from .tool_base import ToolBase
+from .launch_params import LAUNCH_PARAMS_REQUIRED
+from .utils import parse_qs, InvalidLTIConfigError, generate_identifier
 
 class ToolConsumer(ToolBase):
 
@@ -68,4 +68,3 @@ class ToolConsumer(ToolBase):
         if self.launch_url == None:
             self.launch_url = config.launch_url
             self.launch_params.update(config.custom_params)
-

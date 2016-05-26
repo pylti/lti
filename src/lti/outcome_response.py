@@ -1,5 +1,5 @@
 from lxml import etree, objectify
-from utils import InvalidLTIConfigError
+from .utils import InvalidLTIConfigError
 
 CODE_MAJOR_CODES = [
     'success',
@@ -49,7 +49,7 @@ class OutcomeResponse():
             setattr(self, attr, None)
 
         # Store specified options in our options member
-        for (key, val) in kwargs.iteritems():
+        for (key, val) in kwargs.items():
             if key in VALID_ATTRIBUTES:
                 setattr(self, key, val)
             else:

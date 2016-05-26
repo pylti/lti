@@ -1,15 +1,20 @@
-from utils import InvalidLTIRequestError
-from launch_params import LaunchParams
-from tool_base import ToolBase
+from .utils import InvalidLTIRequestError
+from .launch_params import LaunchParams
+from .tool_base import ToolBase
 
 from oauthlib.oauth1 import SignatureOnlyEndpoint
 from oauthlib.oauth1.rfc5849 import CONTENT_TYPE_FORM_URLENCODED
 from requests.structures import CaseInsensitiveDict
 
-from outcome_request import OutcomeRequest
+from .outcome_request import OutcomeRequest
 from collections import defaultdict
-from urllib import urlencode
-from urlparse import urlsplit, urlunsplit, parse_qsl
+
+try:
+    from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
+except ImportError:
+    # Python 2
+    from urllib import urlencode
+    from urlparse import urlsplit, urlunsplit, parse_qsl
 
 class ToolProvider(ToolBase):
     '''
@@ -152,6 +157,3 @@ class ToolProvider(ToolBase):
         self.outcome_requests.append(OutcomeRequest(opts=opts))
         self._last_outcome_request = self.outcome_requests[-1]
         return self._last_outcome_request
-
-
-
