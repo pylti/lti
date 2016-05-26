@@ -8,8 +8,13 @@ from requests.structures import CaseInsensitiveDict
 
 from .outcome_request import OutcomeRequest
 from collections import defaultdict
-from urllib import urlencode
-from urlparse import urlsplit, urlunsplit, parse_qsl
+
+try:
+    from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
+except ImportError:
+    # Python 2
+    from urllib import urlencode
+    from urlparse import urlsplit, urlunsplit, parse_qsl
 
 class ToolProvider(ToolBase):
     '''

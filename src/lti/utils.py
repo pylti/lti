@@ -1,5 +1,9 @@
 from uuid import uuid1
-import urlparse
+
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse  # Python 2
 
 def parse_qs(qs):
     return dict( (k, v if len(v)>1 else v[0] )
