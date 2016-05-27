@@ -27,7 +27,7 @@ NSMAP = {
     'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
     }
 
-class ToolConfig():
+class ToolConfig(object):
     '''
     Object used to represent LTI configuration.
 
@@ -176,19 +176,19 @@ class ToolConfig():
                 self.set_ext_params(platform, properties)
 
     def recursive_options(self,element,params):
-        for key, val in params.items():
+        for key, val in sorted(params.items()):
             if isinstance(val, dict):
                 options_node = etree.SubElement(element,
                       '{%s}%s' %(NSMAP['lticm'], 'options'), name =
                       key)
-                for key, val in val.items():
+                for key, val in sorted(val.items()):
                     self.recursive_options(options_node,{key:val})
             else:
                 param_node = etree.SubElement(element, '{%s}%s'
                           %(NSMAP['lticm'], 'property'), name = key)
                 param_node.text = val
 
-    def to_xml(self, opts = defaultdict(lambda: None)):
+    def to_xml(self, opts=defaultdict(lambda: None)):
         '''
         Generate XML from the current settings.
         '''
@@ -250,4 +250,5 @@ class ToolConfig():
             identifierref = etree.SubElement(root, 'cartridge_icon',
                     identifierref = self.cartridge_icon)
 
-        return '<?xml version="1.0" encoding="UTF-8"?>' + etree.tostring(root)
+        declaration = b'<?xml version="1.0" encoding="UTF-8"?>'
+        return declaration + etree.tostring(root, encoding='utf-8')
