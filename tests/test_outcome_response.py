@@ -3,7 +3,7 @@ from lxml import etree
 import mock
 import unittest
 
-RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
+RESPONSE_XML = """
 <imsx_POXEnvelopeResponse xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
     <imsx_POXHeader>
         <imsx_POXResponseHeaderInfo>
@@ -27,7 +27,7 @@ RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
 def normalize_xml(xml_str):
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.XML(xml_str, parser)
-    return etree.tostring(root, with_tail=False)
+    return etree.tostring(root, with_tail=False, xml_declaration=True)
 
 class TestOutcomeResponse(unittest.TestCase):
 
@@ -55,8 +55,8 @@ class TestOutcomeResponse(unittest.TestCase):
         '''
         Should parse readResult response XML.
         '''
-        read_xml = RESPONSE_XML.replace(\
-                '<replaceResultResponse/>',\
+        read_xml = RESPONSE_XML.replace(
+                '<replaceResultResponse/>',
                 '''<readResultResponse>
 <result>
 <resultScore>

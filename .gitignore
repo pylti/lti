@@ -28,3 +28,6 @@ venv
 
 # Coverage
 .coverage*
+
+# Pycharm
+.idea
