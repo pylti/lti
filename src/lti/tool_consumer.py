@@ -6,7 +6,7 @@ from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_BODY
 
 from .tool_base import ToolBase
 from .launch_params import LAUNCH_PARAMS_REQUIRED
-from .utils import parse_qs, InvalidLTIConfigError, generate_identifier
+from .utils import parse_qs, InvalidLTIConfigError
 
 class ToolConsumer(ToolBase):
 
@@ -59,7 +59,7 @@ class ToolConsumer(ToolBase):
         """
 
         r = self.generate_launch_request(**kwargs)
-        return parse_qs(unquote(r.body))
+        return parse_qs(unquote(r.body.decode('utf-8')))
 
     def set_config(self, config):
         '''

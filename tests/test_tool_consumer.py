@@ -66,7 +66,7 @@ class TestToolConsumer(unittest.TestCase):
 
         self.assertIsInstance(launch_req, PreparedRequest)
 
-        got = parse_qs(unquote(launch_req.body))
+        got = parse_qs(unquote(launch_req.body.decode('utf-8')))
         correct = launch_params.copy()
         correct.update({
             'oauth_nonce': 'abcd1234',
@@ -93,7 +93,7 @@ class TestToolConsumer(unittest.TestCase):
                           params=launch_params)
         launch_req = tc.generate_launch_request(nonce='wxyz7890',
                                                 timestamp='2345678901')
-        got = parse_qs(unquote(launch_req.body))
+        got = parse_qs(unquote(launch_req.body.decode('utf-8')))
         correct = launch_params.copy()
         correct.update({
             'oauth_nonce': 'wxyz7890',
