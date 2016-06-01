@@ -3,7 +3,7 @@ from lxml import etree
 import mock
 import unittest
 
-RESPONSE_XML = """
+RESPONSE_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
 <imsx_POXEnvelopeResponse xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
     <imsx_POXHeader>
         <imsx_POXResponseHeaderInfo>
@@ -56,8 +56,8 @@ class TestOutcomeResponse(unittest.TestCase):
         Should parse readResult response XML.
         '''
         read_xml = RESPONSE_XML.replace(
-                '<replaceResultResponse/>',
-                '''<readResultResponse>
+                b'<replaceResultResponse/>',
+                b'''<readResultResponse>
 <result>
 <resultScore>
 <language>en</language>
@@ -78,7 +78,7 @@ class TestOutcomeResponse(unittest.TestCase):
         '''
         Should parse deleteResult response XML.
         '''
-        delete_xml = RESPONSE_XML.replace('replaceResult', 'deleteResult')
+        delete_xml = RESPONSE_XML.replace(b'replaceResult', b'deleteResult')
         fake = self.mock_response(delete_xml)
         result = OutcomeResponse.from_post_response(fake, delete_xml)
         self.assertTrue(result.is_success())
@@ -93,7 +93,7 @@ class TestOutcomeResponse(unittest.TestCase):
         '''
         Should recognize a failure response.
         '''
-        failure_xml = RESPONSE_XML.replace('success', 'failure')
+        failure_xml = RESPONSE_XML.replace(b'success', b'failure')
         fake = self.mock_response(failure_xml)
         result = OutcomeResponse.from_post_response(fake, failure_xml)
         self.assertTrue(result.is_failure())
