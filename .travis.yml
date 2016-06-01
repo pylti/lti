@@ -17,7 +17,7 @@ deploy:
     secure: TQ0/wEA4Z96GcPPpW4+BwVLq1Oh8YDihD1ugelIwgqIfpVJNF3lSpahazocAn6Lu53Z+I+qReyFMLBpdKBZAQN4d8501V8X029uY7l2Dj7qyWsgOlJmud8BtJZizZ2jgmdg670sZSrEAipfxJ0Rm5f7ItrTWLEEDZG2FQ88T2Ao6CQuOejqqm+UP2AL9he+BjbKN4cOBiVDyYY4KaayzCwue02JMDjTrQdUUD2ebjCa1DuEMLlsiy0Qwvfi59GBM6TygF9Tp4r+S4oCSEP7IoEmOEdykG0vhRlnugMtItl4L/m1DGL/xoClBPHTRP29JJ6c4yaoC4CxH7uGbpeW1EKOrncNx2GxMLco17S7UiBmIQudrvMDSAeepj1BCPUK+QU++OZo9+ZVcA9sctMcz0EieCwh1gXeO8nXtlsbtDzwMUaHTI1C1voSDRXcYGs0UdayGqN/+Rxv26AmJUJymNmcCZdZTfKHR8KLmEmz9UX/RzXad/en9LtKPWZSmwXio/Lrv+EfScvm/Q0Lec6fz2rkiMHWrG4Bvs+4oN4/5wPqC/KqatEWEXIRF8//Ksq+ffhIthApMfvKkE5Y1OwSi5ShGGLntJusSgdB3nr/sy6xEVFR5qshTiISysnKb7cjjxI9S8cQ4lX9HpUNdY6XC0moK1LZwlSsz4hV8AT5aTHA=
   on:
     tags: true
-    python: 2.7
+    python: 3.5
   distributions: sdist bdist_wheel
 matrix:
   fast_finish: true
