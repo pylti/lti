@@ -8,6 +8,10 @@ lti: Learning Tools Interoperability
 .. image:: https://codecov.io/gh/pylti/lti/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/pylti/lti
 
+.. image:: https://badges.gitter.im/pylti/lti.svg
+   :alt: Join the chat at https://gitter.im/pylti/lti
+   :target: https://gitter.im/pylti/lti?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 ``lti`` is a Python library implementing the
 Learning Tools Interperability (LTI) standard.
 It is based on dce_lti_py_,
@@ -121,8 +125,3 @@ Unit tests can be run by executing
 This uses tox_ to set up and run the test environment.
 
 .. _tox: https://tox.readthedocs.org/
-
-
-.. image:: https://badges.gitter.im/pylti/lti.svg
-   :alt: Join the chat at https://gitter.im/pylti/lti
-   :target: https://gitter.im/pylti/lti?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
