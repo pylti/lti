@@ -25,7 +25,7 @@ VALID_ATTRIBUTES = [
     'post_request'
 ]
 
-class OutcomeRequest():
+class OutcomeRequest(object):
     '''
     Class for consuming & generating LTI Outcome Requests.
 
