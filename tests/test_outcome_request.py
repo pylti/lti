@@ -122,7 +122,7 @@ class TestOutcomeRequest(unittest.TestCase):
         self.assertIsInstance(resp, OutcomeResponse)
         request = resp.post_response.request
         self.assertTrue('authorization' in request.headers)
-        auth_header = unquote(request.headers['authorization'])
+        auth_header = unquote(request.headers['authorization'].decode('utf-8'))
         correct = ('OAuth '
             'oauth_nonce="my_nonce", oauth_timestamp="1234567890", '
             'oauth_version="1.0", oauth_signature_method="HMAC-SHA1", '
