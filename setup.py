@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='lti',
-    version='0.8.0',
+    version='0.8.1',
     description='A python library for building and/or consuming LTI apps',
     long_description=open('README.rst', 'rb').read().decode('utf-8'),
     author='Python LTI Initiative',
