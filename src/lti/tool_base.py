@@ -6,7 +6,7 @@ ROLES_INSTRUCTOR = ['instructor', 'faculty', 'staff']
 
 class ToolBase(object):
 
-    def __init__(self, consumer_key, consumer_secret, params=None):
+    def __init__(self, consumer_key=None, consumer_secret=None, params=None):
 
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret

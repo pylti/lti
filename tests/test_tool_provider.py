@@ -9,9 +9,11 @@ from mock import Mock, patch
 from oauthlib.common import generate_client_id
 from oauthlib.common import generate_token
 from oauthlib.oauth1 import SignatureOnlyEndpoint
+from oauthlib.oauth1 import RequestValidator
 
 from lti import LaunchParams, OutcomeRequest, ToolProvider
 from lti.utils import parse_qs, InvalidLTIConfigError
+from lti.tool_provider import ProxyValidator
 
 def create_tp(key=None, secret=None, lp=None, launch_url=None,
               launch_headers=None, tp_class=ToolProvider):
@@ -49,13 +51,69 @@ class TestToolProvider(unittest.TestCase):
         tp = create_tp(key, secret, lp, launch_url, launch_headers)
 
         with patch.object(SignatureOnlyEndpoint, 'validate_request') as mv:
-            mv.return_value = True
+            mv.return_value = True, None  # Tuple of valid, request
             self.assertTrue(tp.is_valid_request(Mock()))
             call_url, call_method, call_params, call_headers = mv.call_args[0]
             self.assertEqual(call_url, launch_url)
             self.assertEqual(call_method, 'POST')
             self.assertEqual(call_params, lp)
             self.assertEqual(call_headers, launch_headers)
+
+    def test_is_valid_request_no_key_or_secret(self):
+        """
+        Checks that the key and secret will be populated during validation.
+        """
+        key = 'spamspamspam'
+        secret_ = 'eggseggsegss'
+        lp = LaunchParams({
+            'lti_version': 'foo',
+            'lti_message_type': 'bar',
+            'resource_link_id': '123',
+            'oauth_consumer_key': key,
+            'oauth_nonce': '9069031379649850801466828504',
+            'oauth_timestamp': '1466828504',
+            'oauth_version': '1.0',
+            'oauth_signature_method': 'HMAC-SHA1',
+            'oauth_signature': 'WZ9IHyFnKgDKBvnAfNSL3aOVteg=',
+        })
+        launch_url = 'https://example.edu/foo/bar'
+        launch_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+        class TpValidator(RequestValidator):
+            dummy_client = ''
+            def validate_timestamp_and_nonce(self, timestamp, nonce, request,
+                                             request_token=None,
+                                             access_token=None):
+                return True
+            def validate_client_key(self, client_key, request):
+                return True
+            def get_client_secret(self, client_key, request):
+                return secret_
+            secret = secret_  # Fool the ProxyValidator
+
+        tp = ToolProvider(params=lp, launch_url=launch_url,
+                          launch_headers=launch_headers)
+
+        SOE = SignatureOnlyEndpoint
+        with patch.object(SOE, '_check_mandatory_parameters'):
+            with patch.object(SOE, '_check_signature', return_value=True):
+                self.assertTrue(tp.is_valid_request(TpValidator()))
+
+        self.assertEqual(tp.consumer_key, key)
+        self.assertEqual(tp.consumer_secret, secret_)
+
+    def test_proxy_validator(self):
+        '''
+        Should store the secret when get_client_secret is called.
+        '''
+        class TpValidator(RequestValidator):
+            def get_client_secret(self, client_key, request):
+                return 'eggseggseggs'
+
+        pv = ProxyValidator(TpValidator())
+        self.assertFalse(hasattr(pv, 'secret'))
+        pv.get_client_secret('spamspamspam', None)
+        self.assertEqual(pv.secret, 'eggseggseggs')
 
     def test_outcome_service(self):
         '''
@@ -180,6 +238,24 @@ class TestDjangoToolProvider(unittest.TestCase):
         self.assertEqual(tp.launch_url, 'http://example.edu/foo/bar')
 
     @patch.dict('sys.modules', mock_modules)
+    def test_request_required(self):
+        from lti.contrib.django import DjangoToolProvider
+        with self.assertRaises(ValueError):
+            DjangoToolProvider.from_django_request()
+
+    @patch.dict('sys.modules', mock_modules)
+    def test_secret_not_required(self):
+        from lti.contrib.django import DjangoToolProvider
+        mock_req = Mock()
+        mock_req.POST = {'oauth_consumer_key': 'foo'}
+        mock_req.META = {'CONTENT_TYPE': 'bar'}
+        mock_req.build_absolute_uri.return_value = 'http://example.edu/foo/bar'
+        tp = DjangoToolProvider.from_django_request(request=mock_req)
+        self.assertEqual(tp.consumer_key, 'foo')
+        self.assertEqual(tp.launch_headers['CONTENT_TYPE'], 'bar')
+        self.assertEqual(tp.launch_url, 'http://example.edu/foo/bar')
+
+    @patch.dict('sys.modules', mock_modules)
     def test_success_redirect(self):
         from lti.contrib.django import DjangoToolProvider
         tp = create_tp(lp={
@@ -219,6 +295,22 @@ class TestFlaskToolProvider(unittest.TestCase):
         mock_req.headers = {'Content-type': 'bar'}
         mock_req.url = 'http://example.edu/foo/bar'
         tp = FlaskToolProvider.from_flask_request(secret, mock_req)
+        self.assertEqual(tp.consumer_key, 'foo')
+        self.assertEqual(tp.launch_headers['Content-type'], 'bar')
+        self.assertEqual(tp.launch_url, 'http://example.edu/foo/bar')
+
+    def test_request_required(self):
+        from lti.contrib.flask import FlaskToolProvider
+        with self.assertRaises(ValueError):
+            FlaskToolProvider.from_flask_request()
+
+    def test_secret_not_required(self):
+        from lti.contrib.flask import FlaskToolProvider
+        mock_req = Mock()
+        mock_req.form = {'oauth_consumer_key': 'foo'}
+        mock_req.headers = {'Content-type': 'bar'}
+        mock_req.url = 'http://example.edu/foo/bar'
+        tp = FlaskToolProvider.from_flask_request(request=mock_req)
         self.assertEqual(tp.consumer_key, 'foo')
         self.assertEqual(tp.launch_headers['Content-type'], 'bar')
         self.assertEqual(tp.launch_url, 'http://example.edu/foo/bar')
