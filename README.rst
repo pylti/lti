@@ -98,8 +98,7 @@ Tool Provider OAuth Request Validation Example (Django)
 
 
     # create the tool provider instance
-    secret = 'my LTI app oauth secret'
-    tool_provider = DjangoToolProvider.from_django_request(secret, request)
+    tool_provider = DjangoToolProvider.from_django_request(request=request)
 
     # the tool provider uses the 'oauthlib' library which requires an instance
     # of a validator class when doing the oauth request signature checking.

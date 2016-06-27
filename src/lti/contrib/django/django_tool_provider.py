@@ -6,8 +6,11 @@ class DjangoToolProvider(ToolProvider):
     '''
     ToolProvider that works with Django requests
     '''
-    @staticmethod
-    def from_django_request(secret, request):
+    @classmethod
+    def from_django_request(cls, secret=None, request=None):
+        if request is None:
+            raise ValueError('request must be supplied')
+
         params = request.POST.copy()
         # django shoves a bunch of other junk in META that we don't care about
         headers = dict([(k, request.META[k])
@@ -15,7 +18,7 @@ class DjangoToolProvider(ToolProvider):
                         k.upper().startswith('HTTP_') or \
                         k.upper().startswith('CONTENT_')])
         url = request.build_absolute_uri()
-        return ToolProvider.from_unpacked_request(secret, params, url, headers)
+        return cls.from_unpacked_request(secret, params, url, headers)
 
     def success_redirect(self, msg='', log=''):
         '''

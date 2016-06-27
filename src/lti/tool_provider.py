@@ -21,20 +21,20 @@ class ToolProvider(ToolBase):
     Implements the LTI Tool Provider.
     '''
 
-    @staticmethod
-    def from_unpacked_request(secret, params, url, headers):
+    @classmethod
+    def from_unpacked_request(cls, secret, params, url, headers):
 
         launch_params = LaunchParams(params)
 
         if 'oauth_consumer_key' not in launch_params:
             raise InvalidLTIRequestError("oauth_consumer_key not found!")
 
-        return ToolProvider(launch_params['oauth_consumer_key'],
-                            secret, params=launch_params,
-                            launch_url=url, launch_headers=headers)
+        return cls(consumer_key=launch_params['oauth_consumer_key'],
+                   consumer_secret=secret, params=launch_params,
+                   launch_url=url, launch_headers=headers)
 
-    def __init__(self, consumer_key, consumer_secret, params=None,
-                  launch_url=None, launch_headers=None):
+    def __init__(self, consumer_key=None, consumer_secret=None, params=None,
+                 launch_url=None, launch_headers=None):
 
         super(ToolProvider, self).__init__(consumer_key, consumer_secret,
                                            params=params)
@@ -46,13 +46,22 @@ class ToolProvider(ToolBase):
             self.launch_headers['Content-Type'] = CONTENT_TYPE_FORM_URLENCODED
 
     def is_valid_request(self, validator):
+        validator = ProxyValidator(validator)
         endpoint = SignatureOnlyEndpoint(validator)
-        return endpoint.validate_request(
+
+        valid, request = endpoint.validate_request(
             self.launch_url,
             'POST',
             self.to_params(),
             self.launch_headers
         )
+
+        if valid and not self.consumer_key and not self.consumer_secret:
+            # Gather the key and secret
+            self.consumer_key = self.launch_params['oauth_consumer_key']
+            self.consumer_secret = validator.secret
+
+        return valid
 
     def is_outcome_service(self):
         '''
@@ -157,3 +166,20 @@ class ToolProvider(ToolBase):
         self.outcome_requests.append(OutcomeRequest(opts=opts))
         self._last_outcome_request = self.outcome_requests[-1]
         return self._last_outcome_request
+
+
+class ProxyValidator(object):
+    '''
+    Proxies a RequestValidator to save the client secret.
+    '''
+
+    def __init__(self, validator):
+        self._validator = validator
+
+    def __getattr__(self, name):
+        value = getattr(self._validator, name)
+        if name == 'get_client_secret':
+            def save_secret(*args, **kwargs):
+                self.secret = value(*args, **kwargs)
+            return save_secret
+        return value
