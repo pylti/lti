@@ -181,5 +181,6 @@ class ProxyValidator(object):
         if name == 'get_client_secret':
             def save_secret(*args, **kwargs):
                 self.secret = value(*args, **kwargs)
+                return self.secret
             return save_secret
         return value
