@@ -10,6 +10,6 @@ class FlaskToolProvider(ToolProvider):
             raise ValueError('request must be supplied')
 
         params = request.form.copy()
-        headers = request.headers.copy()
+        headers = dict(request.headers)
         url = request.url
         return cls.from_unpacked_request(secret, params, url, headers)
