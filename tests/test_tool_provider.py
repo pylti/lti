@@ -112,7 +112,8 @@ class TestToolProvider(unittest.TestCase):
 
         pv = ProxyValidator(TpValidator())
         self.assertFalse(hasattr(pv, 'secret'))
-        pv.get_client_secret('spamspamspam', None)
+        self.assertEqual(
+            pv.get_client_secret('spamspamspam', None), 'eggseggseggs')
         self.assertEqual(pv.secret, 'eggseggseggs')
 
     def test_outcome_service(self):
