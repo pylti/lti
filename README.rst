@@ -47,7 +47,8 @@ Usage
 The primary goal of this library is to provide classes
 for building Python LTI tool providers (LTI apps).
 To that end, the functionality that you're looking for
-is probably in the ``ToolConfig`` and ``ToolProvider`` classes.
+is probably in the ``ToolConfig`` and ``ToolProvider`` classes (``ToolConsumer``
+is available too, if you want to consume LTI Providers).
 
 
 Tool Config Example (Django)
@@ -110,6 +111,48 @@ Tool Provider OAuth Request Validation Example (Django)
     ok = tool_provider.is_valid_request(validator)
 
     # do stuff if ok / not ok
+
+
+Tool Consumer Example (Django)
+----------------------------
+
+In your view:
+
+.. code-block:: python
+
+    def index(request):
+        consumer = ToolConsumer(
+            consumer_key='my_key_given_from_provider',
+            consumer_secret='super_secret',
+            launch_url='provider_url',
+            params={
+                'lti_message_type': 'basic-lti-launch-request'
+            }
+        )
+
+        return render(
+            request,
+            'lti_consumer/index.html',
+            {
+                'launch_data': consumer.generate_launch_data(),
+                'launch_url': consumer.launch_url
+            }
+        )
+
+At the template:
+
+.. code-block:: html
+
+    <form action="{{ launch_url }}"
+          name="ltiLaunchForm"
+          id="ltiLaunchForm"
+          method="POST"
+          encType="application/x-www-form-urlencoded">
+      {% for key, value in launch_data.items %}
+        <input type="hidden" name="{{ key }}" value="{{ value }}"/>
+      {% endfor %}
+      <button type="submit">Launch the tool</button>
+    </form>
 
 
 Testing
