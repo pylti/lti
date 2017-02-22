@@ -14,6 +14,7 @@ setup(
         'lxml',
         'oauthlib',
         'requests-oauthlib',
+        'attrs',
     ],
     license='MIT License',
     keywords='lti',
