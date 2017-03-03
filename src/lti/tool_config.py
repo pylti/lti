@@ -4,20 +4,20 @@ from lxml import etree, objectify
 from .utils import InvalidLTIConfigError
 
 VALID_ATTRIBUTES = [
-        'title',
-        'description',
-        'launch_url',
-        'secure_launch_url',
-        'icon',
-        'secure_icon',
-        'cartridge_bundle',
-        'cartridge_icon',
-        'vendor_code',
-        'vendor_name',
-        'vendor_description',
-        'vendor_url',
-        'vendor_contact_email',
-        'vendor_contact_name'
+    'title',
+    'description',
+    'launch_url',
+    'secure_launch_url',
+    'icon',
+    'secure_icon',
+    'cartridge_bundle',
+    'cartridge_icon',
+    'vendor_code',
+    'vendor_name',
+    'vendor_description',
+    'vendor_url',
+    'vendor_contact_email',
+    'vendor_contact_name'
 ]
 
 NSMAP = {
@@ -25,7 +25,8 @@ NSMAP = {
     'xsi': "http://www.w3.org/2001/XMLSchema-instance",
     'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
     'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
-    }
+}
+
 
 class ToolConfig(object):
     '''
@@ -112,7 +113,7 @@ class ToolConfig(object):
         '''
         Parse tool configuration data out of the Common Cartridge LTI link XML.
         '''
-        root = objectify.fromstring(xml, parser = etree.XMLParser())
+        root = objectify.fromstring(xml, parser=etree.XMLParser())
         # Parse all children of the root node
         for child in root.getchildren():
             if 'title' in child.tag:
@@ -175,17 +176,22 @@ class ToolConfig(object):
 
                 self.set_ext_params(platform, properties)
 
-    def recursive_options(self,element,params):
+    def recursive_options(self, element, params):
         for key, val in sorted(params.items()):
             if isinstance(val, dict):
-                options_node = etree.SubElement(element,
-                      '{%s}%s' %(NSMAP['lticm'], 'options'), name =
-                      key)
+                options_node = etree.SubElement(
+                    element,
+                    '{%s}%s' % (NSMAP['lticm'], 'options'),
+                    name=key,
+                )
                 for key, val in sorted(val.items()):
-                    self.recursive_options(options_node,{key:val})
+                    self.recursive_options(options_node, {key: val})
             else:
-                param_node = etree.SubElement(element, '{%s}%s'
-                          %(NSMAP['lticm'], 'property'), name = key)
+                param_node = etree.SubElement(
+                    element,
+                    '{%s}%s' % (NSMAP['lticm'], 'property'),
+                    name=key,
+                )
                 param_node.text = val
 
     def to_xml(self, opts=defaultdict(lambda: None)):
@@ -195,60 +201,86 @@ class ToolConfig(object):
         if not self.launch_url or not self.secure_launch_url:
             raise InvalidLTIConfigError('Invalid LTI configuration')
 
-
-        root = etree.Element('cartridge_basiclti_link', attrib = {
-                    '{%s}%s' %(NSMAP['xsi'], 'schemaLocation'): 'http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd',
-                    'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0'
-                    }, nsmap = NSMAP)
+        root = etree.Element(
+            'cartridge_basiclti_link',
+            attrib={
+                '{%s}%s' % (NSMAP['xsi'], 'schemaLocation'): 'http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd',
+                'xmlns': 'http://www.imsglobal.org/xsd/imslticc_v1p0',
+            },
+            nsmap=NSMAP,
+        )
 
         for key in ['title', 'description', 'launch_url', 'secure_launch_url']:
-            option = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'], key))
+            option = etree.SubElement(root, '{%s}%s' % (NSMAP['blti'], key))
             option.text = getattr(self, key)
 
         vendor_keys = ['name', 'code', 'description', 'url']
         if any('vendor_' + key for key in vendor_keys) or\
                 self.vendor_contact_email:
-                    vendor_node = etree.SubElement(root, '{%s}%s'
-                            %(NSMAP['blti'], 'vendor'))
+                    vendor_node = etree.SubElement(
+                        root,
+                        '{%s}%s' % (NSMAP['blti'], 'vendor'),
+                    )
                     for key in vendor_keys:
-                        if getattr(self, 'vendor_' + key) != None:
-                            v_node = etree.SubElement(vendor_node,
-                                    '{%s}%s' %(NSMAP['lticp'], key))
+                        if getattr(self, 'vendor_' + key) is not None:
+                            v_node = etree.SubElement(
+                                vendor_node,
+                                '{%s}%s' % (NSMAP['lticp'], key),
+                            )
                             v_node.text = getattr(self, 'vendor_' + key)
                     if getattr(self, 'vendor_contact_email'):
-                        v_node = etree.SubElement(vendor_node,
-                                '{%s}%s' %(NSMAP['lticp'], 'contact'))
-                        c_name = etree.SubElement(v_node,
-                                '{%s}%s' %(NSMAP['lticp'], 'name'))
+                        v_node = etree.SubElement(
+                            vendor_node,
+                            '{%s}%s' % (NSMAP['lticp'], 'contact'),
+                        )
+                        c_name = etree.SubElement(
+                            v_node,
+                            '{%s}%s' % (NSMAP['lticp'], 'name'),
+                        )
                         c_name.text = self.vendor_contact_name
-                        c_email = etree.SubElement(v_node,
-                                '{%s}%s' %(NSMAP['lticp'], 'email'))
+                        c_email = etree.SubElement(
+                            v_node,
+                            '{%s}%s' % (NSMAP['lticp'], 'email'),
+                        )
                         c_email.text = self.vendor_contact_email
 
         # Custom params
         if len(self.custom_params) != 0:
-            custom_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
-                'custom'))
+            custom_node = etree.SubElement(
+                root,
+                '{%s}%s' % (NSMAP['blti'], 'custom'),
+            )
             for (key, val) in sorted(self.custom_params.items()):
-                c_node = etree.SubElement(custom_node, '{%s}%s'
-                        %(NSMAP['lticm'], 'property'))
+                c_node = etree.SubElement(
+                    custom_node,
+                    '{%s}%s' % (NSMAP['lticm'], 'property'),
+                )
                 c_node.set('name', key)
                 c_node.text = val
 
         # Extension params
         if len(self.extensions) != 0:
             for (key, params) in sorted(self.extensions.items()):
-                extension_node = etree.SubElement(root, '{%s}%s' %(NSMAP['blti'],
-                    'extensions'), platform = key)
-                self.recursive_options(extension_node,params)
+                extension_node = etree.SubElement(
+                    root,
+                    '{%s}%s' % (NSMAP['blti'], 'extensions'),
+                    platform=key,
+                )
+                self.recursive_options(extension_node, params)
 
         if getattr(self, 'cartridge_bundle'):
-            identifierref = etree.SubElement(root, 'cartridge_bundle',
-                    identifierref = self.cartridge_bundle)
+            identifierref = etree.SubElement(
+                root,
+                'cartridge_bundle',
+                identifierref=self.cartridge_bundle,
+            )
 
         if getattr(self, 'cartridge_icon'):
-            identifierref = etree.SubElement(root, 'cartridge_icon',
-                    identifierref = self.cartridge_icon)
+            identifierref = etree.SubElement(
+                root,
+                'cartridge_icon',
+                identifierref=self.cartridge_icon,
+            )
 
         declaration = b'<?xml version="1.0" encoding="UTF-8"?>'
         return declaration + etree.tostring(root, encoding='utf-8')

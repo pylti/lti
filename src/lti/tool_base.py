@@ -4,6 +4,7 @@ from .launch_params import LaunchParams, valid_param
 ROLES_STUDENT = ['student', 'learner']
 ROLES_INSTRUCTOR = ['instructor', 'faculty', 'staff']
 
+
 class ToolBase(object):
 
     def __init__(self, consumer_key=None, consumer_secret=None, params=None):
@@ -69,7 +70,7 @@ class ToolBase(object):
     def to_params(self):
         params = dict(self.launch_params)
         # stringify any list values
-        for k,v in params.items():
+        for k, v in params.items():
             if isinstance(v, list):
                 params[k] = ','.join(v)
         return params

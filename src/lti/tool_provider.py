@@ -16,6 +16,7 @@ except ImportError:
     from urllib import urlencode
     from urlparse import urlsplit, urlunsplit, parse_qsl
 
+
 class ToolProvider(ToolBase):
     '''
     Implements the LTI Tool Provider.
@@ -68,7 +69,7 @@ class ToolProvider(ToolBase):
         Check if the Tool Launch expects an Outcome Result.
         '''
         return self.launch_params.get('lis_outcome_service_url') and \
-               self.launch_params.get('lis_result_sourcedid')
+            self.launch_params.get('lis_result_sourcedid')
 
     def username(self, default=None):
         '''
@@ -112,7 +113,7 @@ class ToolProvider(ToolBase):
             original.fragment
         ))
 
-    def post_replace_result(self, score, outcome_opts=defaultdict(lambda:None), result_data=None):
+    def post_replace_result(self, score, outcome_opts=defaultdict(lambda: None), result_data=None):
         '''
         POSTs the given score to the Tool Consumer with a replaceResult.
 
@@ -128,13 +129,13 @@ class ToolProvider(ToolBase):
         '''
         return self.new_request(outcome_opts).post_replace_result(score, result_data)
 
-    def post_delete_result(self,outcome_opts=defaultdict(lambda:None)):
+    def post_delete_result(self, outcome_opts=defaultdict(lambda: None)):
         '''
         POSTs a delete request to the Tool Consumer.
         '''
         return self.new_request(outcome_opts).post_delete_result()
 
-    def post_read_result(self,outcome_opts=defaultdict(lambda:None)):
+    def post_read_result(self, outcome_opts=defaultdict(lambda: None)):
         '''
         POSTs the given score to the Tool Consumer with a replaceResult, the
         returned OutcomeResponse will have the score.

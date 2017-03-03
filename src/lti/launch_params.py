@@ -1,10 +1,12 @@
 import sys
-from collections import defaultdict, MutableMapping
+from collections import MutableMapping
 
 from . import DEFAULT_LTI_VERSION
 
-py   = sys.version_info
-if py <  (2, 6, 0): bytes=str
+py = sys.version_info
+if py < (2, 6, 0):
+    bytes = str
+
 
 def touni(s, enc='utf8', err='strict'):
     return s.decode(enc, err) if isinstance(s, bytes) else unicode(s)
@@ -82,12 +84,15 @@ LAUNCH_PARAMS_CANVAS = [
     'text'
 ]
 
-LAUNCH_PARAMS = LAUNCH_PARAMS_REQUIRED + \
-                LAUNCH_PARAMS_RECOMMENDED + \
-                LAUNCH_PARAMS_RETURN_URL + \
-                LAUNCH_PARAMS_OAUTH + \
-                LAUNCH_PARAMS_LIS + \
-                LAUNCH_PARAMS_CANVAS
+LAUNCH_PARAMS = (
+    LAUNCH_PARAMS_REQUIRED +
+    LAUNCH_PARAMS_RECOMMENDED +
+    LAUNCH_PARAMS_RETURN_URL +
+    LAUNCH_PARAMS_OAUTH +
+    LAUNCH_PARAMS_LIS +
+    LAUNCH_PARAMS_CANVAS
+)
+
 
 def valid_param(param):
     if param.startswith('custom_') or param.startswith('ext_'):
@@ -96,11 +101,13 @@ def valid_param(param):
         return True
     return False
 
+
 class InvalidLaunchParamError(ValueError):
 
     def __init__(self, param):
         message = "{} is not a valid launch param".format(param)
         super(Exception, self).__init__(message)
+
 
 class LaunchParams(MutableMapping):
     """
