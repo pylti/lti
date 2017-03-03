@@ -8,6 +8,7 @@ from .tool_base import ToolBase
 from .launch_params import LAUNCH_PARAMS_REQUIRED
 from .utils import parse_qs, InvalidLTIConfigError
 
+
 class ToolConsumer(ToolBase):
 
     def __init__(self, consumer_key, consumer_secret,
@@ -40,12 +41,9 @@ class ToolConsumer(ToolBase):
 
         if not self.has_required_params():
             raise InvalidLTIConfigError(
-                'Consumer\'s launch params missing one of ' \
+                'Consumer\'s launch params missing one of '
                 + str(LAUNCH_PARAMS_REQUIRED)
             )
-
-#        if 'oauth_consumer_key' not in self.launch_params:
-#            self.launch_params['oauth_consumer_key'] = self.consumer_key
 
         params = self.to_params()
         r = Request('POST', self.launch_url, data=params).prepare()
@@ -65,6 +63,6 @@ class ToolConsumer(ToolBase):
         '''
         Set launch data from a ToolConfig.
         '''
-        if self.launch_url == None:
+        if self.launch_url is None:
             self.launch_url = config.launch_url
             self.launch_params.update(config.custom_params)

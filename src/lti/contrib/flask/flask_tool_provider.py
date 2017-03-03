@@ -1,5 +1,6 @@
 from lti import ToolProvider
 
+
 class FlaskToolProvider(ToolProvider):
     '''
     ToolProvider that works with Flask requests
