@@ -49,6 +49,10 @@ class ToolBase(object):
         msg_type = self.launch_params.get('lti_message_type')
         return msg_type == 'basic-lti-launch-request'
 
+    def is_content_request(self):
+        msg_type = self.launch_params.get('lti_message_type')
+        return msg_type == 'ContentItemSelectionRequest'
+
     def set_custom_param(self, key, val):
         setattr(self, 'custom_' + key, val)
 

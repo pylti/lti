@@ -1,9 +1,11 @@
+import json
 import sys
 from collections import MutableMapping
 
 from . import DEFAULT_LTI_VERSION
 
 py = sys.version_info
+PY2 = py.major == 2
 if py < (2, 6, 0):
     bytes = str
 
@@ -76,12 +78,44 @@ LAUNCH_PARAMS_OAUTH = [
 LAUNCH_PARAMS_IS_LIST = [
     'roles',
     'role_scope_mentor',
-    'context_type'
+    'context_type',
+    'accept_media_types',
+    'accept_presentation_document_targets'
+]
+
+LAUNCH_PARAMS_IS_JSON = [
+    'content_items'
 ]
 
 LAUNCH_PARAMS_CANVAS = [
     'selection_directive',
     'text'
+]
+
+CONTENT_PARAMS_REQUEST = [
+    'accept_media_types',
+    'accept_presentation_document_targets',
+    'content_item_return_url',
+    'accept_unsigned',
+    'accept_multiple',
+    'accept_copy_advice',
+    'auto_create',
+    'title',
+    'data',
+    'can_confirm'
+]
+
+CONTENT_PARAMS_RESPONSE = [
+    'content_items',
+    'lti_msg',
+    'lti_log',
+    'lti_errormsg',
+    'lti_errorlog'
+]
+
+CONTENT_PARAMS_REQUIRED = [
+    'lti_message_type',
+    'lti_version'
 ]
 
 LAUNCH_PARAMS = (
@@ -90,7 +124,9 @@ LAUNCH_PARAMS = (
     LAUNCH_PARAMS_RETURN_URL +
     LAUNCH_PARAMS_OAUTH +
     LAUNCH_PARAMS_LIS +
-    LAUNCH_PARAMS_CANVAS
+    LAUNCH_PARAMS_CANVAS +
+    CONTENT_PARAMS_REQUEST +
+    CONTENT_PARAMS_RESPONSE
 )
 
 
@@ -141,6 +177,8 @@ class LaunchParams(MutableMapping):
     def _param_value(self, param):
         if param in LAUNCH_PARAMS_IS_LIST:
             return [x.strip() for x in self._params[param].split(',')]
+        elif param in LAUNCH_PARAMS_IS_JSON:
+            return json.loads(self._params[param])
         else:
             return self._params[param]
 
@@ -162,6 +200,9 @@ class LaunchParams(MutableMapping):
         if key in LAUNCH_PARAMS_IS_LIST:
             if isinstance(value, list):
                 value = ','.join([x.strip() for x in value])
+        if key in LAUNCH_PARAMS_IS_JSON:
+            if not isinstance(value, str if not PY2 else basestring):
+                value = json.dumps(value)
         self._params[key] = value
 
     def __delitem__(self, key):
