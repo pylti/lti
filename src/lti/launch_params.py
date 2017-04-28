@@ -83,10 +83,6 @@ LAUNCH_PARAMS_IS_LIST = [
     'accept_presentation_document_targets'
 ]
 
-LAUNCH_PARAMS_IS_JSON = [
-    'content_items'
-]
-
 LAUNCH_PARAMS_CANVAS = [
     'selection_directive',
     'text'
@@ -177,8 +173,6 @@ class LaunchParams(MutableMapping):
     def _param_value(self, param):
         if param in LAUNCH_PARAMS_IS_LIST:
             return [x.strip() for x in self._params[param].split(',')]
-        elif param in LAUNCH_PARAMS_IS_JSON:
-            return json.loads(self._params[param])
         else:
             return self._params[param]
 
@@ -200,9 +194,6 @@ class LaunchParams(MutableMapping):
         if key in LAUNCH_PARAMS_IS_LIST:
             if isinstance(value, list):
                 value = ','.join([x.strip() for x in value])
-        if key in LAUNCH_PARAMS_IS_JSON:
-            if not isinstance(value, str if not PY2 else basestring):
-                value = json.dumps(value)
         self._params[key] = value
 
     def __delitem__(self, key):
