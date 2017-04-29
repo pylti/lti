@@ -57,7 +57,7 @@ class ToolConsumer(ToolBase):
         """
 
         r = self.generate_launch_request(**kwargs)
-        return parse_qs(unquote(r.body.decode('utf-8')))
+        return parse_qs(r.body.decode('utf-8'))
 
     def set_config(self, config):
         '''
