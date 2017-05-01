@@ -1,6 +1,5 @@
 
 from requests import Request
-from oauthlib.common import unquote
 from requests_oauthlib import OAuth1
 from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_BODY
 

@@ -1,11 +1,9 @@
-import json
 import sys
 from collections import MutableMapping
 
 from . import DEFAULT_LTI_VERSION
 
 py = sys.version_info
-PY2 = py.major == 2
 if py < (2, 6, 0):
     bytes = str
 
