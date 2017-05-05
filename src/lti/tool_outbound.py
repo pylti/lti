@@ -13,7 +13,8 @@ class ToolOutbound(ToolBase):
     def __init__(self, consumer_key, consumer_secret,
                  params=None, launch_url=None):
         '''
-        Create new ToolConsumer.
+        Create new Outbound Tool.
+        See ToolConsumer and ContentItemResponse for examples
         '''
         # allow launch_url to be specified in launch_params for
         # backwards compatibility
