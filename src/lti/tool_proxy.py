@@ -1,5 +1,4 @@
 from requests import Request
-from .launch_params import LaunchParams
 from .tool_base import ToolBase
 import requests
 import json
@@ -24,9 +23,11 @@ class ToolProxy(ToolBase):
     def register_proxy(self, profile):
         register_url = self.find_registration_url()
 
-        r = Request("POST", register_url, data=profile, headers={'Content-Type':'application/vnd.ims.lis.v2.result+json'}).prepare()
+        r = Request("POST", register_url, data=json.dumps(profile, indent=4), headers={'Content-Type':'application/vnd.ims.lti.v2.toolproxy+json'}).prepare()
         sign = OAuth1(self.launch_params['reg_key'], self.launch_params['reg_password'],
-                      signature_type=SIGNATURE_TYPE_AUTH_HEADER)
-        return sign(r)
+                      signature_type=SIGNATURE_TYPE_AUTH_HEADER, force_include_body=True)
+        signed = sign(r)
+
+        return signed
 
 
