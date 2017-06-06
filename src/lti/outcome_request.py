@@ -61,7 +61,7 @@ class OutcomeRequest(object):
         '''
         request = OutcomeRequest()
         request.post_request = post_request
-        request.process_xml(post_request.data)
+        request.process_xml(post_request.body)
         return request
 
     def post_replace_result(self, score, result_data=None):
