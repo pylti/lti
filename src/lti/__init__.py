@@ -9,6 +9,7 @@ from .tool_provider import ToolProvider
 from .outcome_request import OutcomeRequest
 from .outcome_response import OutcomeResponse
 from .contentitem_response import ContentItemResponse
+from .tool_proxy import ToolProxy
 
 # Exceptions
 from .utils import InvalidLTIConfigError, InvalidLTIRequestError
