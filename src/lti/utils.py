@@ -6,9 +6,10 @@ except ImportError:
     import urlparse  # Python 2
 
 
-def parse_qs(qs):
-    return dict((k, v if len(v) > 1 else v[0])
-        for k, v in urlparse.parse_qs(qs).items())
+def parse_qs(qs, keep_blank_values=False):
+    params = urlparse.parse_qs(
+        qs, keep_blank_values=int(keep_blank_values)).items()
+    return dict((k, v if len(v) > 1 else v[0]) for k, v in params)
 
 
 def generate_identifier():

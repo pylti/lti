@@ -55,4 +55,4 @@ class ToolOutbound(ToolBase):
         """
 
         r = self.generate_launch_request(**kwargs)
-        return parse_qs(r.body.decode('utf-8'))
+        return parse_qs(r.body.decode('utf-8'), keep_blank_values=True)
