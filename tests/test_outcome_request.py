@@ -4,6 +4,10 @@ from lti import OutcomeRequest, OutcomeResponse, InvalidLTIConfigError
 import unittest
 from oauthlib.common import unquote
 from httmock import all_requests, HTTMock
+from django.conf import settings
+from django.test import RequestFactory
+
+settings.configure()
 
 EXPECTED_XML = b'''<?xml version="1.0" encoding="UTF-8"?>
 <imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
@@ -130,3 +134,15 @@ class TestOutcomeRequest(unittest.TestCase):
             'oauth_body_hash="glWvnsZZ8lMif1ATz8Tx64CTTaY=", '
             'oauth_signature="XR6A1CmUauXZdJZXa1pJpTQi6OQ="')
         self.assertEqual(auth_header, correct)
+
+    def test_from_post_request(self):
+        factory = RequestFactory()
+        post_request = factory.post('/',
+            data=REPLACE_RESULT_XML,
+            content_type='application/xml'
+        )
+        request = OutcomeRequest.from_post_request(post_request)
+        self.assertEqual(request.operation, 'replaceResult')
+        self.assertEqual(request.lis_result_sourcedid, '261-154-728-17-784')
+        self.assertEqual(request.message_identifier, '123456789')
+        self.assertEqual(request.score, '5')

@@ -22,3 +22,6 @@ deploy:
   distributions: sdist bdist_wheel
 matrix:
   fast_finish: true
+  include:
+    - python: 3.6
+      env: TOXENV=desc
