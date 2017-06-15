@@ -126,3 +126,17 @@ class TestToolConsumer(unittest.TestCase):
             'oauth_signature': 'gXIAk60dLsrh6YQGT5ZGK6tHDGY=',
             })
         self.assertEqual(got, correct)
+
+    def test_generate_launch_data_with_empty_value(self):
+        launch_params = {
+            'lti_version': 'abc',
+            'lti_message_type': 'def',
+            'resource_link_id': '123',
+            'custom_test_value': '',
+        }
+        tc = ToolConsumer('client_key', 'client_secret',
+                          launch_url='http://example.edu/',
+                          params=launch_params)
+        got = tc.generate_launch_data(nonce='wxyz7890',
+                                      timestamp='2345678901')
+        self.assertEqual(got['custom_test_value'], '')
