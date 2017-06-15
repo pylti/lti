@@ -19,6 +19,7 @@ deploy:
   on:
     tags: true
     python: 3.6
+    condition: $TOXENV != desc
   distributions: sdist bdist_wheel
 matrix:
   fast_finish: true
