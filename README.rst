@@ -118,7 +118,7 @@ Tool Provider OAuth Request Validation Example (Django)
 
 
 Tool Consumer Example (Django)
-----------------------------
+------------------------------
 
 In your view:
 
