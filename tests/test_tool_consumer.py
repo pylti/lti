@@ -105,6 +105,33 @@ class TestToolConsumer(unittest.TestCase):
             })
         self.assertEqual(got, correct)
 
+    def test_launch_request_with_duplicate_qs(self):
+        """
+        test that qs params in launch url are ok
+        """
+        launch_params = {
+            'lti_version': 'abc',
+            'lti_message_type': 'def',
+            'resource_link_id': '123',
+            'custom_value': '123'
+        }
+        tc = ToolConsumer('client_key', 'client_secret',
+                          launch_url='http://example.edu/foo?bar=1&custom_value=123',
+                          params=launch_params)
+        launch_req = tc.generate_launch_request(nonce='wxyz7890',
+                                                timestamp='2345678901')
+        got = parse_qs(unquote(launch_req.body.decode('utf-8')))
+        correct = launch_params.copy()
+        correct.update({
+            'oauth_nonce': 'wxyz7890',
+            'oauth_timestamp': '2345678901',
+            'oauth_version': '1.0',
+            'oauth_signature_method': 'HMAC-SHA1',
+            'oauth_consumer_key': 'client_key',
+            'oauth_signature': 'ICbdppbpNXOFxg1ssMreN6fyH2k=',
+        })
+        self.assertEqual(got, correct)
+
     def test_generate_launch_data(self):
         launch_params = {
             'lti_version': 'abc',

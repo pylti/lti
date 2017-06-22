@@ -51,7 +51,7 @@ class ToolProvider(ToolBase):
         endpoint = SignatureOnlyEndpoint(validator)
 
         valid, request = endpoint.validate_request(
-            self.launch_url,
+            self.signature_launch_url(),
             'POST',
             self.to_params(),
             self.launch_headers

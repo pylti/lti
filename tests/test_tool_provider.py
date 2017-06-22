@@ -102,6 +102,46 @@ class TestToolProvider(unittest.TestCase):
         self.assertEqual(tp.consumer_key, key)
         self.assertEqual(tp.consumer_secret, secret_)
 
+    def test_is_valid_request_with_duplicate_query_string(self):
+        """
+        just checks that the TP sends the correct args to the endpoint
+        """
+        key = generate_client_id()
+        secret = generate_token()
+        lp = {
+            'lti_version': 'foo',
+            'lti_message_type': 'bar',
+            'resource_link_id': 123,
+            'custom_value': "123"
+        }
+        launch_headers = {'Content-Type': 'baz'}
+
+        valid_launch_url = 'http://example.edu/foo/bar'
+        launch_url = valid_launch_url + '?custom_value=123'
+        tp = create_tp(key, secret, lp, launch_url, launch_headers)
+
+        with patch.object(SignatureOnlyEndpoint, 'validate_request') as mv:
+            mv.return_value = True, None  # Tuple of valid, request
+            self.assertTrue(tp.is_valid_request(Mock()))
+            call_url, call_method, call_params, call_headers = mv.call_args[0]
+            self.assertEqual(call_url, valid_launch_url)
+            self.assertEqual(call_method, 'POST')
+            self.assertEqual(call_params, lp)
+            self.assertEqual(call_headers, launch_headers)
+
+        valid_launch_url = 'http://example.edu/foo/bar?custom_value2=123'
+        launch_url = valid_launch_url + '&custom_value=123'
+        tp = create_tp(key, secret, lp, launch_url, launch_headers)
+
+        with patch.object(SignatureOnlyEndpoint, 'validate_request') as mv:
+            mv.return_value = True, None  # Tuple of valid, request
+            self.assertTrue(tp.is_valid_request(Mock()))
+            call_url, call_method, call_params, call_headers = mv.call_args[0]
+            self.assertEqual(call_url, valid_launch_url)
+            self.assertEqual(call_method, 'POST')
+            self.assertEqual(call_params, lp)
+            self.assertEqual(call_headers, launch_headers)
+
     def test_proxy_validator(self):
         '''
         Should store the secret when get_client_secret is called.
