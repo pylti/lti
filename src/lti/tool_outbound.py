@@ -44,7 +44,7 @@ class ToolOutbound(ToolBase):
             )
 
         params = self.to_params()
-        r = Request('POST', self.launch_url, data=params).prepare()
+        r = Request('POST', self.signature_launch_url(), data=params).prepare()
         sign = OAuth1(self.consumer_key, self.consumer_secret,
                                 signature_type=SIGNATURE_TYPE_BODY, **kwargs)
         return sign(r)

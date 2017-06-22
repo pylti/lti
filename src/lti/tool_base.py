@@ -4,6 +4,12 @@ from .launch_params import LaunchParams, valid_param
 ROLES_STUDENT = ['student', 'learner']
 ROLES_INSTRUCTOR = ['instructor', 'faculty', 'staff']
 
+try:
+    from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
+except ImportError:
+    # Python 2
+    from urllib import urlencode
+    from urlparse import urlsplit, urlunsplit, parse_qsl
 
 class ToolBase(object):
 
@@ -78,3 +84,23 @@ class ToolBase(object):
             if isinstance(v, list):
                 params[k] = ','.join(v)
         return params
+
+    def signature_launch_url(self):
+        if self.launch_url:
+            params = self.to_params()
+            original = urlsplit(self.launch_url)
+            launch_query = dict(parse_qsl(original.query))
+
+            # remove duplicate parameters from quey string
+            for k, v in launch_query.copy().items():
+                if k in params and params[k] == v:
+                    del launch_query[k]
+
+            return urlunsplit((
+                original.scheme,
+                original.netloc,
+                original.path,
+                urlencode(launch_query),
+                original.fragment
+            ))
+        return None
