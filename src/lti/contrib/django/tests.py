@@ -307,7 +307,6 @@ class LtiBackendTests(TestCase):
         self.assertEqual(user.first_name, params['lis_person_name_given'])
         self.assertEqual(user.last_name, params['lis_person_name_family'])
 
-    # TODO make this test pass, verify assertions
     def test_authenticate_with_user_fullname(self):
         params = _get_default_params()
         params['user_id'] = 'test_fullname'
