@@ -72,9 +72,6 @@ class LtiBackend(ModelBackend):
             user = self.configure_user(user, lti_launch_request)
             logger.debug('LTI user authenticated (%s)' % username)
             return user
-        else:
-            print('yo')
-            return None
 
     def configure_user(self, user, launch_request):
 
