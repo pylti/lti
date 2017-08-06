@@ -14,7 +14,7 @@ class LtiMiddleware(object):
     def __call__(self, request):
 
         if not (request.method == 'POST' and request.POST.get('lti_version')):
-            # This doesn't look like and LTI launch, continue as usual.
+            # This doesn't look like an LTI launch, continue as usual.
             return self.get_response(request)
 
         if hasattr(request, 'user') and request.user.is_authenticated:
