@@ -7,10 +7,6 @@ from lti.contrib.django import django_tool_provider
 logger = logging.getLogger(__name__)
 
 
-def lti_authenticate(request):
-    pass
-
-
 class LtiMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
