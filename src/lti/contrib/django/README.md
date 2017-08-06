@@ -1,6 +1,6 @@
 ## Install ##
 
-`pip install git+https://github.com/ksofa2/lti.git@django`
+`pip install lti`
 
 
 ## Configure ##
