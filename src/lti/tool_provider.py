@@ -137,7 +137,7 @@ class ToolProvider(ToolBase):
 
     def post_read_result(self, outcome_opts=defaultdict(lambda: None)):
         '''
-        POSTs the given score to the Tool Consumer with a replaceResult, the
+        POSTs the given score to the Tool Consumer with a readResult. The
         returned OutcomeResponse will have the score.
         '''
         return self.new_request(outcome_opts).post_read_result()
