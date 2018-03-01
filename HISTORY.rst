@@ -1,3 +1,24 @@
+0.9.2 (2017-06-15)
+++++++++++++++++++
+
+* Pass through params with empty values (#47)
+
+0.9.1 (2017-06-15)
+++++++++++++++++++
+
+* Fix the PyPI long description.
+
+0.9.0 (2017-06-14)
+++++++++++++++++++
+
+* Add test of from_post_request (#45)
+* Code to allow registration of an LTI 2 proxy (#42)
+* Fix attribute name (#44)
+* Content item (#41)
+* Fix for bug in ToolConsumer urlencoding (#40)
+* PEP8 (#35)
+* Add Python 3.6 support (#34)
+
 0.8.4 (2016-07-26)
 ++++++++++++++++++
 

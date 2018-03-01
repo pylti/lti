@@ -76,12 +76,46 @@ LAUNCH_PARAMS_OAUTH = [
 LAUNCH_PARAMS_IS_LIST = [
     'roles',
     'role_scope_mentor',
-    'context_type'
+    'context_type',
+    'accept_media_types',
+    'accept_presentation_document_targets'
 ]
 
 LAUNCH_PARAMS_CANVAS = [
     'selection_directive',
     'text'
+]
+
+CONTENT_PARAMS_REQUEST = [
+    'accept_media_types',
+    'accept_presentation_document_targets',
+    'content_item_return_url',
+    'accept_unsigned',
+    'accept_multiple',
+    'accept_copy_advice',
+    'auto_create',
+    'title',
+    'data',
+    'can_confirm'
+]
+
+CONTENT_PARAMS_RESPONSE = [
+    'content_items',
+    'lti_msg',
+    'lti_log',
+    'lti_errormsg',
+    'lti_errorlog'
+]
+
+CONTENT_PARAMS_REQUIRED = [
+    'lti_message_type',
+    'lti_version'
+]
+
+REGISTRATION_PARAMS = [
+    'tc_profile_url',
+    'reg_password',
+    'reg_key'
 ]
 
 LAUNCH_PARAMS = (
@@ -90,7 +124,10 @@ LAUNCH_PARAMS = (
     LAUNCH_PARAMS_RETURN_URL +
     LAUNCH_PARAMS_OAUTH +
     LAUNCH_PARAMS_LIS +
-    LAUNCH_PARAMS_CANVAS
+    LAUNCH_PARAMS_CANVAS +
+    CONTENT_PARAMS_REQUEST +
+    CONTENT_PARAMS_RESPONSE +
+    REGISTRATION_PARAMS
 )
 
 

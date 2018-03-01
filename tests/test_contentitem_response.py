@@ -1,11 +1,11 @@
-from lti import ToolConsumer, LaunchParams
+from lti import ContentItemResponse, LaunchParams
 from lti.utils import parse_qs, InvalidLTIConfigError
 import unittest
 
 from oauthlib.common import generate_client_id, generate_token, unquote
 from requests import PreparedRequest
 
-class TestToolConsumer(unittest.TestCase):
+class TestContentItemResponse(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -13,43 +13,45 @@ class TestToolConsumer(unittest.TestCase):
     def test_constructor(self):
         client_id = generate_client_id()
         client_secret = generate_token()
-        tc = ToolConsumer(client_id, client_secret,
+        tc = ContentItemResponse(client_id, client_secret,
                           launch_url='http://example.edu')
         self.assertIsInstance(tc.launch_params, LaunchParams)
 
         lp = LaunchParams()
-        tc = ToolConsumer(client_id, client_secret,
+        tc = ContentItemResponse(client_id, client_secret,
                           launch_url='http://example.edu', params=lp)
         self.assertEqual(tc.launch_params, lp)
 
         lp_dict = {'resource_link_id': 1}
-        tc = ToolConsumer(client_id, client_secret,
+        tc = ContentItemResponse(client_id, client_secret,
                           launch_url='http://example.edu',
                           params=lp_dict)
         self.assertIsInstance(tc.launch_params, LaunchParams)
         self.assertEqual(tc.launch_params._params.get('resource_link_id'), 1)
 
         # no launch_url should raise exception
-        self.failUnlessRaises(InvalidLTIConfigError, ToolConsumer,
+        self.failUnlessRaises(InvalidLTIConfigError, ContentItemResponse,
                               client_id, client_secret,
                               params=lp_dict)
 
         # but confirm that 'launch_url' can still be passed in params
         # (backwards compatibility)
         lp_dict['launch_url'] = 'http://example.edu'
-        tc = ToolConsumer(client_id, client_secret, params=lp_dict)
+        tc = ContentItemResponse(client_id, client_secret, params=lp_dict)
         self.assertEqual(tc.launch_url, 'http://example.edu')
 
     def test_has_required_params(self):
 
         client_id = generate_client_id()
         client_secret = generate_token()
-        tc = ToolConsumer(client_id, client_secret,
+        tc = ContentItemResponse(client_id, client_secret,
                           launch_url='http://example.edu')
 
-        self.assertFalse(tc.has_required_params())
+        #Can't assert false for has_required_params as the only required params are lti_version and lti_message_type
+        #However should consider checking the message type in the future
 
-        tc.launch_params['resource_link_id'] = generate_token()
+        tc.launch_params['lti_version'] = 'LTI-1p0'
+        tc.launch_params['lti_message_type'] = 'ContentItemSelection'
         self.assertTrue(tc.has_required_params())
 
     def test_generate_launch_request(self):
@@ -58,7 +60,7 @@ class TestToolConsumer(unittest.TestCase):
             'lti_message_type': 'bar',
             'resource_link_id': 'baz'
         }
-        tc = ToolConsumer('client_key', 'client_secret',
+        tc = ContentItemResponse('client_key', 'client_secret',
                           launch_url='http://example.edu/',
                           params=launch_params)
         launch_req = tc.generate_launch_request(nonce='abcd1234',
@@ -88,7 +90,7 @@ class TestToolConsumer(unittest.TestCase):
             'lti_message_type': 'def',
             'resource_link_id': '123'
         }
-        tc = ToolConsumer('client_key', 'client_secret',
+        tc = ContentItemResponse('client_key', 'client_secret',
                           launch_url='http://example.edu/foo?bar=1',
                           params=launch_params)
         launch_req = tc.generate_launch_request(nonce='wxyz7890',
@@ -111,7 +113,7 @@ class TestToolConsumer(unittest.TestCase):
             'lti_message_type': 'def',
             'resource_link_id': '123'
         }
-        tc = ToolConsumer('client_key', 'client_secret',
+        tc = ContentItemResponse('client_key', 'client_secret',
                           launch_url='http://example.edu/',
                           params=launch_params)
         got = tc.generate_launch_data(nonce='wxyz7890',
@@ -126,17 +128,3 @@ class TestToolConsumer(unittest.TestCase):
             'oauth_signature': 'gXIAk60dLsrh6YQGT5ZGK6tHDGY=',
             })
         self.assertEqual(got, correct)
-
-    def test_generate_launch_data_with_empty_value(self):
-        launch_params = {
-            'lti_version': 'abc',
-            'lti_message_type': 'def',
-            'resource_link_id': '123',
-            'custom_test_value': '',
-        }
-        tc = ToolConsumer('client_key', 'client_secret',
-                          launch_url='http://example.edu/',
-                          params=launch_params)
-        got = tc.generate_launch_data(nonce='wxyz7890',
-                                      timestamp='2345678901')
-        self.assertEqual(got['custom_test_value'], '')
