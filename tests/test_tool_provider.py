@@ -29,11 +29,7 @@ def create_tp(key=None, secret=None, lp=None, launch_url=None,
 class CustomLaunchParams(LaunchParams):
     def valid_param(self, param):
         result  = super(CustomLaunchParams, self).valid_param(param)
-        if not result:
-            if param in ['basiclti_submit', 'launch_url']:
-                result = True
-
-        return result
+        return result or param in ['basiclti_submit', 'launch_url']
 
 class CustomToolProvider(ToolProvider):
     launch_params_class = CustomLaunchParams
