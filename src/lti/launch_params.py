@@ -123,7 +123,7 @@ class LaunchParams(MutableMapping):
 
         # now verify we only got valid launch params
         for k in self.keys():
-            if not valid_param(k):
+            if not self.valid_param(k):
                 raise InvalidLaunchParamError(k)
 
         # enforce some defaults
@@ -144,11 +144,14 @@ class LaunchParams(MutableMapping):
         else:
             return self._params[param]
 
+    def valid_param(self, param):
+        return valid_param(param)
+
     def __len__(self):
         return len(self._params)
 
     def __getitem__(self, item):
-        if not valid_param(item):
+        if not self.valid_param(item):
             raise KeyError("{} is not a valid launch param".format(item))
         try:
             return self._param_value(item)
@@ -157,7 +160,7 @@ class LaunchParams(MutableMapping):
             raise KeyError(item)
 
     def __setitem__(self, key, value):
-        if not valid_param(key):
+        if not self.valid_param(key):
             raise InvalidLaunchParamError(key)
         if key in LAUNCH_PARAMS_IS_LIST:
             if isinstance(value, list):

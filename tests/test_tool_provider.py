@@ -19,12 +19,24 @@ def create_tp(key=None, secret=None, lp=None, launch_url=None,
               launch_headers=None, tp_class=ToolProvider):
     key = key or generate_client_id()
     secret = secret or generate_token()
-    launch_params = LaunchParams()
+    launch_params = tp_class.launch_params_class()
     if lp is not None:
         launch_params.update(lp)
     launch_url = launch_url or "http://example.edu"
     launch_headers = launch_headers or {}
     return tp_class(key, secret, launch_params, launch_url, launch_headers)
+
+class CustomLaunchParams(LaunchParams):
+    def valid_param(self, param):
+        result  = super(CustomLaunchParams, self).valid_param(param)
+        if not result:
+            if param in ['basiclti_submit', 'launch_url']:
+                result = True
+
+        return result
+
+class CustomToolProvider(ToolProvider):
+    launch_params_class = CustomLaunchParams
 
 class TestToolProvider(unittest.TestCase):
 
@@ -214,6 +226,29 @@ class TestToolProvider(unittest.TestCase):
         tp = create_tp()
         tp.outcome_requests = ['foo','bar']
         self.assertEqual(tp.last_outcome_request(), 'bar')
+
+    def test_custom_launch_params(self):
+        key = generate_client_id()
+        secret = generate_token()
+        lp = {
+            'lti_version': 'foo',
+            'lti_message_type': 'bar',
+            'resource_link_id': 123,
+            'launch_url': 'more_foo',
+            'basiclti_submit': 'more_bar'
+        }
+        launch_url = 'http://example.edu/foo/bar'
+        launch_headers = {'Content-Type': 'baz'}
+        tp = create_tp(key, secret, lp, launch_url, launch_headers, tp_class=CustomToolProvider)
+
+        with patch.object(SignatureOnlyEndpoint, 'validate_request') as mv:
+            mv.return_value = True, None  # Tuple of valid, request
+            self.assertTrue(tp.is_valid_request(Mock()))
+            call_url, call_method, call_params, call_headers = mv.call_args[0]
+            self.assertEqual(call_url, launch_url)
+            self.assertEqual(call_method, 'POST')
+            self.assertEqual(call_params, lp)
+            self.assertEqual(call_headers, launch_headers)
 
 # mock the django.shortcuts import to allow testing
 mock = Mock()
