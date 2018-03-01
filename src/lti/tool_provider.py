@@ -21,11 +21,12 @@ class ToolProvider(ToolBase):
     '''
     Implements the LTI Tool Provider.
     '''
+    launch_params_class = LaunchParams
 
     @classmethod
     def from_unpacked_request(cls, secret, params, url, headers):
 
-        launch_params = LaunchParams(params)
+        launch_params = cls.launch_params_class(params)
 
         if 'oauth_consumer_key' not in launch_params:
             raise InvalidLTIRequestError("oauth_consumer_key not found!")
