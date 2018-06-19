@@ -90,6 +90,11 @@ configuration URL when registering your app with the LTI consumer.
             description = app_description
         )
 
+        # or you may need some additional LTI parameters
+        lti_tool_config.cartridge_bundle = 'BLTI001_Bundle'
+        lti_tool_config.cartridge_icon = 'BLTI001_Icon'
+        lti_tool_config.icon = 'http://www.example.com/icon.png'
+
         return HttpResponse(lti_tool_config.to_xml(), content_type='text/xml')
 
 
