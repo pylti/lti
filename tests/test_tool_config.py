@@ -74,6 +74,18 @@ CC_LTI_WITH_SUBOPTIONS_XML = b'''<?xml version="1.0" encoding="UTF-8"?>
 </cartridge_basiclti_link>
 '''
 
+CC_LTI_OPTIONAL_PARAMS_XML = b'''<?xml version="1.0" encoding="UTF-8"?>
+<cartridge_basiclti_link xmlns:blti="http://www.imsglobal.org/xsd/imsbasiclti_v1p0" xmlns:lticm="http://www.imsglobal.org/xsd/imslticm_v1p0" xmlns:lticp="http://www.imsglobal.org/xsd/imslticp_v1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.imsglobal.org/xsd/imslticc_v1p0" xsi:schemaLocation="http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd">
+  <blti:title>Test config</blti:title>
+  <blti:description/>
+  <blti:launch_url>http://www.example.com</blti:launch_url>
+  <blti:secure_launch_url>http://www.example.com</blti:secure_launch_url>
+  <blti:icon>http://wil.to/_/beardslap.gif</blti:icon>
+  <blti:vendor/>
+  <cartridge_icon identifierref="BLTI001_Icon"/>
+</cartridge_basiclti_link>
+'''
+
 def normalize_xml(xml_str):
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.XML(xml_str, parser)
@@ -90,7 +102,6 @@ class TestToolConfig(unittest.TestCase):
                 custom_params = {"custom1": "customval1"})
         config.description ='Description of boringness'
         config.launch_url = 'http://www.example.com/lti'
-        config.icon = 'http://wil.to/_/beardslap.gif'
         config.vendor_code = 'test'
         config.vendor_name = 'test.tool'
         config.vendor_description = 'We test things'
@@ -119,7 +130,6 @@ class TestToolConfig(unittest.TestCase):
                 custom_params = {"custom1": "customval1"})
         config.description ='Description of boringness'
         config.launch_url = 'http://www.example.com/lti'
-        config.icon = 'http://wil.to/_/beardslap.gif'
         config.vendor_code = 'test'
         config.vendor_name = 'test.tool'
         config.vendor_description = 'We test things'
@@ -144,6 +154,20 @@ class TestToolConfig(unittest.TestCase):
         config.cartridge_bundle = 'BLTI001_Bundle'
 
         correct = normalize_xml(CC_LTI_WITH_SUBOPTIONS_XML)
+        got = normalize_xml(config.to_xml())
+        self.assertEqual(got, correct)
+
+    def test_optional_config_parameters(self):
+        '''
+        Should contain cartridge_icon, and blti:icon.
+        '''
+        config = ToolConfig(title = "Test config",
+                launch_url = "http://www.example.com",
+                secure_launch_url = "http://www.example.com")
+        config.icon = 'http://wil.to/_/beardslap.gif'
+        config.cartridge_icon = 'BLTI001_Icon'
+
+        correct = normalize_xml(CC_LTI_OPTIONAL_PARAMS_XML)
         got = normalize_xml(config.to_xml())
         self.assertEqual(got, correct)
 
