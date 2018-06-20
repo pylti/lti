@@ -1,5 +1,8 @@
 from collections import defaultdict
-from lxml import etree, objectify
+from lxml import etree
+from lxml import objectify
+
+from lxml.etree import QName
 
 from .utils import InvalidLTIConfigError
 
@@ -116,57 +119,57 @@ class ToolConfig(object):
         root = objectify.fromstring(xml, parser=etree.XMLParser())
         # Parse all children of the root node
         for child in root.getchildren():
-            if 'title' in child.tag:
+            if QName(child).localname == 'title':
                 self.title = child.text
-            if 'description' in child.tag:
+            if QName(child).localname == 'description':
                 self.description = child.text
-            if 'secure_launch_url' in child.tag:
+            if QName(child).localname == 'secure_launch_url':
                 self.secure_launch_url = child.text
-            elif 'launch_url' in child.tag:
+            if QName(child).localname == 'launch_url':
                 self.launch_url = child.text
-            if 'icon' in child.tag:
+            if QName(child).localname == 'icon':
                 self.icon = child.text
-            if 'secure_icon' in child.tag:
+            if QName(child).localname == 'secure_icon':
                 self.secure_icon = child.text
-            if 'cartridge_bundle' in child.tag:
+            if QName(child).localname == 'cartridge_bundle':
                 self.cartridge_bundle = child.attrib['identifierref']
-            if 'cartridge_icon' in child.tag:
+            if QName(child).localname == 'cartridge_icon':
                 self.cartridge_icon = child.attrib['identifierref']
 
-            if 'vendor' in child.tag:
+            if QName(child).localname == 'vendor':
                 # Parse vendor tag
                 for v_child in child.getchildren():
-                    if 'code' in v_child.tag:
+                    if QName(v_child).localname == 'code':
                         self.vendor_code = v_child.text
-                    if 'description' in v_child.tag:
+                    if QName(v_child).localname == 'description':
                         self.vendor_description = v_child.text
-                    if 'name' in v_child.tag:
+                    if QName(v_child).localname == 'name':
                         self.vendor_name = v_child.text
-                    if 'url' in v_child.tag:
+                    if QName(v_child).localname == 'url':
                         self.vendor_url = v_child.text
-                    if 'contact' in v_child.tag:
+                    if QName(v_child).localname == 'contact':
                         # Parse contact tag for email and name
                         for c_child in v_child:
-                            if 'name' in c_child.tag:
+                            if QName(c_child).localname == 'name':
                                 self.vendor_contact_name = c_child.text
-                            if 'email' in c_child.tag:
+                            if QName(c_child).localname == 'email':
                                 self.vendor_contact_email = c_child.text
 
-            if 'custom' in child.tag:
+            if QName(child).localname == 'custom':
                 # Parse custom tags
                 for custom_child in child.getchildren():
                     self.custom_params[custom_child.attrib['name']] =\
                             custom_child.text
 
-            if 'extensions' in child.tag:
+            if QName(child).localname == 'extensions':
                 platform = child.attrib['platform']
                 properties = {}
 
                 # Parse extension tags
                 for ext_child in child.getchildren():
-                    if 'property' in ext_child.tag:
+                    if QName(ext_child).localname == 'property':
                         properties[ext_child.attrib['name']] = ext_child.text
-                    elif 'options' in ext_child.tag:
+                    elif QName(ext_child).localname == 'options':
                         opt_name = ext_child.attrib['name']
                         options = {}
                         for option_child in ext_child.getchildren():
