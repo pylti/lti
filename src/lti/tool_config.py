@@ -130,8 +130,8 @@ class ToolConfig(object):
                 self.secure_icon = child.text
             if 'cartridge_bundle' in child.tag:
                 self.cartridge_bundle = child.attrib['identifierref']
-            if 'catridge_icon' in child.tag:
-                self.cartridge_icon = child.atrib['identifierref']
+            if 'cartridge_icon' in child.tag:
+                self.cartridge_icon = child.attrib['identifierref']
 
             if 'vendor' in child.tag:
                 # Parse vendor tag
