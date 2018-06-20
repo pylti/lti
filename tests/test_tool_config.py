@@ -171,6 +171,13 @@ class TestToolConfig(unittest.TestCase):
         got = normalize_xml(config.to_xml())
         self.assertEqual(got, correct)
 
+    def test_can_parse_optional_config_parameters(self):
+        '''
+        Config should have cartridge_icon and blti:icon set
+        '''
+        config = ToolConfig.create_from_xml(CC_LTI_OPTIONAL_PARAMS_XML)
+        self.assertEqual(config.cartridge_icon, 'BLTI001_Icon')
+
     def test_read_xml_config(self):
         '''
         Should read an XML config.
