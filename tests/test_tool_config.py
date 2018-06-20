@@ -177,6 +177,7 @@ class TestToolConfig(unittest.TestCase):
         '''
         config = ToolConfig.create_from_xml(CC_LTI_OPTIONAL_PARAMS_XML)
         self.assertEqual(config.cartridge_icon, 'BLTI001_Icon')
+        self.assertEqual(config.icon, 'http://wil.to/_/beardslap.gif')
 
     def test_read_xml_config(self):
         '''
