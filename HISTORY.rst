@@ -1,3 +1,12 @@
+0.9.3 (2018-06-20)
+++++++++++++++++++
+
+* Check full tagname when parsing xml (#60)
+* Fix issue with cartridge_icon parsing from xml (#58)
+* Add icon to tool config xml (#57)
+* Handling Non-Standard LTI Params (#55)
+* tool_provider: Fix doc for post_read_result (#53)
+
 0.9.2 (2017-06-15)
 ++++++++++++++++++
 
