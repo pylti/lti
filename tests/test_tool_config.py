@@ -81,6 +81,7 @@ CC_LTI_OPTIONAL_PARAMS_XML = b'''<?xml version="1.0" encoding="UTF-8"?>
   <blti:launch_url>http://www.example.com</blti:launch_url>
   <blti:secure_launch_url>http://www.example.com</blti:secure_launch_url>
   <blti:icon>http://wil.to/_/beardslap.gif</blti:icon>
+  <blti:secure_icon>https://www.example.com/secure_icon.png</blti:secure_icon>
   <blti:vendor/>
   <cartridge_icon identifierref="BLTI001_Icon"/>
 </cartridge_basiclti_link>
@@ -165,6 +166,7 @@ class TestToolConfig(unittest.TestCase):
                 launch_url = "http://www.example.com",
                 secure_launch_url = "http://www.example.com")
         config.icon = 'http://wil.to/_/beardslap.gif'
+        config.secure_icon = 'https://www.example.com/secure_icon.png'
         config.cartridge_icon = 'BLTI001_Icon'
 
         correct = normalize_xml(CC_LTI_OPTIONAL_PARAMS_XML)
@@ -178,6 +180,7 @@ class TestToolConfig(unittest.TestCase):
         config = ToolConfig.create_from_xml(CC_LTI_OPTIONAL_PARAMS_XML)
         self.assertEqual(config.cartridge_icon, 'BLTI001_Icon')
         self.assertEqual(config.icon, 'http://wil.to/_/beardslap.gif')
+        self.assertEqual(config.secure_icon, 'https://www.example.com/secure_icon.png')
 
     def test_read_xml_config(self):
         '''
