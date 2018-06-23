@@ -221,6 +221,10 @@ class ToolConfig(object):
             option = etree.SubElement(root, '{%s}%s' % (NSMAP['blti'], 'icon'))
             option.text = getattr(self, 'icon')
 
+        if getattr(self, 'secure_icon'):
+            option = etree.SubElement(root, '{%s}%s' % (NSMAP['blti'], 'secure_icon'))
+            option.text = getattr(self, 'secure_icon')
+
         vendor_keys = ['name', 'code', 'description', 'url']
         if any('vendor_' + key for key in vendor_keys) or\
                 self.vendor_contact_email:
