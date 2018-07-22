@@ -12,6 +12,7 @@ Welcome to lti's documentation!
 
    getting_started
    examples
+   contributing
    class_reference
 
 
