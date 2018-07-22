@@ -10,6 +10,9 @@ Welcome to lti's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
+   examples
+   class_reference
 
 
 Indices and tables
