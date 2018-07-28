@@ -4,7 +4,7 @@ Contributing
 Setup development environment
 -----------------------------
 
-If you decide to contribute to code base, you'll first have to fork the project on GitHub, and then clone the project in the local environment. You'll need a GitHub account in order to make a fork.
+If you decide to contribute to the code base, you'll first have to fork the project on GitHub, and then clone the project in the local environment. You'll need a GitHub account in order to make a fork.
 
 First make a directory, setup virtualenv, and install dependencies:
 
@@ -27,7 +27,7 @@ For testing, you can build and install library using `setup.py` (but this is not
 .. code-block:: sh
 
     cd lti
-    python setyp.py bdist_wheel
+    python setup.py bdist_wheel
     pipenv install dist/lti-0.9.3.whl
 
 or you can let `tox` handle the build process (it will build and execute automated tests):
