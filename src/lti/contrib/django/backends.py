@@ -7,7 +7,6 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 
-from .models import NonceHistory
 from .utils import LtiRequestValidator
 
 UserModel = get_user_model()
@@ -44,11 +43,6 @@ class LtiBackend(ModelBackend):
                 ('LTI launch params: %s' % lti_launch_request.to_params()))
 
             raise PermissionDenied
-
-        NonceHistory.objects.create(
-            client_key=lti_launch_request.oauth_consumer_key,
-            timestamp=lti_launch_request.oauth_timestamp,
-            nonce=lti_launch_request.oauth_nonce)
 
         logger.debug('user_id: %s' % lti_launch_request.user_id)
         if not lti_launch_request.user_id:

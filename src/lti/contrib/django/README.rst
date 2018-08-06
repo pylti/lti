@@ -33,3 +33,13 @@ AUTHENTICATION_BACKENDS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can turn off SSL check by setting LTI\_ENFORCE\_SSL to False.
+
+5. [optional] Specify LTI_CACHE_ALIAS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To store nonces in a cache other than the default,
+specify a value for ``LTI_CACHE_ALIAS``.
+
+::
+
+    LTI_CACHE_ALIAS = 'nonces'

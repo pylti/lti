@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 from oauthlib.oauth1 import RequestValidator
 from datetime import datetime, timedelta
 
+from django.core.cache import caches
 from django.conf import settings
 from django.utils.module_loading import import_string
 
-from .models import NonceHistory
-
 import logging
 logger = logging.getLogger(__name__)
+
+KEY_PREFIX = 'lti.contrib.django'
 
 
 class LtiConsumerSettingsStorage(object):
@@ -72,9 +73,13 @@ class LtiRequestValidator(RequestValidator):
             logger.warning('Timestamp too old (age: %s)' % diff)
             return False
 
-        if NonceHistory.objects.filter(client_key=client_key,
-                                       timestamp=timestamp,
-                                       nonce=nonce).exists():
+        if hasattr(settings, 'LTI_CACHE_ALIAS'):
+            nonce_cache = caches[settings.LTI_CACHE_ALIAS]
+        else:
+            nonce_cache = caches['default']
+        nonce_key = '{}:{}:{}'.format(KEY_PREFIX, client_key, nonce)
+        nonce_stored = nonce_cache.add(nonce_key, timestamp, 600)
+        if not nonce_stored:
             logger.warning(
                 'Found matching nonce/timestamp, possible replay attack')
             return False
