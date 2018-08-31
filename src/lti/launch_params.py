@@ -70,7 +70,8 @@ LAUNCH_PARAMS_OAUTH = [
     'oauth_nonce',
     'oauth_version',
     'oauth_signature',
-    'oauth_callback'
+    'oauth_callback',
+    'oauth_token'
 ]
 
 LAUNCH_PARAMS_IS_LIST = [
