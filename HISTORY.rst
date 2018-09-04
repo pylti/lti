@@ -1,3 +1,9 @@
+0.9.4 (2018-09-04)
+++++++++++++++++++
+
+* Add secure_icon to tool config xml (#62)
+* Add oauth_token as a valid launch parameter (#68)
+
 0.9.3 (2018-06-20)
 ++++++++++++++++++
 
