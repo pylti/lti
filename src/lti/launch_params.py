@@ -1,6 +1,8 @@
 import sys
-from collections.abc import MutableMapping
-
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 from . import DEFAULT_LTI_VERSION
 
 py = sys.version_info
