@@ -1,5 +1,5 @@
 import sys
-from collections import MutableMapping
+from collections.abc import MutableMapping
 
 from . import DEFAULT_LTI_VERSION
 
