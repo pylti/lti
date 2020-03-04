@@ -25,9 +25,9 @@ VALID_ATTRIBUTES = [
 
 NSMAP = {
     'blti': 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
-    'xsi': "http://www.w3.org/2001/XMLSchema-instance",
-    'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
     'lticm': 'http://www.imsglobal.org/xsd/imslticm_v1p0',
+    'lticp': 'http://www.imsglobal.org/xsd/imslticp_v1p0',
+    'xsi': "http://www.w3.org/2001/XMLSchema-instance",
 }
 
 
