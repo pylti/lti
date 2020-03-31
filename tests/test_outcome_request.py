@@ -111,7 +111,8 @@ class TestOutcomeRequest(unittest.TestCase):
         self.assertTrue(request.has_required_attributes())
 
     def test_post_outcome_request(self):
-        request = OutcomeRequest()
+        request_headers = {"User-Agent": "unit-test"}
+        request = OutcomeRequest(headers=request_headers)
         self.assertRaises(InvalidLTIConfigError, request.post_outcome_request)
         request.consumer_key = 'consumer'
         request.consumer_secret = 'secret'
@@ -126,6 +127,8 @@ class TestOutcomeRequest(unittest.TestCase):
         self.assertIsInstance(resp, OutcomeResponse)
         request = resp.post_response.request
         self.assertTrue('authorization' in request.headers)
+        self.assertEqual(request.headers.get('user-agent'), b"unit-test")
+        self.assertEqual(request.headers.get('content-type'), b"application/xml")
         auth_header = unquote(request.headers['authorization'].decode('utf-8'))
         correct = ('OAuth '
             'oauth_nonce="my_nonce", oauth_timestamp="1234567890", '
@@ -141,8 +144,11 @@ class TestOutcomeRequest(unittest.TestCase):
             data=REPLACE_RESULT_XML,
             content_type='application/xml'
         )
-        request = OutcomeRequest.from_post_request(post_request)
+        request_headers = {"User-Agent": "post-request", "Content-Type": "text/xml"}
+        request = OutcomeRequest.from_post_request(post_request, request_headers)
         self.assertEqual(request.operation, 'replaceResult')
         self.assertEqual(request.lis_result_sourcedid, '261-154-728-17-784')
         self.assertEqual(request.message_identifier, '123456789')
         self.assertEqual(request.score, '5')
+        self.assertEqual(request.headers.get('User-Agent'), "post-request")
+        self.assertEqual(request.headers.get('Content-Type'), "text/xml")

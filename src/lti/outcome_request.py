@@ -4,6 +4,7 @@ from lxml import etree, objectify
 import requests
 from requests_oauthlib import OAuth1
 from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_AUTH_HEADER
+from requests.structures import CaseInsensitiveDict
 
 from .outcome_response import OutcomeResponse
 from .utils import InvalidLTIConfigError
@@ -37,7 +38,7 @@ class OutcomeRequest(object):
     they each use it differently. The TP will use it to POST an OAuth-signed
     request to the TC. A TC will use it to parse such a request from a TP.
     '''
-    def __init__(self, opts=defaultdict(lambda: None)):
+    def __init__(self, opts=defaultdict(lambda: None), headers=None):
         # Initialize all our accessors to None
         for attr in VALID_ATTRIBUTES:
             setattr(self, attr, None)
@@ -51,15 +52,19 @@ class OutcomeRequest(object):
                     "Invalid outcome request option: {}".format(key)
                 )
 
+        self.headers = CaseInsensitiveDict(headers or {})
+        if "Content-Type" not in self.headers:
+            self.headers['Content-type'] = 'application/xml'
+
     @staticmethod
-    def from_post_request(post_request):
+    def from_post_request(post_request, headers=None):
         '''
         Convenience method for creating a new OutcomeRequest from a request
         object.
 
         post_request is assumed to be a Django HttpRequest object
         '''
-        request = OutcomeRequest()
+        request = OutcomeRequest(headers=headers)
         request.post_request = post_request
         request.process_xml(post_request.body)
         return request
@@ -140,10 +145,9 @@ class OutcomeRequest(object):
                               signature_type=SIGNATURE_TYPE_AUTH_HEADER,
                               force_include_body=True, **kwargs)
 
-        headers = {'Content-type': 'application/xml'}
         resp = requests.post(self.lis_outcome_service_url, auth=header_oauth,
                              data=self.generate_request_xml(),
-                             headers=headers)
+                             headers=self.headers)
         outcome_resp = OutcomeResponse.from_post_response(resp, resp.content)
         self.outcome_response = outcome_resp
         return self.outcome_response
