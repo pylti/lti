@@ -58,10 +58,12 @@ class ToolProvider(ToolBase):
             self.launch_headers
         )
 
-        if valid and not self.consumer_key and not self.consumer_secret:
+        if valid:
             # Gather the key and secret
-            self.consumer_key = self.launch_params['oauth_consumer_key']
-            self.consumer_secret = validator.secret
+            if not self.consumer_key:
+                self.consumer_key = self.launch_params['oauth_consumer_key']
+            if not self.consumer_secret:
+                self.consumer_secret = validator.secret
 
         return valid
 
