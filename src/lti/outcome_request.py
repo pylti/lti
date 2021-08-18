@@ -75,6 +75,7 @@ class OutcomeRequest(object):
 
             'text' : str text
             'url' : str url
+            'ltiLaunchUrl' : str url
         '''
         self.operation = REPLACE_REQUEST
         self.score = score
@@ -84,9 +85,9 @@ class OutcomeRequest(object):
                 error_msg = ('Dictionary result_data can only have one entry. '
                              '{0} entries were found.'.format(len(result_data)))
                 raise InvalidLTIConfigError(error_msg)
-            elif 'text' not in result_data and 'url' not in result_data:
+            elif 'text' not in result_data and 'url' not in result_data and 'ltiLaunchUrl' not in result_data:
                 error_msg = ('Dictionary result_data can only have the key '
-                             '"text" or the key "url".')
+                             '"text" or the key "url" or the key "ltiLaunchUrl".')
                 raise InvalidLTIConfigError(error_msg)
             else:
                 return self.post_outcome_request()
@@ -230,5 +231,8 @@ class OutcomeRequest(object):
             elif 'url' in self.result_data:
                 resultDataURL = etree.SubElement(resultData, 'url')
                 resultDataURL.text = self.result_data['url']
+            elif 'ltiLaunchUrl' in self.result_data:
+                resultDataLaunchURL = etree.SubElement(resultData, 'ltiLaunchUrl')
+                resultDataLaunchURL.text = self.result_data['ltiLaunchUrl']
 
         return etree.tostring(root, xml_declaration=True, encoding='utf-8')
