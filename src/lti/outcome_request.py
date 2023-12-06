@@ -165,6 +165,14 @@ class OutcomeRequest(object):
                 sourcedGUID.sourcedId
             self.score = str(result.resultRecord.result.
                              resultScore.textString)
+
+            if len(resultData := result.find('resultRecord/result/resultData', root.nsmap)):
+                if r := resultData.find('text', root.nsmap):
+                    self.result_data = {'text': result}
+                elif r := resultData.find('url', root.nsmap):
+                    self.result_data = {'url': result}
+                elif r := resultData.find('ltiLaunchUrl', root.nsmap):
+                    self.result_data = {'ltiLaunchUrl': r}
         except:
             pass
 
