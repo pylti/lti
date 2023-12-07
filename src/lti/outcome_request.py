@@ -4,6 +4,7 @@ from lxml import etree, objectify
 import requests
 from requests_oauthlib import OAuth1
 from requests_oauthlib.oauth1_auth import SIGNATURE_TYPE_AUTH_HEADER
+from requests.structures import CaseInsensitiveDict
 
 from .outcome_response import OutcomeResponse
 from .utils import InvalidLTIConfigError
@@ -37,7 +38,7 @@ class OutcomeRequest(object):
     they each use it differently. The TP will use it to POST an OAuth-signed
     request to the TC. A TC will use it to parse such a request from a TP.
     '''
-    def __init__(self, opts=defaultdict(lambda: None)):
+    def __init__(self, opts=defaultdict(lambda: None), headers=None):
         # Initialize all our accessors to None
         for attr in VALID_ATTRIBUTES:
             setattr(self, attr, None)
@@ -51,15 +52,19 @@ class OutcomeRequest(object):
                     "Invalid outcome request option: {}".format(key)
                 )
 
+        self.headers = CaseInsensitiveDict(headers or {})
+        if "Content-Type" not in self.headers:
+            self.headers['Content-type'] = 'application/xml'
+
     @staticmethod
-    def from_post_request(post_request):
+    def from_post_request(post_request, headers=None):
         '''
         Convenience method for creating a new OutcomeRequest from a request
         object.
 
         post_request is assumed to be a Django HttpRequest object
         '''
-        request = OutcomeRequest()
+        request = OutcomeRequest(headers=headers)
         request.post_request = post_request
         request.process_xml(post_request.body)
         return request
@@ -75,6 +80,7 @@ class OutcomeRequest(object):
 
             'text' : str text
             'url' : str url
+            'ltiLaunchUrl' : str url
         '''
         self.operation = REPLACE_REQUEST
         self.score = score
@@ -84,9 +90,9 @@ class OutcomeRequest(object):
                 error_msg = ('Dictionary result_data can only have one entry. '
                              '{0} entries were found.'.format(len(result_data)))
                 raise InvalidLTIConfigError(error_msg)
-            elif 'text' not in result_data and 'url' not in result_data:
+            elif 'text' not in result_data and 'url' not in result_data and 'ltiLaunchUrl' not in result_data:
                 error_msg = ('Dictionary result_data can only have the key '
-                             '"text" or the key "url".')
+                             '"text" or the key "url" or the key "ltiLaunchUrl".')
                 raise InvalidLTIConfigError(error_msg)
             else:
                 return self.post_outcome_request()
@@ -140,10 +146,9 @@ class OutcomeRequest(object):
                               signature_type=SIGNATURE_TYPE_AUTH_HEADER,
                               force_include_body=True, **kwargs)
 
-        headers = {'Content-type': 'application/xml'}
         resp = requests.post(self.lis_outcome_service_url, auth=header_oauth,
                              data=self.generate_request_xml(),
-                             headers=headers)
+                             headers=self.headers)
         outcome_resp = OutcomeResponse.from_post_response(resp, resp.content)
         self.outcome_response = outcome_resp
         return self.outcome_response
@@ -164,6 +169,14 @@ class OutcomeRequest(object):
                 sourcedGUID.sourcedId
             self.score = str(result.resultRecord.result.
                              resultScore.textString)
+
+            if len(resultData := result.find('resultRecord/result/resultData', root.nsmap)):
+                if r := resultData.find('text', root.nsmap):
+                    self.result_data = {'text': result}
+                elif r := resultData.find('url', root.nsmap):
+                    self.result_data = {'url': result}
+                elif r := resultData.find('ltiLaunchUrl', root.nsmap):
+                    self.result_data = {'ltiLaunchUrl': r}
         except:
             pass
 
@@ -230,5 +243,8 @@ class OutcomeRequest(object):
             elif 'url' in self.result_data:
                 resultDataURL = etree.SubElement(resultData, 'url')
                 resultDataURL.text = self.result_data['url']
+            elif 'ltiLaunchUrl' in self.result_data:
+                resultDataLaunchURL = etree.SubElement(resultData, 'ltiLaunchUrl')
+                resultDataLaunchURL.text = self.result_data['ltiLaunchUrl']
 
         return etree.tostring(root, xml_declaration=True, encoding='utf-8')
